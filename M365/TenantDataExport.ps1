@@ -1,10 +1,10 @@
 # M365 Data Export Script Template
 # This script retrieves information from M365 services (Users, Exchange, OneDrive, SharePoint, Licenses)
 # and exports each dataset to separate sheets in an Excel workbook.
-
+## Install-Module -Name ImportExcel -Scope CurrentUser
 # Import necessary modules
 # Ensure you have the required modules installed
-
+Import-Module ImportExcel
 # Set output file path
 $outputFile = "M365DataExport.xlsx"
 
@@ -23,6 +23,9 @@ function Initialize-ExcelFile {
     #>
     
     # Add initialization code here
+    $workbook = @()
+    $workbook | Export-Excel -Path $outputFile -WorksheetName "Sheet1" -AutoSize
+    Write-Output "Initialized a blank Excel file at $outputFile"
 }
 
 # Function to retrieve M365 Users and add to Excel
