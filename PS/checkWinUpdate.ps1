@@ -1,13 +1,20 @@
-# Import the PSWindowsUpdate module
+# Ensure the PSWindowsUpdate module is installed
+if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
+    Write-Output "PSWindowsUpdate module not found. Installing..."
+    Install-Module -Name PSWindowsUpdate -Force -AllowClobber
+}
+
+# Import the module
 Import-Module PSWindowsUpdate
 
-# Get list of updates that are available to install
-$updates = Get-WUList
+# Check for available updates
+$AvailableUpdates = Get-WindowsUpdate
 
-# Check if updates are available
-if ($updates.Count -eq 0) {
-    Write-Host "No updates are available."
-    # You can add additional actions here, like logging the result or triggering other tasks.
+# Display available updates
+if ($AvailableUpdates) {
+    Write-Host "`nThe following updates are available:" -ForegroundColor Green
+    Write-Host "--------------------------------------------------------"
+    $AvailableUpdates | Format-Table -Property KB, Title, Date -AutoSize | Out-String | Write-Host
 } else {
-    $updates | Select-Object Title, KB, IsInstalled | Format-Table -AutoSize
+    Write-Host "`nNo updates are pending." -ForegroundColor Yellow
 }
