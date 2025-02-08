@@ -4,7 +4,7 @@ function Check-OutlookStatus {
     if ($outlook) {
         return "OK"
     } else {
-        return "Outlook is not running. Please start Outlook."
+        return "Outlook is not running."
     }
 }
 
@@ -34,12 +34,20 @@ function StartOrRestart-Outlook {
     if ($outlookProcess) {
         # If Outlook is running but frozen, restart it
         Stop-Process -Name "Outlook" -Force
-        Start-Process "Outlook"
-        return "Outlook has been restarted."
+        try {
+            Start-Process "Outlook" -ErrorAction Stop
+            return "Outlook has been restarted."
+        } catch {
+            return "Failed to restart Outlook. Please ensure Outlook is installed."
+        }
     } else {
         # If Outlook is not running, start it
-        Start-Process "Outlook"
-        return "Outlook has been started."
+        try {
+            Start-Process "Outlook" -ErrorAction Stop
+            return "Outlook has been started."
+        } catch {
+            return "Failed to start Outlook. Please ensure Outlook is installed."
+        }
     }
 }
 
@@ -58,14 +66,14 @@ Write-Host "Internet Connection $internetStatus     Internet connection is stabl
 Write-Host ""
 
 # Automated Task (Start or Restart Outlook if necessary)
-if ($outlookStatus -eq "Outlook is not running. Please start Outlook.") {
+if ($outlookStatus -eq "Outlook is not running.") {
     Write-Host "------------------ Automated Tasks ------------------" -ForegroundColor Cyan
     $startOrRestartStatus = StartOrRestart-Outlook
     Write-Host "Task               Status     Recommendation" -ForegroundColor Yellow
     Write-Host "----               ------     --------------" -ForegroundColor Yellow
     Write-Host "Outlook Started     Not Running     $startOrRestartStatus"
     Write-Host ""
-} elseif ($outlookStatus -eq "Outlook is frozen. Please restart Outlook.") {
+} elseif ($outlookStatus -eq "Outlook is frozen.") {
     Write-Host "------------------ Automated Tasks ------------------" -ForegroundColor Cyan
     $startOrRestartStatus = StartOrRestart-Outlook
     Write-Host "Task               Status     Recommendation" -ForegroundColor Yellow
@@ -96,8 +104,15 @@ Write-Host ""
 Write-Host "------------------ Final Status ------------------" -ForegroundColor Cyan
 Write-Host "Check               Result        Recommendation" -ForegroundColor Yellow
 Write-Host "-----               ------        --------------" -ForegroundColor Yellow
+
+# Corrected final status condition
 if ($outlookStatus -eq "OK" -and $dnsStatus -eq "OK" -and $internetStatus -eq "OK") {
     Write-Host "Final Status        OK          No issues detected. All checks passed." -ForegroundColor Green
 } else {
-    Write-Host "Final Status        Investigate The following tests failed: Outlook Status, DNS Resolution, Internet Connection. Follow the recommendations above to resolve the issues." -ForegroundColor Red
+    $failedChecks = @()
+    if ($outlookStatus -ne "OK") { $failedChecks += "Outlook Status" }
+    if ($dnsStatus -ne "OK") { $failedChecks += "DNS Resolution" }
+    if ($internetStatus -ne "OK") { $failedChecks += "Internet Connection" }
+
+    Write-Host "Final Status        Investigate The following tests failed: $($failedChecks -join ', '). Follow the recommendations above to resolve the issues." -ForegroundColor Red
 }
