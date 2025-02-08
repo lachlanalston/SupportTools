@@ -1,0 +1,18 @@
+# Get OS Information
+$OS = Get-ComputerInfo
+
+# Get Windows Edition, Version, Build, and Architecture
+$WindowsEdition = $OS.WindowsProductName
+$WindowsVersion = $OS.WindowsVersion
+$OSBuild = $OS.OsBuildNumber
+$Arch = $OS.OsArchitecture
+
+# Determine Feature Update Version (e.g., 23H2)
+$FeatureVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name DisplayVersion -ErrorAction SilentlyContinue).DisplayVersion
+
+# Output results
+Write-Output "Windows Edition: $WindowsEdition"
+Write-Output "Windows Version: $WindowsVersion"
+Write-Output "Feature Update: $FeatureVersion"
+Write-Output "OS Build Number: $OSBuild"
+Write-Output "OS Architecture: $Arch"
