@@ -1,3 +1,0 @@
-$version = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" | Select-Object DisplayVersion, InstallDate
-$installDate = [System.DateTimeOffset]::FromUnixTimeSeconds($version.InstallDate).DateTime
-Write-Output "Updated to Windows $($version.DisplayVersion) on $installDate"
