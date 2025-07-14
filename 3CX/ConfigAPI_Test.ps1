@@ -4,8 +4,8 @@ $quickTestUrl = 'https://pbx.3cx.com.au/xapi/v1/Defs?$select=Id'
 
 # Prepare body for token request
 $body = @{
-    client_id     = 'client_id'
-    client_secret = 'client_secret'
+    client_id     = 'CLIENT_ID'
+    client_secret = 'CLIENT_SECRET'
     grant_type    = 'client_credentials'
 }
 
