@@ -7,7 +7,7 @@
 - [Have I Been Pwned](https://haveibeenpwned.com/) – Check if credentials have been exposed.
 - [Any.run](https://any.run/) – Interactive malware sandbox and analysis.
 - [Shodan](https://www.shodan.io/) – Search engine for internet-connected devices.
-- [SSL Labs] (https://www.ssllabs.com/ssltest/) - SSL test for external sites
+- [SSL Labs](https://www.ssllabs.com/ssltest/) - SSL test for external sites
 
 ## Email & DNS Tools
 - [MXToolbox](https://mxtoolbox.com/) – DNS, blacklist checks, and mail diagnostics.
