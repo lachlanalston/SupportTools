@@ -56,7 +56,8 @@
 - [RFC 1035](https://datatracker.ietf.org/doc/html/rfc1035) — Domain Names - Implementation and Specification
 - [RFC 2131](https://datatracker.ietf.org/doc/html/rfc2131) — Dynamic Host Configuration Protocol (DHCP)
 - [RFC 854](https://datatracker.ietf.org/doc/html/rfc854) — Telnet Protocol Specification
-
+- [RFC 5737](https://datatracker.ietf.org/doc/rfc5737/) — IPv4 Address Blocks Reserved for Documentation
+  
 ### Security & Authentication
 - [RFC 4251](https://datatracker.ietf.org/doc/html/rfc4251) — The Secure Shell (SSH) Protocol Architecture
 - [RFC 5246](https://datatracker.ietf.org/doc/html/rfc5246) — Transport Layer Security (TLS) Protocol Version 1.2
