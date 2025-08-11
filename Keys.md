@@ -2,6 +2,21 @@
 
 Quick reference for common helpdesk keyboard shortcuts and commands.
 
+## Table of Contents
+
+- [Shortcuts](#shortcuts)
+  - [Microsoft Remote Desktop – Reset Password](#microsoft-remote-desktop--reset-password)
+  - [Reload Graphics Driver](#reload-graphics-driver)
+  - [macOS Reset NVRAM/PRAM](#macos-reset-nvrampram)
+  - [Safe Boot](#safe-boot)
+- [Commands](#commands)
+  - [Example Command 1](#example-command-1)
+  - [Example Command 2](#example-command-2)
+
+---
+
+## Shortcuts
+
 ### Microsoft Remote Desktop – Reset Password  
 **Windows:** `Ctrl + Alt + End`  
 Sends the equivalent of `Ctrl + Alt + Delete` to the remote session, allowing you to change a password or access security options.
@@ -25,5 +40,18 @@ Restarts the graphics driver without rebooting. Useful for fixing frozen or glit
 ### Safe Boot  
 **Windows:** Hold the `Shift` key and click **Restart** (power icon in lower-left corner).  
 **macOS:** Restart Mac and hold the `Shift` key.
+
+---
+
+## Commands
+
+### Battery Report
+*powercfg /batteryreport*
+
+
+---
+
+### System Boot Time
+*systeminfo | find "System Boot Time*
 
 ---
