@@ -14,3 +14,7 @@ Quick reference for common helpdesk keyboard shortcuts and commands.
 ## Reload Graphics Driver
 - **Windows Keyboard Shortcut** `Ctrl + Shift + Windows + B`  
   Restarts the graphics driver without rebooting. Useful for fixing frozen or glitchy displays.
+
+## MacOS Reset NVRAM/PRAM
+- **MacOS Keyboard Shortcut:**  
+  Restart Mac and hold `Option + Command + P + R` for ~20 seconds.
