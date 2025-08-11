@@ -18,3 +18,9 @@ Quick reference for common helpdesk keyboard shortcuts and commands.
 ## MacOS Reset NVRAM/PRAM
 - **MacOS Keyboard Shortcut:**  
   Restart Mac and hold `Option + Command + P + R` for ~20 seconds.
+
+## Safe Boot
+- **Windows Shortcut:**  
+  Hold the `Shift` key andclick Restart (power icon in lower-left corner)
+- **MacOS Shortcut:**  
+  Restart Mac and hold `Shift` key
