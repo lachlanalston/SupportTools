@@ -9,13 +9,21 @@ Sends the equivalent of `Ctrl + Alt + Delete` to the remote session, allowing yo
 **macOS:** `fn + Control + Option + Delete`  
 (Some Mac keyboards may require `fn + Control + Option + Backspace` depending on key mapping.)
 
+---
+
 ### Reload Graphics Driver  
 **Windows:** `Ctrl + Shift + Windows + B`  
 Restarts the graphics driver without rebooting. Useful for fixing frozen or glitchy displays.
 
+---
+
 ### macOS Reset NVRAM/PRAM  
 **macOS:** Restart Mac and hold `Option + Command + P + R` for about 20 seconds.
+
+---
 
 ### Safe Boot  
 **Windows:** Hold the `Shift` key and click **Restart** (power icon in lower-left corner).  
 **macOS:** Restart Mac and hold the `Shift` key.
+
+---
