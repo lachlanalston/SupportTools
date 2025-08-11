@@ -10,8 +10,8 @@ Quick reference for common helpdesk keyboard shortcuts and commands.
   - [macOS Reset NVRAM/PRAM](#macos-reset-nvrampram)
   - [Safe Boot](#safe-boot)
 - [Commands](#commands)
-  - [Example Command 1](#example-command-1)
-  - [Example Command 2](#example-command-2)
+  - [Battery Report](#battery-report)
+  - [System Boot Time](#system-boot-time)
 
 ---
 
@@ -45,13 +45,12 @@ Restarts the graphics driver without rebooting. Useful for fixing frozen or glit
 
 ## Commands
 
-### Battery Report
-*powercfg /batteryreport*
-
+### Battery Report  
+`powercfg /batteryreport`
 
 ---
 
-### System Boot Time
-*systeminfo | find "System Boot Time*
+### System Boot Time  
+`systeminfo | find System Boot Time`
 
 ---
