@@ -10,3 +10,7 @@ Quick reference for common helpdesk keyboard shortcuts and commands.
   
 - **Mac Keyboard Shortcut (Microsoft Remote Desktop):** `fn + Control + Option + Delete`  
   Some Mac keyboards may require `fn + Control + Option + Backspace` depending on key mapping.
+
+## Reload Graphics Driver
+- **Windows Keyboard Shortcut** `Ctrl + Shift + Windows + B`  
+  Restarts the graphics driver without rebooting. Useful for fixing frozen or glitchy displays.
