@@ -54,3 +54,10 @@ Restarts the graphics driver without rebooting. Useful for fixing frozen or glit
 `systeminfo | find System Boot Time`
 
 ---
+
+### Windows Version
+`Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" |
+Select-Object DisplayVersion, ReleaseId, CurrentBuild, CurrentBuildNumber`
+
+---
+
