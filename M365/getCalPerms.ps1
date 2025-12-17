@@ -27,7 +27,7 @@ if ($response.access_token) {
 }
 
 # Define the user's email address
-$userId = "lachlan@alston.id.au"  # Replace with the target user's email address
+$userId = "email address"  # Replace with the target user's email address
 
 # API to get user's calendars
 $uri = "https://graph.microsoft.com/v1.0/users/$userId/calendars"
