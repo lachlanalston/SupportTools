@@ -300,7 +300,7 @@ function openScriptModal(script) {
     </div>
     <p class="modal-desc">${esc(script.description)}</p>
     <div class="modal-section-label">File</div>
-    <div class="modal-value">${esc(script.file)}</div>
+    <div class="modal-value">${esc(script.file.split('/').pop())}</div>
     <div class="modal-section-label">Tags</div>
     <div class="modal-tags">${script.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${runSection}
@@ -310,7 +310,7 @@ function openScriptModal(script) {
   const copyRunBtn = document.getElementById('copy-run-btn');
   if (copyRunBtn) {
     copyRunBtn.addEventListener('click', () => {
-      copyToClipboard(cmdText, 'copy-run-btn', 'Copied!');
+      copyToClipboard(cmdText, 'copy-run-btn');
     });
   }
 
@@ -340,7 +340,7 @@ function openCommandModal(cmd) {
   `;
 
   document.getElementById('copy-cmd-btn').addEventListener('click', () => {
-    copyToClipboard(cmd.value, 'copy-cmd-btn', 'Copied!');
+    copyToClipboard(cmd.value, 'copy-cmd-btn');
   });
 
   showModal();
@@ -359,18 +359,46 @@ function closeModal() {
 }
 
 // ─── Clipboard ────────────────────────────────────────────────────
-function copyToClipboard(text, btnId, successText) {
+function copyToClipboard(text, btnId) {
   navigator.clipboard.writeText(text).then(() => {
+    // Button feedback
     const btn = document.getElementById(btnId);
-    if (!btn) return;
-    const original = btn.innerHTML;
-    btn.textContent = successText;
-    btn.classList.add('btn-copy-success');
-    setTimeout(() => {
-      btn.innerHTML = original;
-      btn.classList.remove('btn-copy-success');
-    }, 1800);
+    if (btn) {
+      const original = btn.innerHTML;
+      btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg> Copied!`;
+      btn.classList.add('btn-copy-success');
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.classList.remove('btn-copy-success');
+      }, 2000);
+    }
+
+    // Toast
+    showToast('Copied to clipboard');
   });
+}
+
+let toastTimer = null;
+
+function showToast(message) {
+  let toast = document.getElementById('copy-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'copy-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+  }
+
+  toast.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg> ${message}`;
+  toast.classList.remove('toast-hide');
+  toast.classList.add('toast-show');
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('toast-show');
+    toast.classList.add('toast-hide');
+  }, 2200);
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────
