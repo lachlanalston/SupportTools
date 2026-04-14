@@ -275,7 +275,7 @@ function openScriptModal(script) {
     <div class="modal-actions" style="margin-top:10px;">
       <button class="btn ${canRun ? 'btn-run' : 'btn-run-config'}" id="copy-run-btn">
         ${canRun ? playIcon : cpyIcon}
-        ${canRun ? 'Copy run command' : 'Copy (review config first)'}
+        Copy
       </button>
       <a class="btn btn-secondary" href="${script.github_url}" target="_blank" rel="noopener">
         ${ghIcon} View on GitHub
@@ -359,23 +359,42 @@ function closeModal() {
 }
 
 // ─── Clipboard ────────────────────────────────────────────────────
+const checkIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>`;
+
 function copyToClipboard(text, btnId) {
-  navigator.clipboard.writeText(text).then(() => {
-    // Button feedback
+  const done = () => {
     const btn = document.getElementById(btnId);
     if (btn) {
       const original = btn.innerHTML;
-      btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg> Copied!`;
+      btn.innerHTML = `${checkIcon} Copied!`;
       btn.classList.add('btn-copy-success');
       setTimeout(() => {
         btn.innerHTML = original;
         btn.classList.remove('btn-copy-success');
       }, 2000);
     }
-
-    // Toast
     showToast('Copied to clipboard');
-  });
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => execCommandFallback(text, done));
+  } else {
+    execCommandFallback(text, done);
+  }
+}
+
+function execCommandFallback(text, callback) {
+  const el = document.createElement('textarea');
+  el.value = text;
+  el.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+  document.body.appendChild(el);
+  el.focus();
+  el.select();
+  try {
+    document.execCommand('copy');
+    callback();
+  } catch (_) {}
+  document.body.removeChild(el);
 }
 
 let toastTimer = null;
