@@ -1,0 +1,506 @@
+[
+  {
+    "name": "AbuseIPDB",
+    "url": "https://www.abuseipdb.com/",
+    "description": "Report and investigate malicious IP addresses.",
+    "category": "IP & Domain Reputation",
+    "tags": ["ip", "reputation", "abuse", "threat"]
+  },
+  {
+    "name": "GreyNoise Visualizer",
+    "url": "https://viz.greynoise.io/",
+    "description": "Understand whether an IP is noisy (mass scanning) or targeted.",
+    "category": "IP & Domain Reputation",
+    "tags": ["ip", "reputation", "scanning", "noise", "threat"]
+  },
+  {
+    "name": "Talos Intelligence",
+    "url": "https://www.talosintelligence.com/",
+    "description": "Cisco's IP and domain reputation lookup with threat indicators.",
+    "category": "IP & Domain Reputation",
+    "tags": ["ip", "domain", "reputation", "cisco", "threat"]
+  },
+  {
+    "name": "URLVoid",
+    "url": "https://www.urlvoid.com/",
+    "description": "Domain reputation, blacklist status, and scoring.",
+    "category": "IP & Domain Reputation",
+    "tags": ["url", "domain", "reputation", "blacklist"]
+  },
+  {
+    "name": "FortiGuard Web Filter Check",
+    "url": "https://www.fortiguard.com/webfilter",
+    "description": "Web filtering category lookup for Fortinet firewalls.",
+    "category": "IP & Domain Reputation",
+    "tags": ["url", "domain", "fortinet", "web-filter", "category"]
+  },
+  {
+    "name": "SSL Labs Test",
+    "url": "https://www.ssllabs.com/ssltest/",
+    "description": "Check SSL/TLS security configuration on public-facing websites.",
+    "category": "IP & Domain Reputation",
+    "tags": ["ssl", "tls", "certificate", "security", "https"]
+  },
+  {
+    "name": "VirusTotal",
+    "url": "https://www.virustotal.com/gui/home/upload",
+    "description": "Scan files and URLs with multiple antivirus engines simultaneously.",
+    "category": "Malware & Sandbox Analysis",
+    "tags": ["malware", "antivirus", "scan", "file", "url"]
+  },
+  {
+    "name": "Hybrid Analysis",
+    "url": "https://www.hybrid-analysis.com/",
+    "description": "Deep behavioral analysis of files and URLs in a sandbox environment.",
+    "category": "Malware & Sandbox Analysis",
+    "tags": ["malware", "sandbox", "behavioral", "analysis", "file"]
+  },
+  {
+    "name": "Any.run",
+    "url": "https://any.run/",
+    "description": "Real-time interactive malware sandbox for dynamic analysis.",
+    "category": "Malware & Sandbox Analysis",
+    "tags": ["malware", "sandbox", "interactive", "dynamic", "analysis"]
+  },
+  {
+    "name": "ThreatFox",
+    "url": "https://threatfox.abuse.ch/browse/",
+    "description": "Community-driven threat intelligence and IOC database from Abuse.ch.",
+    "category": "Threat Feeds & IOCs",
+    "tags": ["ioc", "threat", "intelligence", "community", "abuse"]
+  },
+  {
+    "name": "PhishTank",
+    "url": "https://phishtank.org/",
+    "description": "Crowd-sourced phishing link database for verifying suspicious URLs.",
+    "category": "Threat Feeds & IOCs",
+    "tags": ["phishing", "url", "crowdsource", "ioc"]
+  },
+  {
+    "name": "Shodan",
+    "url": "https://www.shodan.io/",
+    "description": "Search engine for exposed internet-connected devices and open ports.",
+    "category": "Threat Feeds & IOCs",
+    "tags": ["shodan", "exposed", "devices", "ports", "iot", "recon"]
+  },
+  {
+    "name": "Have I Been Pwned",
+    "url": "https://haveibeenpwned.com/",
+    "description": "Check if email addresses or credentials have been exposed in known data breaches.",
+    "category": "Breach & Exposure Checking",
+    "tags": ["breach", "email", "credentials", "exposure", "password"]
+  },
+  {
+    "name": "MXToolbox",
+    "url": "https://mxtoolbox.com/",
+    "description": "DNS, email flow, blacklist diagnostics, and MX record lookup.",
+    "category": "Email & DNS Tools",
+    "tags": ["dns", "mx", "email", "blacklist", "spf", "dmarc"]
+  },
+  {
+    "name": "Google Dig Tool",
+    "url": "https://toolbox.googleapps.com/apps/dig/",
+    "description": "Simple web-based DNS lookup tool from Google Workspace.",
+    "category": "Email & DNS Tools",
+    "tags": ["dns", "dig", "lookup", "google"]
+  },
+  {
+    "name": "MITRE ATT&CK",
+    "url": "https://attack.mitre.org/",
+    "description": "Adversary tactics, techniques, and procedures framework.",
+    "category": "Cybersecurity Frameworks",
+    "tags": ["mitre", "attack", "ttp", "framework", "adversary", "tactics"]
+  },
+  {
+    "name": "CIS Controls",
+    "url": "https://www.cisecurity.org/controls",
+    "description": "Prescriptive best practices for cyber defense from the Center for Internet Security.",
+    "category": "Cybersecurity Frameworks",
+    "tags": ["cis", "controls", "hardening", "best-practice", "framework"]
+  },
+  {
+    "name": "NIST Cybersecurity Framework",
+    "url": "https://www.nist.gov/cyberframework",
+    "description": "US NIST framework for critical infrastructure cybersecurity risk management.",
+    "category": "Cybersecurity Frameworks",
+    "tags": ["nist", "framework", "risk", "critical-infrastructure", "csf"]
+  },
+  {
+    "name": "ASD Essential Eight",
+    "url": "https://blueprint.asd.gov.au/security-and-governance/essential-eight/",
+    "description": "Top eight mitigation strategies recommended by the Australian Signals Directorate.",
+    "category": "Cybersecurity Frameworks",
+    "tags": ["asd", "essential-eight", "australia", "mitigation", "framework"]
+  },
+  {
+    "name": "ASIC Regulatory Guide 104",
+    "url": "https://download.asic.gov.au/media/zboexfrp/rg104-published-23-june-2022.pdf",
+    "description": "ASIC licensing guide covering general obligations including IT resource and risk management (RG 104).",
+    "category": "Cybersecurity Frameworks",
+    "tags": ["asic", "rg104", "compliance", "licensing", "australia", "financial"]
+  },
+  {
+    "name": "Australian Cyber Security Centre (ACSC)",
+    "url": "https://www.cyber.gov.au/",
+    "description": "National guidance, news, alerts, and incident reporting from the ACSC.",
+    "category": "Compliance & Governance",
+    "tags": ["acsc", "australia", "guidance", "alerts", "government", "cyber"]
+  },
+  {
+    "name": "Office of the Australian Information Commissioner (OAIC)",
+    "url": "https://www.oaic.gov.au/",
+    "description": "Privacy and compliance guidance under Australian law.",
+    "category": "Compliance & Governance",
+    "tags": ["oaic", "privacy", "australia", "compliance", "law"]
+  },
+  {
+    "name": "Notifiable Data Breaches (OAIC)",
+    "url": "https://www.oaic.gov.au/privacy/notifiable-data-breaches",
+    "description": "Guide and reporting site for notifiable data breaches under Australian Privacy Act.",
+    "category": "Compliance & Governance",
+    "tags": ["oaic", "breach", "notification", "privacy", "australia", "reporting"]
+  },
+  {
+    "name": "Stay Smart Online Alerts",
+    "url": "https://www.cyber.gov.au/acsc/view-all-content/alerts",
+    "description": "Current cyber threats and scam notifications from the Australian Government.",
+    "category": "Compliance & Governance",
+    "tags": ["alerts", "threats", "scams", "australia", "government", "acsc"]
+  },
+  {
+    "name": "ISO/IEC 27001",
+    "url": "https://www.iso.org/standard/54534.html",
+    "description": "Information security management systems (ISMS) standard.",
+    "category": "Compliance & Governance",
+    "tags": ["iso", "27001", "isms", "information-security", "standard"]
+  },
+  {
+    "name": "ISO 9001",
+    "url": "https://www.iso.org/standard/62085.html",
+    "description": "Quality management systems (QMS) standard.",
+    "category": "Compliance & Governance",
+    "tags": ["iso", "9001", "quality", "management", "standard", "qms"]
+  },
+  {
+    "name": "Windows End-of-Life Tracker",
+    "url": "https://endoflife.date/windows",
+    "description": "Windows version lifecycle status including end-of-support dates.",
+    "category": "System & Software Lifecycle",
+    "tags": ["windows", "eol", "lifecycle", "support", "end-of-life"]
+  },
+  {
+    "name": "PCI DSS",
+    "url": "https://www.pcisecuritystandards.org/pci_security/",
+    "description": "Cardholder data protection and compliance framework for payment processing.",
+    "category": "Financial Standards",
+    "tags": ["pci", "dss", "payment", "cardholder", "compliance", "financial"]
+  },
+  {
+    "name": "RFC 791 — IPv4",
+    "url": "https://datatracker.ietf.org/doc/html/rfc791",
+    "description": "Internet Protocol version 4 (IPv4) specification.",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "ipv4", "ip", "protocol", "network"]
+  },
+  {
+    "name": "RFC 793 — TCP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc793",
+    "description": "Transmission Control Protocol (TCP) specification.",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "tcp", "protocol", "network", "transport"]
+  },
+  {
+    "name": "RFC 2460 — IPv6",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2460",
+    "description": "Internet Protocol version 6 (IPv6) specification.",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "ipv6", "ip", "protocol", "network"]
+  },
+  {
+    "name": "RFC 1034 — DNS Concepts",
+    "url": "https://datatracker.ietf.org/doc/html/rfc1034",
+    "description": "Domain Names - Concepts and Facilities.",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "dns", "domain", "protocol"]
+  },
+  {
+    "name": "RFC 1035 — DNS Implementation",
+    "url": "https://datatracker.ietf.org/doc/html/rfc1035",
+    "description": "Domain Names - Implementation and Specification.",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "dns", "domain", "protocol"]
+  },
+  {
+    "name": "RFC 2131 — DHCP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2131",
+    "description": "Dynamic Host Configuration Protocol (DHCP) specification.",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "dhcp", "protocol", "network", "ip"]
+  },
+  {
+    "name": "RFC 854 — Telnet",
+    "url": "https://datatracker.ietf.org/doc/html/rfc854",
+    "description": "Telnet Protocol Specification.",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "telnet", "protocol", "remote"]
+  },
+  {
+    "name": "RFC 5737 — Documentation IPs",
+    "url": "https://datatracker.ietf.org/doc/rfc5737/",
+    "description": "IPv4 Address Blocks Reserved for Documentation (192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24).",
+    "category": "RFCs — Network Protocols",
+    "tags": ["rfc", "ipv4", "documentation", "reserved", "test"]
+  },
+  {
+    "name": "RFC 4251 — SSH Architecture",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4251",
+    "description": "The Secure Shell (SSH) Protocol Architecture.",
+    "category": "RFCs — Security & Auth",
+    "tags": ["rfc", "ssh", "security", "protocol", "auth"]
+  },
+  {
+    "name": "RFC 5246 — TLS 1.2",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5246",
+    "description": "Transport Layer Security (TLS) Protocol Version 1.2.",
+    "category": "RFCs — Security & Auth",
+    "tags": ["rfc", "tls", "ssl", "security", "encryption"]
+  },
+  {
+    "name": "RFC 8446 — TLS 1.3",
+    "url": "https://datatracker.ietf.org/doc/html/rfc8446",
+    "description": "Transport Layer Security (TLS) Protocol Version 1.3.",
+    "category": "RFCs — Security & Auth",
+    "tags": ["rfc", "tls", "ssl", "security", "encryption"]
+  },
+  {
+    "name": "RFC 6749 — OAuth 2.0",
+    "url": "https://datatracker.ietf.org/doc/html/rfc6749",
+    "description": "OAuth 2.0 Authorization Framework.",
+    "category": "RFCs — Security & Auth",
+    "tags": ["rfc", "oauth", "auth", "authorization", "api"]
+  },
+  {
+    "name": "RFC 2865 — RADIUS",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2865",
+    "description": "Remote Authentication Dial-In User Service (RADIUS) protocol.",
+    "category": "RFCs — Security & Auth",
+    "tags": ["rfc", "radius", "auth", "aaa", "network"]
+  },
+  {
+    "name": "RFC 7235 — HTTP Authentication",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7235",
+    "description": "HTTP Authentication framework specification.",
+    "category": "RFCs — Security & Auth",
+    "tags": ["rfc", "http", "auth", "authentication", "web"]
+  },
+  {
+    "name": "RFC 5321 — SMTP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5321",
+    "description": "Simple Mail Transfer Protocol (SMTP) specification.",
+    "category": "RFCs — Email",
+    "tags": ["rfc", "smtp", "email", "protocol", "mail"]
+  },
+  {
+    "name": "RFC 5322 — Email Format",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5322",
+    "description": "Internet Message Format — defines email header and body structure.",
+    "category": "RFCs — Email",
+    "tags": ["rfc", "email", "format", "headers", "message"]
+  },
+  {
+    "name": "RFC 6376 — DKIM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc6376",
+    "description": "DomainKeys Identified Mail (DKIM) Signatures.",
+    "category": "RFCs — Email",
+    "tags": ["rfc", "dkim", "email", "signing", "authentication"]
+  },
+  {
+    "name": "RFC 7208 — SPF",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7208",
+    "description": "Sender Policy Framework (SPF) for authorizing mail senders.",
+    "category": "RFCs — Email",
+    "tags": ["rfc", "spf", "email", "authentication", "dns"]
+  },
+  {
+    "name": "RFC 7489 — DMARC",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7489",
+    "description": "Domain-based Message Authentication, Reporting, and Conformance (DMARC).",
+    "category": "RFCs — Email",
+    "tags": ["rfc", "dmarc", "email", "authentication", "reporting"]
+  },
+  {
+    "name": "RFC 5424 — Syslog",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5424",
+    "description": "The Syslog Protocol specification.",
+    "category": "RFCs — Logging",
+    "tags": ["rfc", "syslog", "logging", "monitoring", "protocol"]
+  },
+  {
+    "name": "RFC 5425 — TLS Syslog",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5425",
+    "description": "TLS Transport Mapping for Syslog.",
+    "category": "RFCs — Logging",
+    "tags": ["rfc", "syslog", "tls", "logging", "secure"]
+  },
+  {
+    "name": "RFC 3411 — SNMP Architecture",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3411",
+    "description": "Architecture for describing SNMP Management Frameworks.",
+    "category": "RFCs — Network Management",
+    "tags": ["rfc", "snmp", "network", "management", "monitoring"]
+  },
+  {
+    "name": "RFC 3412 — SNMP Message Processing",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3412",
+    "description": "Message Processing and Dispatching for SNMP.",
+    "category": "RFCs — Network Management",
+    "tags": ["rfc", "snmp", "network", "management"]
+  },
+  {
+    "name": "RFC 3413 — SNMP Applications",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3413",
+    "description": "SNMP Applications specification.",
+    "category": "RFCs — Network Management",
+    "tags": ["rfc", "snmp", "network", "management"]
+  },
+  {
+    "name": "RFC 3414 — SNMPv3 USM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3414",
+    "description": "User-based Security Model (USM) for SNMPv3.",
+    "category": "RFCs — Network Management",
+    "tags": ["rfc", "snmp", "snmpv3", "security", "usm"]
+  },
+  {
+    "name": "RFC 3415 — SNMP VACM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3415",
+    "description": "View-based Access Control Model (VACM) for SNMP.",
+    "category": "RFCs — Network Management",
+    "tags": ["rfc", "snmp", "access-control", "vacm"]
+  },
+  {
+    "name": "RFC 1901 — SNMPv2 Community",
+    "url": "https://datatracker.ietf.org/doc/html/rfc1901",
+    "description": "Introduction to Community-based SNMPv2.",
+    "category": "RFCs — Network Management",
+    "tags": ["rfc", "snmp", "snmpv2", "community"]
+  },
+  {
+    "name": "RFC 3261 — SIP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3261",
+    "description": "Session Initiation Protocol (SIP) core specification.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "protocol", "telephony", "3cx"]
+  },
+  {
+    "name": "RFC 3263 — SIP Server Locating",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3263",
+    "description": "Locating SIP Servers using DNS.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "dns", "server"]
+  },
+  {
+    "name": "RFC 3264 — SDP Offer/Answer",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3264",
+    "description": "An Offer/Answer Model with the Session Description Protocol.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sdp", "sip", "voip", "offer-answer"]
+  },
+  {
+    "name": "RFC 3311 — SIP UPDATE",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3311",
+    "description": "The Session Initiation Protocol (SIP) UPDATE Method.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "update", "method"]
+  },
+  {
+    "name": "RFC 3323 — SIP Privacy",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3323",
+    "description": "A Privacy Mechanism for the Session Initiation Protocol.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "privacy", "identity"]
+  },
+  {
+    "name": "RFC 3325 — SIP Asserted Identity",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3325",
+    "description": "Private Extensions to SIP for Asserted Identity within Trusted Networks.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "identity", "trust"]
+  },
+  {
+    "name": "RFC 4028 — SIP Session Timers",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4028",
+    "description": "Session Timers in the Session Initiation Protocol (SIP).",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "session", "timers"]
+  },
+  {
+    "name": "RFC 4566 — SDP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4566",
+    "description": "Session Description Protocol (SDP) specification.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sdp", "sip", "voip", "media"]
+  },
+  {
+    "name": "RFC 3550 — RTP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3550",
+    "description": "RTP: A Transport Protocol for Real-Time Applications.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "rtp", "voip", "real-time", "media", "audio", "video"]
+  },
+  {
+    "name": "RFC 3551 — RTP Audio/Video Profile",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3551",
+    "description": "RTP Profile for Audio and Video Conferences with Minimal Control.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "rtp", "voip", "audio", "video", "profile"]
+  },
+  {
+    "name": "RFC 4474 — SIP Identity",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4474",
+    "description": "Enhancements for Authenticated Identity Management in the Session Initiation Protocol.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "identity", "authentication"]
+  },
+  {
+    "name": "RFC 3711 — SRTP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3711",
+    "description": "The Secure Real-Time Transport Protocol (SRTP).",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "srtp", "rtp", "voip", "encryption", "security"]
+  },
+  {
+    "name": "RFC 3312 — SIP Resource Management",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3312",
+    "description": "Integration of Resource Management and SIP.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "resource", "qos"]
+  },
+  {
+    "name": "RFC 5128 — SIP NAT Traversal",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5128",
+    "description": "State of Peer-to-Peer Communication across NAT for SIP.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "sip", "voip", "nat", "traversal"]
+  },
+  {
+    "name": "RFC 5389 — STUN",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5389",
+    "description": "Session Traversal Utilities for NAT (STUN) specification.",
+    "category": "RFCs — VoIP & SIP",
+    "tags": ["rfc", "stun", "nat", "voip", "traversal"]
+  },
+  {
+    "name": "RFC 2806 — Tel URI",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2806",
+    "description": "URLs for Telephone Calls (tel: URI scheme).",
+    "category": "RFCs — Number Porting",
+    "tags": ["rfc", "tel", "uri", "telephone", "porting"]
+  },
+  {
+    "name": "RFC 3952 — ENUM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3952",
+    "description": "ENUM: Telephone Number Mapping via DNS.",
+    "category": "RFCs — Number Porting",
+    "tags": ["rfc", "enum", "telephone", "dns", "porting"]
+  }
+]

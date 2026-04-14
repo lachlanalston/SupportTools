@@ -1,0 +1,342 @@
+[
+  {
+    "name": "CheckSecurityUpdates",
+    "file": "PS/CheckSecurityUpdates.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks for pending Windows security updates using the Windows Update COM API and lists any missing updates.",
+    "tags": ["updates", "security", "windows-update", "patch"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/CheckSecurityUpdates.ps1"
+  },
+  {
+    "name": "CheckTimeSync",
+    "file": "PS/CheckTimeSync.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks current time sync status, W32Time service state, and NTP server configuration against AU pool servers.",
+    "tags": ["time", "ntp", "sync", "w32time"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/CheckTimeSync.ps1"
+  },
+  {
+    "name": "checkWinUpdate",
+    "file": "PS/checkWinUpdate.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Retrieves the Windows Update log and displays it in a formatted table with timestamps, KB numbers, titles, results, and error codes.",
+    "tags": ["updates", "windows-update", "troubleshooting", "logs", "kb"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/checkWinUpdate.ps1"
+  },
+  {
+    "name": "Get-EndpointHealth",
+    "file": "PS/get-EndpointHealth.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Comprehensive MSP diagnostic tool. Checks CPU, memory, disk, network, services, and uptime. Paste into a remote terminal session.",
+    "tags": ["diagnostic", "health", "endpoint", "msp", "cpu", "memory", "disk", "network"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/get-EndpointHealth.ps1"
+  },
+  {
+    "name": "Get-EventLogExport",
+    "file": "PS/Get-EventLogExport.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Exports System, Application, Security, and Setup event logs (last 48h) to a ZIP of .evtx files. Output goes to C:\\Temp.",
+    "tags": ["event-log", "export", "zip", "logs", "evtx", "system", "application", "security"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Get-EventLogExport.ps1"
+  },
+  {
+    "name": "getGraphicsDriverDate",
+    "file": "PS/getGraphicsDriverDate.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks Dell update service logs for graphics driver update history. Supports NVIDIA, AMD, and Intel GPUs.",
+    "tags": ["driver", "graphics", "gpu", "dell", "nvidia", "amd", "intel"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/getGraphicsDriverDate.ps1"
+  },
+  {
+    "name": "Get-SystemDetails",
+    "file": "PS/Get-SystemDetails.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Displays OS edition, version, build, architecture, hardware manufacturer and model, active user, install date, and system uptime.",
+    "tags": ["system", "info", "hardware", "os", "build", "version"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Get-SystemDetails.ps1"
+  },
+  {
+    "name": "getWanIP",
+    "file": "PS/getWanIP.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Retrieves the public WAN IP address via Cloudflare's trace endpoint.",
+    "tags": ["network", "wan", "ip", "cloudflare", "public-ip"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/getWanIP.ps1"
+  },
+  {
+    "name": "OutlookCheck",
+    "file": "PS/OutlookCheck.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks if Outlook is running and validates DNS resolution for outlook.office365.com.",
+    "tags": ["outlook", "email", "dns", "office365", "connectivity", "exchange"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/OutlookCheck.ps1"
+  },
+  {
+    "name": "performanceCheck",
+    "file": "PS/performanceCheck.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks system performance including critical services, memory usage, disk space, and pending Windows updates.",
+    "tags": ["performance", "services", "memory", "disk", "diagnostic", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/performanceCheck.ps1"
+  },
+  {
+    "name": "RemoveNetskope",
+    "file": "PS/RemoveNetskope.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Fully uninstalls the Netskope client including the service, MSI product, and all data directories.",
+    "tags": ["netskope", "uninstall", "removal", "agent", "vpn", "security"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/RemoveNetskope.ps1"
+  },
+  {
+    "name": "Remove-NetworkDrives",
+    "file": "PS/Remove-NetworkDrives.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Removes all connected network drives and reports what was removed. Handles both user and SYSTEM context.",
+    "tags": ["network", "drives", "mapped", "cleanup", "unc"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Remove-NetworkDrives.ps1"
+  },
+  {
+    "name": "remove-print-jobs",
+    "file": "PS/remove-print-jobs.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Clears all pending print jobs across all installed printers.",
+    "tags": ["print", "printer", "queue", "stuck", "spooler", "jobs"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/remove-print-jobs.ps1"
+  },
+  {
+    "name": "SetLocalAdmin",
+    "file": "PS/SetLocalAdmin.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Creates or enables a local administrator account with a non-expiring password and non-expiring account.",
+    "tags": ["admin", "local-user", "account", "password", "create"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/SetLocalAdmin.ps1"
+  },
+  {
+    "name": "TimeFix",
+    "file": "PS/TimeFix.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Forces NTP time resync using AU pool servers and Cloudflare/Google/Microsoft time. Selects the fastest responding server.",
+    "tags": ["time", "ntp", "sync", "fix", "au", "w32time"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/TimeFix.ps1"
+  },
+  {
+    "name": "UnlockSetNeverExpire",
+    "file": "PS/UnlockSetNeverExpire.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Enables a local user account and sets the password to never expire. Shows before/after state.",
+    "tags": ["account", "password", "unlock", "expiry", "local-user", "enable"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/UnlockSetNeverExpire.ps1"
+  },
+  {
+    "name": "uptime",
+    "file": "PS/uptime.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Displays current system uptime in hours (if under 24h) or days.",
+    "tags": ["uptime", "system", "info", "boot"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/uptime.ps1"
+  },
+  {
+    "name": "Verify-FastStartupDisabled",
+    "file": "PS/Verify-FastStartupDisabled.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks if Windows Fast Startup (HiberbootEnabled) is disabled via the registry. Returns true if disabled.",
+    "tags": ["fast-startup", "hibernate", "registry", "verify", "power"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Verify-FastStartupDisabled.ps1"
+  },
+  {
+    "name": "Verify-SecureBoot",
+    "file": "PS/Verify-SecureBoot.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks if Secure Boot is enabled on the system using Confirm-SecureBootUEFI.",
+    "tags": ["secure-boot", "uefi", "security", "verify", "bios"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Verify-SecureBoot.ps1"
+  },
+  {
+    "name": "Verify-TPMStatus",
+    "file": "PS/Verify-TPMStatus.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks if the TPM chip is present and ready using Get-Tpm. Returns true if TPM is enabled and working.",
+    "tags": ["tpm", "security", "hardware", "verify", "bitlocker"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Verify-TPMStatus.ps1"
+  },
+  {
+    "name": "windows11Check",
+    "file": "PS/windows11Check.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Checks if current hardware meets Windows 11 requirements including TPM 2.0, CPU, RAM, storage, and Secure Boot.",
+    "tags": ["windows11", "compatibility", "upgrade", "hardware", "tpm", "requirements"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/windows11Check.ps1"
+  },
+  {
+    "name": "WIP_ClearBrowserCache",
+    "file": "PS/WIP_ClearBrowserCache.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Clears browser cache across installed browsers.",
+    "tags": ["browser", "cache", "cleanup", "chrome", "edge"],
+    "wip": true,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/WIP_ClearBrowserCache.ps1"
+  },
+  {
+    "name": "WIP_diskClean",
+    "file": "PS/WIP_diskClean.ps1",
+    "platform": "windows",
+    "category": "PS",
+    "description": "Automates disk cleanup to free up space.",
+    "tags": ["disk", "cleanup", "storage", "space"],
+    "wip": true,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/WIP_diskClean.ps1"
+  },
+  {
+    "name": "extract_recovery_key",
+    "file": "MacOS/extract_recovery_key.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Checks if FileVault is enabled and extracts the FileVault recovery key.",
+    "tags": ["filevault", "recovery", "encryption", "key", "security"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/extract_recovery_key.sh"
+  },
+  {
+    "name": "get-EndpointHealth",
+    "file": "MacOS/get-EndpointHealth.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Comprehensive MSP diagnostic tool for macOS. Checks hardware, disk, network, and services. Paste into a remote terminal session.",
+    "tags": ["diagnostic", "health", "endpoint", "msp", "disk", "network"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-EndpointHealth.sh"
+  },
+  {
+    "name": "macRename",
+    "file": "MacOS/macRename.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Fixes macOS hostnames that gain a .local suffix due to Bluetooth or AirDrop activity. Resets the hostname via scutil.",
+    "tags": ["hostname", "rename", "airdrop", "bluetooth", "network", "local", "scutil"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/macRename.sh"
+  },
+  {
+    "name": "checkEmail",
+    "file": "M365/checkEmail.ps1",
+    "platform": "m365",
+    "category": "M365",
+    "description": "Finds all recipients and distribution groups a given email address is associated with in Exchange Online.",
+    "tags": ["email", "recipient", "distribution-group", "exchange", "alias"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/checkEmail.ps1"
+  },
+  {
+    "name": "Clone-SPGroups",
+    "file": "M365/Clone-SPGroups.ps1",
+    "platform": "m365",
+    "category": "M365",
+    "description": "Copies SP_ SharePoint group memberships from a source user to a target user via Microsoft Graph.",
+    "tags": ["sharepoint", "groups", "clone", "permissions", "graph", "azure-ad"],
+    "wip": true,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/Clone-SPGroups.ps1"
+  },
+  {
+    "name": "getCalPerms",
+    "file": "M365/getCalPerms.ps1",
+    "platform": "m365",
+    "category": "M365",
+    "description": "Retrieves calendar permissions for a mailbox via the Microsoft Graph API using client credentials.",
+    "tags": ["calendar", "permissions", "graph", "exchange", "mailbox"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/getCalPerms.ps1"
+  },
+  {
+    "name": "getUserGUID",
+    "file": "M365/getUserGUID.ps1",
+    "platform": "m365",
+    "category": "M365",
+    "description": "Looks up a user's Object ID / GUID from Microsoft Graph by UPN.",
+    "tags": ["user", "guid", "object-id", "graph", "azure-ad", "upn"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/getUserGUID.ps1"
+  },
+  {
+    "name": "listUsers",
+    "file": "M365/listUsers.ps1",
+    "platform": "m365",
+    "category": "M365",
+    "description": "Lists all users in a tenant via the Microsoft Graph API using OAuth client credentials flow.",
+    "tags": ["users", "list", "graph", "tenant", "azure-ad", "entra"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/listUsers.ps1"
+  },
+  {
+    "name": "TenantDataExport",
+    "file": "M365/TenantDataExport.ps1",
+    "platform": "m365",
+    "category": "M365",
+    "description": "Template script to export M365 tenant data (users, Exchange, OneDrive, SharePoint, licenses) to an Excel workbook.",
+    "tags": ["export", "excel", "tenant", "users", "sharepoint", "licenses", "onedrive"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/TenantDataExport.ps1"
+  },
+  {
+    "name": "ConfigAPI_Test",
+    "file": "3CX/ConfigAPI_Test.ps1",
+    "platform": "3cx",
+    "category": "3CX",
+    "description": "Tests connectivity to the 3CX Configuration API using the /xapi/v1/Defs endpoint with Bearer token auth.",
+    "tags": ["3cx", "api", "voip", "connectivity", "test", "xapi"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/ConfigAPI_Test.ps1"
+  },
+  {
+    "name": "get3CXVersion",
+    "file": "3CX/get3CXVersion.ps1",
+    "platform": "3cx",
+    "category": "3CX",
+    "description": "Authenticates to a 3CX PBX via OAuth client credentials and retrieves the current PBX version.",
+    "tags": ["3cx", "version", "oauth", "api", "voip", "pbx"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/get3CXVersion.ps1"
+  }
+]

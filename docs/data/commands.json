@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Reset Password in RDP (Windows)",
+    "type": "shortcut",
+    "platform": "windows",
+    "value": "Ctrl + Alt + End",
+    "description": "Sends Ctrl + Alt + Delete to the remote session. Use to change a password or access security options inside a Remote Desktop session.",
+    "tags": ["rdp", "remote-desktop", "password", "reset", "shortcut"]
+  },
+  {
+    "name": "Reset Password in RDP (macOS)",
+    "type": "shortcut",
+    "platform": "macos",
+    "value": "fn + Control + Option + Delete",
+    "description": "Sends Ctrl + Alt + Delete to the remote session from a Mac. Some keyboards may require fn + Control + Option + Backspace.",
+    "tags": ["rdp", "remote-desktop", "password", "reset", "shortcut", "mac"]
+  },
+  {
+    "name": "Reload Graphics Driver",
+    "type": "shortcut",
+    "platform": "windows",
+    "value": "Ctrl + Shift + Win + B",
+    "description": "Restarts the graphics driver without rebooting. Useful for fixing a frozen or glitchy display.",
+    "tags": ["graphics", "driver", "display", "freeze", "shortcut"]
+  },
+  {
+    "name": "Reset NVRAM / PRAM (Intel Mac)",
+    "type": "shortcut",
+    "platform": "macos",
+    "value": "Option + Command + P + R  (hold on startup for ~20s)",
+    "description": "Resets NVRAM/PRAM on Intel Macs. Hold the keys immediately after pressing the power button until you hear the startup sound twice.",
+    "tags": ["nvram", "pram", "reset", "mac", "startup", "shortcut"]
+  },
+  {
+    "name": "Safe Boot (Windows)",
+    "type": "shortcut",
+    "platform": "windows",
+    "value": "Hold Shift, then click Restart",
+    "description": "Boots into Windows Safe Mode. Hold Shift and click Restart from the power menu in the Start menu or lock screen.",
+    "tags": ["safe-mode", "boot", "windows", "shortcut", "troubleshooting"]
+  },
+  {
+    "name": "Safe Boot (macOS)",
+    "type": "shortcut",
+    "platform": "macos",
+    "value": "Hold Shift on startup",
+    "description": "Boots into macOS Safe Mode. Hold Shift immediately after pressing the power button (Intel Mac) or after selecting the startup disk (Apple Silicon).",
+    "tags": ["safe-mode", "boot", "mac", "shortcut", "troubleshooting"]
+  },
+  {
+    "name": "Battery Report",
+    "type": "command",
+    "platform": "windows",
+    "value": "powercfg /batteryreport",
+    "description": "Generates an HTML battery health report saved to the current directory. Shows charge capacity, cycle count, and usage history.",
+    "tags": ["battery", "power", "report", "laptop", "health"]
+  },
+  {
+    "name": "System Boot Time",
+    "type": "command",
+    "platform": "windows",
+    "value": "systeminfo | find \"System Boot Time\"",
+    "description": "Displays the last system boot time from systeminfo output.",
+    "tags": ["boot", "uptime", "system", "time"]
+  },
+  {
+    "name": "Windows Version (Detailed)",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\" | Select-Object DisplayVersion, ReleaseId, CurrentBuild, CurrentBuildNumber",
+    "description": "Retrieves detailed Windows version info including feature update version (e.g. 23H2), build number, and release ID from the registry.",
+    "tags": ["windows", "version", "build", "registry", "info"]
+  }
+]
