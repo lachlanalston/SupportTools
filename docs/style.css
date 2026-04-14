@@ -571,6 +571,57 @@ kbd {
   color: #fff !important;
 }
 
+.btn-run {
+  background: #1a7f37;
+  border-color: #238636;
+  color: #fff;
+}
+.btn-run:hover { background: #238636; }
+
+.btn-run-config {
+  background: rgba(227,179,65,0.1);
+  border-color: rgba(227,179,65,0.4);
+  color: var(--wip);
+}
+.btn-run-config:hover {
+  background: rgba(227,179,65,0.18);
+  border-color: var(--wip);
+}
+
+/* ─── One-liner block ──────────────────────────────────────────── */
+.modal-oneliner {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.8rem;
+  color: #79c0ff;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  word-break: break-all;
+  line-height: 1.6;
+  margin-bottom: 2px;
+  user-select: all;
+}
+
+.modal-config-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  background: rgba(227,179,65,0.08);
+  border: 1px solid rgba(227,179,65,0.3);
+  border-radius: var(--radius-sm);
+  color: #d4a72c;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.modal-config-warning svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 /* ─── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }

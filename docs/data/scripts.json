@@ -137,6 +137,8 @@
     "description": "Creates or enables a local administrator account with a non-expiring password and non-expiring account.",
     "tags": ["admin", "local-user", "account", "password", "create"],
     "wip": false,
+    "requires_config": true,
+    "config_note": "Edit $user and $pass before running.",
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/SetLocalAdmin.ps1"
   },
   {
@@ -157,6 +159,8 @@
     "description": "Enables a local user account and sets the password to never expire. Shows before/after state.",
     "tags": ["account", "password", "unlock", "expiry", "local-user", "enable"],
     "wip": false,
+    "requires_config": true,
+    "config_note": "Set $user to the target username before running.",
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/UnlockSetNeverExpire.ps1"
   },
   {
@@ -317,6 +321,8 @@
     "description": "Template script to export M365 tenant data (users, Exchange, OneDrive, SharePoint, licenses) to an Excel workbook.",
     "tags": ["export", "excel", "tenant", "users", "sharepoint", "licenses", "onedrive"],
     "wip": false,
+    "requires_config": true,
+    "config_note": "Template script — review and configure before running. Requires ImportExcel module.",
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/TenantDataExport.ps1"
   },
   {
@@ -327,6 +333,8 @@
     "description": "Tests connectivity to the 3CX Configuration API using the /xapi/v1/Defs endpoint with Bearer token auth.",
     "tags": ["3cx", "api", "voip", "connectivity", "test", "xapi"],
     "wip": false,
+    "requires_config": true,
+    "config_note": "Set $BaseUrl, $ClientId, and $ApiKey at the top of the script before running.",
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/ConfigAPI_Test.ps1"
   },
   {
@@ -337,6 +345,8 @@
     "description": "Authenticates to a 3CX PBX via OAuth client credentials and retrieves the current PBX version.",
     "tags": ["3cx", "version", "oauth", "api", "voip", "pbx"],
     "wip": false,
+    "requires_config": true,
+    "config_note": "Set $pbxFqdn, $clientId, and $clientSecret before running.",
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/get3CXVersion.ps1"
   }
 ]
