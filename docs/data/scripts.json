@@ -21,7 +21,7 @@
   },
   {
     "name": "Get-EndpointHealth",
-    "file": "Windows/Diagnostics/get-EndpointHealth.ps1",
+    "file": "Windows/Diagnostics/Get-EndpointHealth.ps1",
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Comprehensive MSP diagnostic tool. Checks CPU, memory, disk, network, services, and uptime. Paste into a remote terminal session.",
