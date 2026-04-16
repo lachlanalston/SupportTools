@@ -68,20 +68,32 @@ function Get-UptimeStatus {
 }
 
 function Get-DiskSpaceStatus {
-    $disk    = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
-    $pctFree = [math]::Round(($disk.FreeSpace / $disk.Size) * 100, 0)
-    $gbFree  = [math]::Round($disk.FreeSpace / 1GB, 1)
-    $gbTotal = [math]::Round($disk.Size / 1GB, 1)
-    $display = "$pctFree% free ($gbFree GB of $gbTotal GB)"
+    $disks = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType=3" |
+             Where-Object { $_.Size -gt 0 }
 
-    if ($pctFree -le 2) {
-        [PSCustomObject]@{ Status = "Critical"; Message = "C: drive nearly full — immediate action required"; Value = $display; Color = "Red" }
-    } elseif ($pctFree -le 5) {
-        [PSCustomObject]@{ Status = "Warning";  Message = "C: drive running low — cleanup recommended"; Value = $display; Color = "Yellow" }
-    } elseif ($pctFree -le 10) {
-        [PSCustomObject]@{ Status = "Warning";  Message = "C: drive below 10% — monitor closely"; Value = $display; Color = "Yellow" }
+    if (-not $disks) {
+        return [PSCustomObject]@{ Status = "Unknown"; Message = "No local drives detected"; Value = "N/A"; Color = "Yellow" }
+    }
+
+    $results = foreach ($disk in $disks) {
+        $pctFree = [math]::Round(($disk.FreeSpace / $disk.Size) * 100, 0)
+        $gbFree  = [math]::Round($disk.FreeSpace / 1GB, 1)
+        $gbTotal = [math]::Round($disk.Size / 1GB, 1)
+        [PSCustomObject]@{ Drive = $disk.DeviceID; PctFree = $pctFree; GbFree = $gbFree; GbTotal = $gbTotal }
+    }
+
+    $critical = @($results | Where-Object { $_.PctFree -le 2  })
+    $warning  = @($results | Where-Object { $_.PctFree -gt 2 -and $_.PctFree -le 10 })
+    $summary  = ($results | ForEach-Object { "$($_.Drive) $($_.PctFree)%" }) -join ', '
+
+    if ($critical.Count -gt 0) {
+        $detail = ($critical | ForEach-Object { "$($_.Drive) $($_.PctFree)% ($($_.GbFree) GB free)" }) -join ' | '
+        [PSCustomObject]@{ Status = "Critical"; Message = "Nearly full: $detail"; Value = $summary; Color = "Red" }
+    } elseif ($warning.Count -gt 0) {
+        $detail = ($warning | ForEach-Object { "$($_.Drive) $($_.PctFree)% ($($_.GbFree) GB free)" }) -join ' | '
+        [PSCustomObject]@{ Status = "Warning";  Message = "Low space: $detail"; Value = $summary; Color = "Yellow" }
     } else {
-        [PSCustomObject]@{ Status = "Healthy";  Message = "C: drive has adequate free space"; Value = $display; Color = "Green" }
+        [PSCustomObject]@{ Status = "Healthy";  Message = "All drives have adequate free space"; Value = $summary; Color = "Green" }
     }
 }
 
@@ -235,6 +247,9 @@ function Get-CriticalServicesStatus {
         @{ Name = 'Dnscache';          Display = 'DNS Client'             },
         @{ Name = 'W32Time';           Display = 'Windows Time'           },
         @{ Name = 'wuauserv';          Display = 'Windows Update'         },
+        @{ Name = 'BITS';             Display = 'Background Int. Transfer' },
+        @{ Name = 'Dhcp';             Display = 'DHCP Client'             },
+        @{ Name = 'Netlogon';         Display = 'Netlogon'               },
         @{ Name = 'WinDefend';         Display = 'Windows Defender'       },
         @{ Name = 'MpsSvc';            Display = 'Windows Firewall'       },
         @{ Name = 'LanmanWorkstation'; Display = 'Workstation (SMB)'      },
@@ -293,10 +308,55 @@ function Get-BatteryStatus {
         [PSCustomObject]@{ Status = "Unknown"; Message = "Capacity data unavailable — status: $statusText"; Value = "$($battery.EstimatedChargeRemaining)% charge"; Color = "Yellow" }
     }
 }
+
+function Get-PageFileStatus {
+    $pageFiles = Get-CimInstance -ClassName Win32_PageFileUsage -ErrorAction SilentlyContinue
+
+    if (-not $pageFiles) {
+        return [PSCustomObject]@{ Status = "Unknown"; Message = "No page file found — may be system-managed"; Value = "N/A"; Color = "Cyan" }
+    }
+
+    $results = foreach ($pf in $pageFiles) {
+        $usePct = if ($pf.AllocatedBaseSize -gt 0) {
+            [math]::Round(($pf.CurrentUsage / $pf.AllocatedBaseSize) * 100, 0)
+        } else { 0 }
+        [PSCustomObject]@{ Name = $pf.Name; AllocMB = $pf.AllocatedBaseSize; UsedMB = $pf.CurrentUsage; UsePct = $usePct }
+    }
+
+    $high    = @($results | Where-Object { $_.UsePct -ge 80 })
+    $summary = ($results | ForEach-Object { "$($_.UsePct)% ($($_.UsedMB)/$($_.AllocMB) MB)" }) -join ', '
+
+    if ($high.Count -gt 0) {
+        [PSCustomObject]@{ Status = "Warning"; Message = "Page file heavily used — likely RAM pressure"; Value = $summary; Color = "Yellow" }
+    } else {
+        [PSCustomObject]@{ Status = "Healthy"; Message = "Page file usage normal"; Value = $summary; Color = "Green" }
+    }
+}
+
+function Get-TopIOStatus {
+    # Cumulative bytes since process start — identifies sustained high-I/O processes
+    $procs = Get-CimInstance -ClassName Win32_Process -ErrorAction SilentlyContinue |
+        Where-Object { ($_.ReadTransferCount + $_.WriteTransferCount) -gt 0 } |
+        Sort-Object { $_.ReadTransferCount + $_.WriteTransferCount } -Descending |
+        Select-Object -First 3
+
+    if (-not $procs) {
+        return [PSCustomObject]@{ Status = "Info"; Message = "No I/O data available"; Value = "N/A"; Color = "Gray" }
+    }
+
+    $lines = $procs | ForEach-Object {
+        $mb = [math]::Round(($_.ReadTransferCount + $_.WriteTransferCount) / 1MB, 0)
+        "$($_.Name -replace '\.exe$','') (${mb} MB)"
+    }
+    [PSCustomObject]@{ Status = "Info"; Message = $lines -join ', '; Value = "Top $($procs.Count) by I/O"; Color = "Gray" }
+}
 #endregion
 
 #region --- Parallel execution ---
 # Start WAN IP lookup immediately as a background job so it runs while checks execute
+# TODO: Switch to Cloudflare trace endpoint for consistency with rest of tooling:
+#   (Invoke-RestMethod "https://www.cloudflare.com/cdn-cgi/trace") -split "`n" |
+#   Where-Object { $_ -like "ip=*" } | ForEach-Object { ($_ -split "=")[1] }
 $wanJob = Start-Job -ScriptBlock {
     try { (Invoke-RestMethod -Uri "https://api.ipify.org" -TimeoutSec 5 -ErrorAction Stop).Trim() }
     catch { "Unavailable" }
@@ -306,7 +366,7 @@ $wanJob = Start-Job -ScriptBlock {
 $funcNames  = @(
     'Get-UptimeStatus','Get-DiskSpaceStatus','Get-CpuStatus','Get-PowerProfileStatus',
     'Get-WindowsUpdatesStatus','Get-RamStatus','Get-SmartDiskStatus','Get-AvStatus',
-    'Get-CriticalServicesStatus','Get-BatteryStatus'
+    'Get-CriticalServicesStatus','Get-BatteryStatus','Get-PageFileStatus','Get-TopIOStatus'
 )
 $funcDefs   = $funcNames | ForEach-Object { "function $_ {`n$((Get-Item ('function:' + $_)).ScriptBlock)`n}" }
 $initScript = [scriptblock]::Create($funcDefs -join "`n`n")
@@ -326,10 +386,12 @@ $jobs = [ordered]@{
     "Power Scheme"      = Start-Job -InitializationScript $initScript -ScriptBlock { Get-PowerProfileStatus }
     "Windows Updates"   = Start-Job -InitializationScript $initScript -ScriptBlock { Get-WindowsUpdatesStatus }
     "RAM Usage"         = Start-Job -InitializationScript $initScript -ScriptBlock { Get-RamStatus }
+    "Page File"         = Start-Job -InitializationScript $initScript -ScriptBlock { Get-PageFileStatus }
     "SMART Disk Health" = Start-Job -InitializationScript $initScript -ScriptBlock { Get-SmartDiskStatus }
     "Antivirus"         = Start-Job -InitializationScript $initScript -ScriptBlock { Get-AvStatus }
     "Critical Services" = Start-Job -InitializationScript $initScript -ScriptBlock { Get-CriticalServicesStatus }
     "Battery Health"    = Start-Job -InitializationScript $initScript -ScriptBlock { Get-BatteryStatus }
+    "Top I/O Processes" = Start-Job -InitializationScript $initScript -ScriptBlock { Get-TopIOStatus }
 }
 
 # Show a live elapsed timer while waiting for all jobs to finish

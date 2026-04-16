@@ -1,237 +1,173 @@
 [
   {
-    "name": "CheckSecurityUpdates",
-    "file": "PS/CheckSecurityUpdates.ps1",
+    "name": "Get-UpdateHealth",
+    "file": "Windows/Updates/Get-UpdateHealth.ps1",
     "platform": "windows",
-    "category": "PS",
-    "description": "Checks for pending Windows security updates using the Windows Update COM API and lists any missing updates.",
-    "tags": ["updates", "security", "windows-update", "patch"],
+    "category": "Updates",
+    "description": "Checks for pending Windows updates using the Windows Update COM API. Flags mandatory updates as CRIT and optional updates as WARN.",
+    "tags": ["updates", "windows-update", "patch", "mandatory", "health"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/CheckSecurityUpdates.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Updates/Get-UpdateHealth.ps1"
   },
   {
-    "name": "CheckTimeSync",
-    "file": "PS/CheckTimeSync.ps1",
+    "name": "Get-UpdateHistory",
+    "file": "Windows/Updates/Get-UpdateHistory.ps1",
     "platform": "windows",
-    "category": "PS",
-    "description": "Checks current time sync status, W32Time service state, and NTP server configuration against AU pool servers.",
-    "tags": ["time", "ntp", "sync", "w32time"],
+    "category": "Updates",
+    "description": "Reports Windows Update install history — last successful install date, recent failures with HResult codes, and a list of the 10 most recent entries.",
+    "tags": ["updates", "windows-update", "history", "failures", "hresult", "health"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/CheckTimeSync.ps1"
-  },
-  {
-    "name": "checkWinUpdate",
-    "file": "PS/checkWinUpdate.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Retrieves the Windows Update log and displays it in a formatted table with timestamps, KB numbers, titles, results, and error codes.",
-    "tags": ["updates", "windows-update", "troubleshooting", "logs", "kb"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/checkWinUpdate.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Updates/Get-UpdateHistory.ps1"
   },
   {
     "name": "Get-EndpointHealth",
-    "file": "PS/get-EndpointHealth.ps1",
+    "file": "Windows/Diagnostics/get-EndpointHealth.ps1",
     "platform": "windows",
-    "category": "PS",
+    "category": "Diagnostics",
     "description": "Comprehensive MSP diagnostic tool. Checks CPU, memory, disk, network, services, and uptime. Paste into a remote terminal session.",
     "tags": ["diagnostic", "health", "endpoint", "msp", "cpu", "memory", "disk", "network"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/get-EndpointHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/get-EndpointHealth.ps1"
   },
   {
     "name": "Get-EventLogExport",
-    "file": "PS/Get-EventLogExport.ps1",
+    "file": "Windows/Diagnostics/Get-EventLogExport.ps1",
     "platform": "windows",
-    "category": "PS",
+    "category": "Diagnostics",
     "description": "Exports System, Application, Security, and Setup event logs (last 48h) to a ZIP of .evtx files. Output goes to C:\\Temp.",
     "tags": ["event-log", "export", "zip", "logs", "evtx", "system", "application", "security"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Get-EventLogExport.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-EventLogExport.ps1"
   },
   {
-    "name": "getGraphicsDriverDate",
-    "file": "PS/getGraphicsDriverDate.ps1",
+    "name": "Get-RecentChanges",
+    "file": "Windows/Diagnostics/Get-RecentChanges.ps1",
     "platform": "windows",
-    "category": "PS",
-    "description": "Checks Dell update service logs for graphics driver update history. Supports NVIDIA, AMD, and Intel GPUs.",
-    "tags": ["driver", "graphics", "gpu", "dell", "nvidia", "amd", "intel"],
+    "category": "Diagnostics",
+    "description": "Reports all notable changes on a Windows endpoint in the last 72 hours including updates, installs, driver changes, reboots, crashes, and logons.",
+    "tags": ["diagnostic", "changes", "event-log", "installs", "reboots", "crashes", "troubleshooting"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/getGraphicsDriverDate.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-RecentChanges.ps1"
   },
   {
     "name": "Get-SystemDetails",
-    "file": "PS/Get-SystemDetails.ps1",
+    "file": "Windows/Diagnostics/Get-SystemDetails.ps1",
     "platform": "windows",
-    "category": "PS",
-    "description": "Displays OS edition, version, build, architecture, hardware manufacturer and model, active user, install date, and system uptime.",
-    "tags": ["system", "info", "hardware", "os", "build", "version"],
+    "category": "Diagnostics",
+    "description": "Reports OS edition, feature update version, build, architecture, hardware manufacturer and model, active user, install date, and uptime. Warns if uptime exceeds 14 days.",
+    "tags": ["system", "info", "hardware", "os", "build", "version", "uptime", "health"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Get-SystemDetails.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-SystemDetails.ps1"
   },
   {
-    "name": "getWanIP",
-    "file": "PS/getWanIP.ps1",
+    "name": "Get-GraphicsDriverHealth",
+    "file": "Windows/Diagnostics/Get-GraphicsDriverHealth.ps1",
     "platform": "windows",
-    "category": "PS",
-    "description": "Retrieves the public WAN IP address via Cloudflare's trace endpoint.",
-    "tags": ["network", "wan", "ip", "cloudflare", "public-ip"],
+    "category": "Diagnostics",
+    "description": "Checks GPU driver version and date for all installed video controllers. Warns if any driver is older than 365 days. Works for NVIDIA, AMD, Intel, and any vendor.",
+    "tags": ["driver", "graphics", "gpu", "nvidia", "amd", "intel", "health"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/getWanIP.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-GraphicsDriverHealth.ps1"
   },
   {
-    "name": "OutlookCheck",
-    "file": "PS/OutlookCheck.ps1",
+    "name": "Get-Win11Readiness",
+    "file": "Windows/Diagnostics/Get-Win11Readiness.ps1",
     "platform": "windows",
-    "category": "PS",
-    "description": "Checks if Outlook is running and validates DNS resolution for outlook.office365.com.",
-    "tags": ["outlook", "email", "dns", "office365", "connectivity", "exchange"],
+    "category": "Diagnostics",
+    "description": "Checks Windows 11 upgrade readiness: TPM 2.0, Secure Boot, CPU generation, RAM (4 GB min), and disk space (64 GB min). Reports CRIT for hard blockers.",
+    "tags": ["windows11", "compatibility", "upgrade", "hardware", "tpm", "secure-boot", "readiness"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/OutlookCheck.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-Win11Readiness.ps1"
   },
   {
-    "name": "performanceCheck",
-    "file": "PS/performanceCheck.ps1",
+    "name": "Get-PrintHealth",
+    "file": "Windows/Diagnostics/Get-PrintHealth.ps1",
     "platform": "windows",
-    "category": "PS",
-    "description": "Checks system performance including critical services, memory usage, disk space, and pending Windows updates.",
-    "tags": ["performance", "services", "memory", "disk", "diagnostic", "health"],
+    "category": "Diagnostics",
+    "description": "Checks print spooler health, stuck jobs, and offline printer states. Run with -Fix to stop the spooler, clear job files, and restart.",
+    "tags": ["print", "printer", "queue", "stuck", "spooler", "jobs", "health"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/performanceCheck.ps1"
-  },
-  {
-    "name": "RemoveNetskope",
-    "file": "PS/RemoveNetskope.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Fully uninstalls the Netskope client including the service, MSI product, and all data directories.",
-    "tags": ["netskope", "uninstall", "removal", "agent", "vpn", "security"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/RemoveNetskope.ps1"
-  },
-  {
-    "name": "Remove-NetworkDrives",
-    "file": "PS/Remove-NetworkDrives.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Removes all connected network drives and reports what was removed. Handles both user and SYSTEM context.",
-    "tags": ["network", "drives", "mapped", "cleanup", "unc"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Remove-NetworkDrives.ps1"
-  },
-  {
-    "name": "remove-print-jobs",
-    "file": "PS/remove-print-jobs.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Clears all pending print jobs across all installed printers.",
-    "tags": ["print", "printer", "queue", "stuck", "spooler", "jobs"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/remove-print-jobs.ps1"
-  },
-  {
-    "name": "SetLocalAdmin",
-    "file": "PS/SetLocalAdmin.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Creates or enables a local administrator account with a non-expiring password and non-expiring account.",
-    "tags": ["admin", "local-user", "account", "password", "create"],
-    "wip": false,
-    "requires_config": true,
-    "config_note": "Edit $user and $pass before running.",
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/SetLocalAdmin.ps1"
-  },
-  {
-    "name": "TimeFix",
-    "file": "PS/TimeFix.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Forces NTP time resync using AU pool servers and Cloudflare/Google/Microsoft time. Selects the fastest responding server.",
-    "tags": ["time", "ntp", "sync", "fix", "au", "w32time"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/TimeFix.ps1"
-  },
-  {
-    "name": "UnlockSetNeverExpire",
-    "file": "PS/UnlockSetNeverExpire.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Enables a local user account and sets the password to never expire. Shows before/after state.",
-    "tags": ["account", "password", "unlock", "expiry", "local-user", "enable"],
-    "wip": false,
-    "requires_config": true,
-    "config_note": "Set $user to the target username before running.",
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/UnlockSetNeverExpire.ps1"
-  },
-  {
-    "name": "uptime",
-    "file": "PS/uptime.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Displays current system uptime in hours (if under 24h) or days.",
-    "tags": ["uptime", "system", "info", "boot"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/uptime.ps1"
-  },
-  {
-    "name": "Verify-FastStartupDisabled",
-    "file": "PS/Verify-FastStartupDisabled.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Checks if Windows Fast Startup (HiberbootEnabled) is disabled via the registry. Returns true if disabled.",
-    "tags": ["fast-startup", "hibernate", "registry", "verify", "power"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Verify-FastStartupDisabled.ps1"
-  },
-  {
-    "name": "Verify-SecureBoot",
-    "file": "PS/Verify-SecureBoot.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Checks if Secure Boot is enabled on the system using Confirm-SecureBootUEFI.",
-    "tags": ["secure-boot", "uefi", "security", "verify", "bios"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Verify-SecureBoot.ps1"
-  },
-  {
-    "name": "Verify-TPMStatus",
-    "file": "PS/Verify-TPMStatus.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Checks if the TPM chip is present and ready using Get-Tpm. Returns true if TPM is enabled and working.",
-    "tags": ["tpm", "security", "hardware", "verify", "bitlocker"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/Verify-TPMStatus.ps1"
-  },
-  {
-    "name": "windows11Check",
-    "file": "PS/windows11Check.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Checks if current hardware meets Windows 11 requirements including TPM 2.0, CPU, RAM, storage, and Secure Boot.",
-    "tags": ["windows11", "compatibility", "upgrade", "hardware", "tpm", "requirements"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/windows11Check.ps1"
-  },
-  {
-    "name": "WIP_ClearBrowserCache",
-    "file": "PS/WIP_ClearBrowserCache.ps1",
-    "platform": "windows",
-    "category": "PS",
-    "description": "Clears browser cache across installed browsers.",
-    "tags": ["browser", "cache", "cleanup", "chrome", "edge"],
-    "wip": true,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/WIP_ClearBrowserCache.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-PrintHealth.ps1"
   },
   {
     "name": "WIP_diskClean",
-    "file": "PS/WIP_diskClean.ps1",
+    "file": "Windows/Diagnostics/WIP_diskClean.ps1",
     "platform": "windows",
-    "category": "PS",
+    "category": "Diagnostics",
     "description": "Automates disk cleanup to free up space.",
     "tags": ["disk", "cleanup", "storage", "space"],
     "wip": true,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/PS/WIP_diskClean.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/WIP_diskClean.ps1"
+  },
+  {
+    "name": "WIP_ClearBrowserCache",
+    "file": "Windows/Diagnostics/WIP_ClearBrowserCache.ps1",
+    "platform": "windows",
+    "category": "Diagnostics",
+    "description": "Clears browser cache across installed browsers.",
+    "tags": ["browser", "cache", "cleanup", "chrome", "edge"],
+    "wip": true,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/WIP_ClearBrowserCache.ps1"
+  },
+  {
+    "name": "Get-NetworkDriveHealth",
+    "file": "Windows/Network/Get-NetworkDriveHealth.ps1",
+    "platform": "windows",
+    "category": "Network",
+    "description": "Reports mapped network drives and their connectivity state. Warns on disconnected drives. Run with -Fix to remove all mapped drives.",
+    "tags": ["network", "drives", "mapped", "connectivity", "unc", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-NetworkDriveHealth.ps1"
+  },
+  {
+    "name": "Get-TimeSyncHealth",
+    "file": "Windows/Network/Get-TimeSyncHealth.ps1",
+    "platform": "windows",
+    "category": "Network",
+    "description": "Checks Windows Time service health, NTP source, stratum, last sync time, and time offset. Run with -Fix to re-register w32time and sync to the fastest reachable AU/global NTP server.",
+    "tags": ["time", "ntp", "sync", "w32time", "offset", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-TimeSyncHealth.ps1"
+  },
+  {
+    "name": "Get-SecurityBaseline",
+    "file": "Windows/Security/Get-SecurityBaseline.ps1",
+    "platform": "windows",
+    "category": "Security",
+    "description": "Checks Windows security baseline: Secure Boot, TPM presence and readiness, Fast Startup state, and Windows Firewall profile status. Flags CRIT/WARN for any failures.",
+    "tags": ["secure-boot", "tpm", "fast-startup", "firewall", "security", "baseline", "uefi"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-SecurityBaseline.ps1"
+  },
+  {
+    "name": "Get-LocalUserHealth",
+    "file": "Windows/Users/Get-LocalUserHealth.ps1",
+    "platform": "windows",
+    "category": "Users",
+    "description": "Reports all local user accounts, enabled state, admin membership, password expiry, and last logon. Run with -Fix -Username <name> to create/enable a local admin account with non-expiring password.",
+    "tags": ["admin", "local-user", "account", "password", "unlock", "expiry", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Users/Get-LocalUserHealth.ps1"
+  },
+  {
+    "name": "Get-OutlookHealth",
+    "file": "Apps/Outlook/Get-OutlookHealth.ps1",
+    "platform": "windows",
+    "category": "Outlook",
+    "description": "Checks Outlook process state, install path, DNS resolution for outlook.office365.com, and internet connectivity. Flags missing install and DNS/connectivity failures.",
+    "tags": ["outlook", "email", "dns", "office365", "connectivity", "exchange", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Apps/Outlook/Get-OutlookHealth.ps1"
+  },
+  {
+    "name": "Get-NetskopeHealth",
+    "file": "Apps/Netskope/Get-NetskopeHealth.ps1",
+    "platform": "windows",
+    "category": "Netskope",
+    "description": "Checks Netskope client installation state, version, agent service status, and certificate presence. Run with -Remove to fully uninstall Netskope including service, MSI, folders, certs, and roaming data.",
+    "tags": ["netskope", "agent", "uninstall", "removal", "vpn", "security", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Apps/Netskope/Get-NetskopeHealth.ps1"
   },
   {
     "name": "extract_recovery_key",

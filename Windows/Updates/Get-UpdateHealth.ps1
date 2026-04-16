@@ -1,22 +1,20 @@
 <#
 .SYNOPSIS
-    Exports System, Application, Security, and Setup event logs (last 48h) to a ZIP of .evtx files.
+    Checks for pending Windows updates on the endpoint.
 
 .DESCRIPTION
-    Collects all event log data silently first, then reasons across the findings
+    Collects all Windows Update data silently first, then reasons across the findings
     to surface actionable issues. Outputs a clean header, a FINDINGS block with
     interpreted results, and a compact DETAIL block for raw reference.
     Designed to fit in one ticket note or terminal screenshot.
 
-    Output: C:\Temp\EventLogs_<HOSTNAME>_<YYYYMMDD-HHmm>.zip
-
 .EXAMPLE
-    .\Get-EventLogExport.ps1
+    .\Get-UpdateHealth.ps1
 
 .NOTES
     Author:  Lachlan Alston
     Version: v1
-    Updated: 2026-04-14
+    Updated: 2026-04-16
 #>
 
 [CmdletBinding()]
@@ -45,15 +43,20 @@ function Add-Finding { param([string]$Severity, [string]$Title, [string]$Detail)
 # ─────────────────────────────────────────────────────────────
 $scriptStart = Get-Date
 
-# Logged-in user — SYSTEM-safe (RMM tools run as SYSTEM)
+# Logged-in user — SYSTEM-safe
 try {
     $rawUser     = (Get-CimInstance Win32_ComputerSystem).UserName
     $currentUser = if ($rawUser) { $rawUser.Split('\')[-1] } else { '(unknown)' }
 } catch { $currentUser = '(unknown)' }
 
 # Box header data
-try { $model  = (Get-CimInstance Win32_ComputerSystem).Model } catch { $model  = '(unknown)' }
-try { $serial = (Get-CimInstance Win32_BIOS).SerialNumber    } catch { $serial = '(unknown)' }
+try {
+    $cs     = Get-CimInstance Win32_ComputerSystem
+    $model  = $cs.Model
+    $domain = $cs.Domain
+} catch { $model = '(unknown)'; $domain = '(unknown)' }
+
+try { $serial = (Get-CimInstance Win32_BIOS).SerialNumber } catch { $serial = '(unknown)' }
 
 try {
     $osObj     = Get-CimInstance Win32_OperatingSystem
@@ -63,91 +66,55 @@ try {
     $upDelta   = (Get-Date) - $osObj.LastBootUpTime
     $uptime    = if ($upDelta.Days -gt 0) { "$($upDelta.Days)d $($upDelta.Hours)h" } `
                  else { "$($upDelta.Hours)h $($upDelta.Minutes)m" }
-} catch {
-    $osCaption = '(unknown)'; $osBuild = '?'; $uptime = '(unknown)'
-}
-
-# Output paths — timestamped so repeated runs never collide
-$ts        = Get-Date -Format 'yyyyMMdd-HHmm'
-$exportDir = "C:\Temp\EventLogs_$($env:COMPUTERNAME)_$ts"
-$zipPath   = "C:\Temp\EventLogs_$($env:COMPUTERNAME)_$ts.zip"
-$dirOk     = $false
-$dirError  = ''
+} catch { $osCaption = '(unknown)'; $osBuild = '?'; $uptime = '(unknown)' }
 
 try {
-    if (-not (Test-Path 'C:\Temp')) {
-        New-Item -ItemType Directory -Path 'C:\Temp' -Force | Out-Null
-    }
-    New-Item -ItemType Directory -Path $exportDir -Force | Out-Null
-    $dirOk = $true
-} catch {
-    $dirError = $_.Exception.Message
-}
+    $localIP = (Get-CimInstance Win32_NetworkAdapterConfiguration -Filter "IPEnabled=True" |
+        Where-Object { $_.IPAddress -match '^\d+\.\d+\.\d+\.\d+$' } |
+        Select-Object -First 1).IPAddress |
+        Where-Object { $_ -match '^\d' } |
+        Select-Object -First 1
+    if (-not $localIP) { $localIP = '(unknown)' }
+} catch { $localIP = '(unknown)' }
 
-# XPath filter — last 48 hours (172,800,000 ms)
-$xpQuery = '*[System[TimeCreated[timediff(@SystemTime) <= 172800000]]]'
-
-# Export each log via wevtutil — preserves native .evtx format
-$logs   = @('System', 'Application', 'Security', 'Setup')
-$result = @{}
-
-foreach ($log in $logs) {
-    if (-not $dirOk) {
-        $result[$log] = @{ Status = 'SKIP' }
-        continue
-    }
-    $outFile = Join-Path $exportDir "$log.evtx"
-    try {
-        $wevOut = & wevtutil epl $log $outFile /q:$xpQuery /ow:true 2>&1
-        if ($LASTEXITCODE -eq 0 -and (Test-Path $outFile)) {
-            $sizeKB        = [Math]::Round((Get-Item $outFile).Length / 1KB, 1)
-            $result[$log]  = @{ Status = 'OK'; SizeKB = $sizeKB }
-        } else {
-            $result[$log]  = @{ Status = 'FAIL'; Error = ($wevOut -join ' ').Trim() }
-        }
-    } catch {
-        $result[$log] = @{ Status = 'FAIL'; Error = $_.Exception.Message }
-    }
-}
-
-# Bundle into ZIP and remove staging folder
-$zipOk     = $false
-$zipSizeKB = 0
-$zipError  = ''
+# Windows Update data via COM API
+$updateError    = $false
+$updateErrorMsg = ''
+$pendingUpdates = @()
+$totalCount     = 0
+$mandatoryCount = 0
 
 try {
-    if ($dirOk) {
-        Compress-Archive -Path "$exportDir\*" -DestinationPath $zipPath -Force
-        if (Test-Path $zipPath) {
-            $zipOk     = $true
-            $zipSizeKB = [Math]::Round((Get-Item $zipPath).Length / 1KB, 1)
-            Remove-Item -Path $exportDir -Recurse -Force -ErrorAction SilentlyContinue
-        }
+    $session  = [activator]::CreateInstance([type]::GetTypeFromProgID('Microsoft.Update.Session'))
+    $searcher = $session.CreateUpdateSearcher()
+    $results  = $searcher.Search('IsInstalled=0 AND IsHidden=0')
+
+    $pendingUpdates = foreach ($u in $results.Updates) {
+        [PSCustomObject]@{ Title = $u.Title; IsMandatory = $u.IsMandatory }
     }
+    $totalCount     = $results.Updates.Count
+    $mandatoryCount = @($pendingUpdates | Where-Object { $_.IsMandatory }).Count
 } catch {
-    $zipError = $_.Exception.Message
+    $updateError    = $true
+    $updateErrorMsg = $_.Exception.Message
 }
 
 # ─────────────────────────────────────────────────────────────
 #  REASON
 # ─────────────────────────────────────────────────────────────
 
-if (-not $dirOk) {
-    Add-Finding 'CRIT' 'Output directory could not be created' `
-        "Could not create C:\Temp — check local permissions. Error: $dirError"
+if ($updateError) {
+    Add-Finding 'WARN' 'Windows Update COM API unavailable' `
+        "Check wuauserv service is running. Error: $updateErrorMsg"
+} elseif ($mandatoryCount -gt 0) {
+    Add-Finding 'CRIT' "$mandatoryCount mandatory update(s) pending" `
+        "Install via Settings → Windows Update or wuauclt /detectnow /updatenow. Restart likely required."
+} elseif ($totalCount -gt 0) {
+    Add-Finding 'WARN' "$totalCount update(s) pending installation" `
+        "Install via Settings → Windows Update. Schedule restart in a maintenance window."
 }
 
-foreach ($log in $logs) {
-    if ($result[$log].Status -eq 'FAIL') {
-        Add-Finding 'WARN' "$log log export failed" `
-            "wevtutil error: $($result[$log].Error)"
-    }
-}
-
-if ($dirOk -and -not $zipOk) {
-    Add-Finding 'WARN' 'ZIP creation failed' `
-        "Individual .evtx files remain at $exportDir — retrieve folder directly. Error: $zipError"
-}
+$findings = $findings | Sort-Object { switch ($_.Severity) { 'CRIT' { 0 } 'WARN' { 1 } default { 2 } } }
 
 # ─────────────────────────────────────────────────────────────
 #  OUTPUT
@@ -162,63 +129,66 @@ if ($termWidth -gt 0 -and $termWidth -lt 90) {
 $runAt = Get-Date -Format 'yyyy-MM-dd HH:mm'
 
 Write-Host ''
-Write-Host '  ┌─ EVENT LOG EXPORT ─────────────────────────────────────┐' -ForegroundColor Cyan
+Write-Host '  ┌─ WINDOWS UPDATE HEALTH ────────────────────────────────┐' -ForegroundColor Cyan
 Write-Host ("  │  {0,-58}│" -f "Host    $($env:COMPUTERNAME)")            -ForegroundColor Cyan
 Write-Host ("  │  {0,-58}│" -f "User    $currentUser")                    -ForegroundColor Cyan
 Write-Host ("  │  {0,-58}│" -f "Model   $model")                          -ForegroundColor Cyan
 Write-Host ("  │  {0,-58}│" -f "S/N     $serial")                         -ForegroundColor Cyan
 Write-Host ("  │  {0,-58}│" -f "OS      $osCaption  Build $osBuild")      -ForegroundColor Cyan
+Write-Host ("  │  {0,-58}│" -f "Domain  $domain")                         -ForegroundColor Cyan
+Write-Host ("  │  {0,-58}│" -f "IP      $localIP")                        -ForegroundColor Cyan
 Write-Host ("  │  {0,-58}│" -f "Uptime  $uptime")                         -ForegroundColor Cyan
 Write-Host ("  │  {0,-58}│" -f "Run     $runAt")                          -ForegroundColor Cyan
 Write-Host '  └────────────────────────────────────────────────────────┘' -ForegroundColor Cyan
 Write-Host ''
 
 # FINDINGS
-$findings = $findings | Sort-Object { switch ($_.Severity) { 'CRIT' { 0 } 'WARN' { 1 } default { 2 } } }
 Write-Divider 'FINDINGS'
 
 if ($findings.Count -eq 0) {
-    Write-Host '  [OK] All logs exported successfully.' -ForegroundColor Green
+    Write-Host '  [OK] Windows is fully up to date — no pending updates found.' -ForegroundColor Green
 } else {
     foreach ($f in $findings) {
-        $color = if ($f.Severity -eq 'CRIT') { 'Red' } else { 'Yellow' }
-        Write-Host "  [!!] $($f.Title)" -ForegroundColor $color
+        $icon  = if ($f.Severity -eq 'INFO') { '[--]' } else { '[!!]' }
+        $color = switch ($f.Severity) { 'CRIT' { 'Red' } 'WARN' { 'Yellow' } default { 'Cyan' } }
+        Write-Host "  $icon $($f.Title)" -ForegroundColor $color
         Write-Host "       $($f.Detail)" -ForegroundColor DarkGray
     }
 }
 
-$issueCount  = ($findings | Where-Object { $_.Severity -in 'CRIT', 'WARN' }).Count
-$countColor  = if ($issueCount -gt 0) { 'Yellow' } else { 'Green' }
+$issueCount = ($findings | Where-Object { $_.Severity -in 'CRIT', 'WARN' }).Count
+$countColor = if ($issueCount -gt 0) { 'Yellow' } else { 'Green' }
 Write-Divider "$issueCount issue(s) found"
 Write-Host ''
 
 # DETAIL
 Write-Divider 'DETAIL'
-Write-KV 'Range'  'Last 48 hours'
-Write-KV 'Format' '.evtx (opens in Event Viewer)'
-Write-Host ''
 
-foreach ($log in $logs) {
-    $r = $result[$log]
-    switch ($r.Status) {
-        'OK'   { Write-KV $log "$($r.SizeKB) KB" }
-        'FAIL' { Write-KV $log 'EXPORT FAILED' 'Red' }
-        'SKIP' { Write-KV $log 'SKIPPED' 'Yellow' }
-    }
-}
-
-Write-Host ''
-
-if ($zipOk) {
-    Write-KV 'Output' $zipPath 'Green'
-    Write-KV 'ZIP size' "$zipSizeKB KB"
-    Write-Host "       Tip: Download $zipPath and open .evtx files in Event Viewer." `
-        -ForegroundColor DarkGray
-} elseif ($dirOk) {
-    Write-KV 'Output' $exportDir 'Yellow'
-    Write-Host '       Tip: ZIP failed — download the folder directly.' -ForegroundColor DarkGray
+if ($updateError) {
+    Write-KV 'Status' 'Query failed' 'Red'
+    Write-KV 'Error' $updateErrorMsg 'DarkGray'
 } else {
-    Write-KV 'Output' 'UNAVAILABLE' 'Red'
+    Write-KV 'Pending total'  "$totalCount"
+    Write-KV 'Mandatory'      "$mandatoryCount" $(if ($mandatoryCount -gt 0) { 'Red' } else { 'White' })
+    Write-KV 'Optional'       "$($totalCount - $mandatoryCount)"
+    Write-Host ''
+
+    if ($totalCount -eq 0) {
+        Write-Host '  No pending updates.' -ForegroundColor DarkGray
+    } else {
+        $display = $pendingUpdates | Select-Object -First 10
+        foreach ($u in $display) {
+            $label = if ($u.IsMandatory) { '[MANDATORY]' } else { '[optional] ' }
+            $color = if ($u.IsMandatory) { 'Red' } else { 'White' }
+            Write-Host "  $label $($u.Title)" -ForegroundColor $color
+        }
+        if ($totalCount -gt 10) {
+            Write-Host "  ... and $($totalCount - 10) more update(s) not shown." -ForegroundColor DarkGray
+        }
+        Write-Host ''
+        Write-Host '       Tip: Run Windows Update or wuauclt /detectnow /updatenow to install.' `
+            -ForegroundColor DarkGray
+    }
 }
 
 Write-Host ''
