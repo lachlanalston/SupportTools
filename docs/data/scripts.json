@@ -210,16 +210,6 @@
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/checkEmail.ps1"
   },
   {
-    "name": "Clone-SPGroups",
-    "file": "M365/Clone-SPGroups.ps1",
-    "platform": "m365",
-    "category": "M365",
-    "description": "Copies SP_ SharePoint group memberships from a source user to a target user via Microsoft Graph.",
-    "tags": ["sharepoint", "groups", "clone", "permissions", "graph", "azure-ad"],
-    "wip": true,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/Clone-SPGroups.ps1"
-  },
-  {
     "name": "getCalPerms",
     "file": "M365/getCalPerms.ps1",
     "platform": "m365",
@@ -264,8 +254,8 @@
   {
     "name": "ConfigAPI_Test",
     "file": "3CX/ConfigAPI_Test.ps1",
-    "platform": "3cx",
-    "category": "3CX",
+    "platform": "api",
+    "category": "API",
     "description": "Tests connectivity to the 3CX Configuration API using the /xapi/v1/Defs endpoint with Bearer token auth.",
     "tags": ["3cx", "api", "voip", "connectivity", "test", "xapi"],
     "wip": false,
@@ -276,8 +266,8 @@
   {
     "name": "get3CXVersion",
     "file": "3CX/get3CXVersion.ps1",
-    "platform": "3cx",
-    "category": "3CX",
+    "platform": "api",
+    "category": "API",
     "description": "Authenticates to a 3CX PBX via OAuth client credentials and retrieves the current PBX version.",
     "tags": ["3cx", "version", "oauth", "api", "voip", "pbx"],
     "wip": false,

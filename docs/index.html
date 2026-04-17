@@ -45,13 +45,13 @@
         Scripts
         <span class="tab-count" id="count-scripts">0</span>
       </button>
-      <button class="tab" data-tab="bookmarks" role="tab" aria-selected="false">
-        Bookmarks
-        <span class="tab-count" id="count-bookmarks">0</span>
-      </button>
       <button class="tab" data-tab="commands" role="tab" aria-selected="false">
         Commands
         <span class="tab-count" id="count-commands">0</span>
+      </button>
+      <button class="tab" data-tab="bookmarks" role="tab" aria-selected="false">
+        Bookmarks
+        <span class="tab-count" id="count-bookmarks">0</span>
       </button>
     </nav>
 
@@ -68,22 +68,12 @@
         <button class="filter-chip" data-filter="m365">
           <span class="dot dot-m365"></span>M365
         </button>
-        <button class="filter-chip" data-filter="3cx">
-          <span class="dot dot-3cx"></span>3CX
-        </button>
-        <button class="filter-chip" data-filter="wip">
-          <span class="dot dot-wip"></span>WIP
+        <button class="filter-chip" data-filter="api">
+          <span class="dot dot-api"></span>API
         </button>
       </div>
       <div class="card-grid" id="scripts-grid"></div>
       <p class="empty-state" id="scripts-empty" hidden>No scripts match your search.</p>
-    </div>
-
-    <!-- Bookmarks tab -->
-    <div id="tab-bookmarks" class="tab-panel">
-      <div class="filters" id="bookmark-filters"></div>
-      <div class="card-grid" id="bookmarks-grid"></div>
-      <p class="empty-state" id="bookmarks-empty" hidden>No bookmarks match your search.</p>
     </div>
 
     <!-- Commands tab -->
@@ -98,9 +88,19 @@
         <button class="filter-chip" data-filter="macos">
           <span class="dot dot-macos"></span>macOS
         </button>
+        <button class="filter-chip" data-filter="m365">
+          <span class="dot dot-m365"></span>M365
+        </button>
       </div>
       <div class="card-grid" id="commands-grid"></div>
       <p class="empty-state" id="commands-empty" hidden>No commands match your search.</p>
+    </div>
+
+    <!-- Bookmarks tab -->
+    <div id="tab-bookmarks" class="tab-panel">
+      <div class="filters" id="bookmark-filters"></div>
+      <div class="card-grid" id="bookmarks-grid"></div>
+      <p class="empty-state" id="bookmarks-empty" hidden>No bookmarks match your search.</p>
     </div>
   </main>
 

@@ -70,5 +70,69 @@
     "value": "Get-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\" | Select-Object DisplayVersion, ReleaseId, CurrentBuild, CurrentBuildNumber",
     "description": "Retrieves detailed Windows version info including feature update version (e.g. 23H2), build number, and release ID from the registry.",
     "tags": ["windows", "version", "build", "registry", "info"]
+  },
+  {
+    "name": "List User Accounts",
+    "type": "command",
+    "platform": "macos",
+    "value": "dscl . list /Users | grep -v '^_'",
+    "description": "Lists all real local user accounts on the Mac. Filters out system and service accounts which all start with an underscore.",
+    "tags": ["users", "accounts", "list", "macos", "dscl"]
+  },
+  {
+    "name": "List Admin Users",
+    "type": "command",
+    "platform": "macos",
+    "value": "dscl . read /Groups/admin GroupMembership",
+    "description": "Shows all members of the local admin group on macOS.",
+    "tags": ["admin", "users", "group", "macos", "dscl"]
+  },
+  {
+    "name": "Add User to Admin Group",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo dseditgroup -o edit -a <username> -t user admin",
+    "description": "Promotes an existing local user to administrator. Replace <username> with the account's short name.",
+    "tags": ["admin", "users", "promote", "macos", "dseditgroup"]
+  },
+  {
+    "name": "Hide User from Login Screen",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo defaults write /Library/Preferences/com.apple.loginwindow HiddenUsersList -array-add <username>",
+    "description": "Hides a user account from the macOS login window while keeping the account active. Replace <username> with the account's short name.",
+    "tags": ["login", "hide", "user", "macos", "loginwindow"]
+  },
+  {
+    "name": "Connect to Exchange Online",
+    "type": "command",
+    "platform": "m365",
+    "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com",
+    "description": "Connects to Exchange Online PowerShell using the specified UPN. Run this before any other Exchange Online commands in the session.",
+    "tags": ["exchange", "connect", "m365", "exo", "powershell"]
+  },
+  {
+    "name": "List User's Calendars",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-MailboxFolderStatistics -Identity user@domain.com -FolderScope Calendar | Select-Object Name, FolderType, ItemsInFolder",
+    "description": "Lists all calendar folders in a mailbox, including shared and additional calendars with their item counts.",
+    "tags": ["calendar", "mailbox", "m365", "exchange", "folders"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Get Calendar Permissions",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-MailboxFolderPermission -Identity user@domain.com:\\Calendar",
+    "description": "Shows who has access to a user's calendar and what permission level they have (e.g. Reviewer, Editor, Owner).",
+    "tags": ["calendar", "permissions", "m365", "exchange", "mailbox"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
   }
 ]

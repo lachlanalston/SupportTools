@@ -113,10 +113,8 @@ function getFiltered(data, fuse, query) {
 function renderScripts() {
   let data = getFiltered(scripts, fuseScripts, searchQuery);
 
-  if (scriptFilter === 'wip') {
-    data = data.filter(s => s.wip);
-  } else if (scriptFilter !== 'all') {
-    data = data.filter(s => s.platform === scriptFilter && !s.wip);
+  if (scriptFilter !== 'all') {
+    data = data.filter(s => s.platform === scriptFilter);
   }
 
   const grid  = document.getElementById('scripts-grid');
@@ -131,8 +129,8 @@ function renderScripts() {
 
   data.forEach(script => {
     const card = document.createElement('div');
-    card.className = 'card' + (script.wip ? ' wip' : '');
-    card.dataset.platform = script.wip ? 'wip' : script.platform;
+    card.className = 'card';
+    card.dataset.platform = script.platform;
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
 
@@ -140,7 +138,7 @@ function renderScripts() {
       <div class="card-header">
         <span class="card-name">${esc(script.name)}</span>
         <div class="card-badges">
-          <span class="badge badge-${script.wip ? 'wip' : script.platform}">${script.wip ? 'WIP' : platformLabel(script.platform)}</span>
+          <span class="badge badge-${script.platform}">${platformLabel(script.platform)}</span>
         </div>
       </div>
       <p class="card-desc">${esc(script.description)}</p>
@@ -254,21 +252,20 @@ function openScriptModal(script) {
     windows: '#2196f3',
     macos:   '#9b8af4',
     m365:    '#d83b01',
-    '3cx':   '#00a859',
-    wip:     '#e3b341',
+    api:     '#00a859',
   };
 
-  const color    = script.wip ? platformColor.wip : (platformColor[script.platform] || '#388bfd');
+  const color    = platformColor[script.platform] || '#388bfd';
   const cmdText  = oneLiner(script);
-  const canRun   = !script.wip && !script.requires_config;
-  const needsCfg = !script.wip && script.requires_config;
+  const canRun   = !script.requires_config;
+  const needsCfg = script.requires_config;
 
   const ghIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>`;
   const cpyIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>`;
   const playIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zm4.879-2.773a.5.5 0 01.52.038l3.5 2.5a.5.5 0 010 .47l-3.5 2.5A.5.5 0 016 10.25v-5a.5.5 0 01.379-.523z"/></svg>`;
   const warnIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13"><path d="M8.22 1.754a.25.25 0 00-.44 0L1.698 13.132a.25.25 0 00.22.368h12.164a.25.25 0 00.22-.368L8.22 1.754zm-1.763-.707c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM9 11a1 1 0 11-2 0 1 1 0 012 0zm-.25-5.25a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z"/></svg>`;
 
-  const runSection = script.wip ? '' : `
+  const runSection = `
     <div class="modal-section-label" style="margin-top:4px;">Run one-liner</div>
     ${needsCfg ? `<div class="modal-config-warning">${warnIcon} Edit required — ${esc(script.config_note || 'configure variables before running.')}</div>` : ''}
     <div class="modal-oneliner">${esc(cmdText)}</div>
@@ -283,19 +280,12 @@ function openScriptModal(script) {
     </div>
   `;
 
-  const wipActions = script.wip ? `
-    <div class="modal-actions" style="margin-top:16px;">
-      <a class="btn btn-secondary" href="${script.github_url}" target="_blank" rel="noopener">
-        ${ghIcon} View on GitHub
-      </a>
-    </div>` : '';
-
   const body = document.getElementById('modal-body');
   body.innerHTML = `
     <div class="modal-platform-bar" style="background: ${color};"></div>
     <h2 class="modal-name">${esc(script.name)}</h2>
     <div class="modal-badges">
-      <span class="badge badge-${script.wip ? 'wip' : script.platform}">${script.wip ? 'WIP' : platformLabel(script.platform)}</span>
+      <span class="badge badge-${script.platform}">${platformLabel(script.platform)}</span>
       <span class="badge" style="background:rgba(110,118,129,0.15);color:var(--sub);">${esc(script.category)}</span>
     </div>
     <p class="modal-desc">${esc(script.description)}</p>
@@ -304,7 +294,6 @@ function openScriptModal(script) {
     <div class="modal-section-label">Tags</div>
     <div class="modal-tags">${script.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${runSection}
-    ${wipActions}
   `;
 
   const copyRunBtn = document.getElementById('copy-run-btn');
@@ -318,22 +307,74 @@ function openScriptModal(script) {
 }
 
 function openCommandModal(cmd) {
+  const platformColor = { windows: '#2196f3', macos: '#9b8af4', m365: '#d83b01', both: '#2196f3' };
+  const color  = cmd.type === 'shortcut' ? '#9b8af4' : (platformColor[cmd.platform] || '#388bfd');
+  const cpyIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>`;
+
+  let commandBlock = '';
+  if (cmd.type === 'shortcut') {
+    commandBlock = `
+      <div class="modal-section-label">Keys</div>
+      <div class="modal-value">${esc(cmd.value)}</div>`;
+  } else if (cmd.platform === 'macos') {
+    commandBlock = `
+      <div class="modal-section-label">Command</div>
+      <div class="terminal terminal-macos">
+        <div class="terminal-titlebar">
+          <span class="terminal-dot terminal-dot-red"></span>
+          <span class="terminal-dot terminal-dot-yellow"></span>
+          <span class="terminal-dot terminal-dot-green"></span>
+          <span class="terminal-title">Terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line">
+            <span class="terminal-prompt">~ %</span>
+            <span class="terminal-cmd">${esc(cmd.value)}</span>
+          </div>
+        </div>
+      </div>`;
+  } else if (cmd.platform === 'm365') {
+    const prereq = cmd.prereq ? `
+          <div class="terminal-prereq-note">${esc(cmd.prereq.label)}</div>
+          <div class="terminal-line">
+            <span class="terminal-prompt">PS C:\\&gt;</span>
+            <span class="terminal-cmd terminal-cmd-dim">${esc(cmd.prereq.value)}</span>
+          </div>
+          <hr class="terminal-divider">` : '';
+    commandBlock = `
+      <div class="modal-section-label">Command</div>
+      <div class="terminal terminal-ps">
+        <div class="terminal-titlebar">
+          <span class="terminal-title">Windows PowerShell</span>
+        </div>
+        <div class="terminal-body">${prereq}
+          <div class="terminal-line">
+            <span class="terminal-prompt">PS C:\\&gt;</span>
+            <span class="terminal-cmd">${esc(cmd.value)}</span>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    commandBlock = `
+      <div class="modal-section-label">Command</div>
+      <div class="modal-value">${esc(cmd.value)}</div>`;
+  }
+
   const body = document.getElementById('modal-body');
   body.innerHTML = `
-    <div class="modal-platform-bar" style="background: ${cmd.type === 'shortcut' ? '#9b8af4' : '#2196f3'};"></div>
+    <div class="modal-platform-bar" style="background: ${color};"></div>
     <h2 class="modal-name">${esc(cmd.name)}</h2>
     <div class="modal-badges">
       <span class="badge badge-${cmd.type}">${cmd.type === 'shortcut' ? 'Shortcut' : 'Command'}</span>
       <span class="badge badge-${cmd.platform}">${platformLabel(cmd.platform)}</span>
     </div>
     <p class="modal-desc">${esc(cmd.description)}</p>
-    <div class="modal-section-label">${cmd.type === 'shortcut' ? 'Keys' : 'Command'}</div>
-    <div class="modal-value">${esc(cmd.value)}</div>
-    <div class="modal-section-label">Tags</div>
+    ${commandBlock}
+    <div class="modal-section-label" style="margin-top:16px;">Tags</div>
     <div class="modal-tags">${cmd.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     <div class="modal-actions">
       <button class="btn btn-primary" id="copy-cmd-btn">
-        <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>
+        ${cpyIcon}
         Copy ${cmd.type === 'shortcut' ? 'shortcut' : 'command'}
       </button>
     </div>
@@ -430,7 +471,7 @@ function esc(str) {
 }
 
 function platformLabel(p) {
-  const map = { windows: 'Windows', macos: 'macOS', m365: 'M365', '3cx': '3CX', both: 'Win/Mac' };
+  const map = { windows: 'Windows', macos: 'macOS', m365: 'M365', api: 'API', both: 'Win/Mac' };
   return map[p] || p;
 }
 

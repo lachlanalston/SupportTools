@@ -15,7 +15,7 @@
   --windows:  #2196f3;
   --macos:    #9b8af4;
   --m365:     #d83b01;
-  --3cx:      #00a859;
+  --api:      #00a859;
   --wip:      #e3b341;
 
   --radius:   10px;
@@ -253,8 +253,7 @@ kbd {
 .dot-windows { background: var(--windows); }
 .dot-macos   { background: var(--macos); }
 .dot-m365    { background: var(--m365); }
-.dot-3cx     { background: var(--3cx); }
-.dot-wip     { background: var(--wip); }
+.dot-api     { background: var(--api); }
 
 /* ─── Card grid ────────────────────────────────────────────────── */
 .card-grid {
@@ -289,12 +288,10 @@ kbd {
   border-radius: var(--radius) 0 0 var(--radius);
 }
 
-.card[data-platform="windows"]::before { background: var(--windows); }
-.card[data-platform="macos"]::before   { background: var(--macos); }
-.card[data-platform="m365"]::before    { background: var(--m365); }
-.card[data-platform="3cx"]::before     { background: var(--3cx); }
-.card[data-platform="wip"]::before,
-.card.wip::before                      { background: var(--wip); }
+.card[data-platform="windows"]::before  { background: var(--windows); }
+.card[data-platform="macos"]::before    { background: var(--macos); }
+.card[data-platform="m365"]::before     { background: var(--m365); }
+.card[data-platform="api"]::before      { background: var(--api); }
 .card[data-platform="shortcut"]::before { background: var(--macos); }
 .card[data-platform="command"]::before  { background: var(--windows); }
 .card[data-platform="bookmark"]::before { background: #388bfd; }
@@ -338,11 +335,10 @@ kbd {
   white-space: nowrap;
 }
 
-.badge-windows { background: rgba(33,150,243,0.15); color: var(--windows); }
+.badge-windows { background: rgba(33,150,243,0.15);  color: var(--windows); }
 .badge-macos   { background: rgba(155,138,244,0.15); color: var(--macos); }
 .badge-m365    { background: rgba(216,59,1,0.15);    color: #f05322; }
-.badge-3cx     { background: rgba(0,168,89,0.15);    color: var(--3cx); }
-.badge-wip     { background: rgba(227,179,65,0.15);  color: var(--wip); }
+.badge-api     { background: rgba(0,168,89,0.15);    color: var(--api); }
 .badge-shortcut{ background: rgba(155,138,244,0.15); color: var(--macos); }
 .badge-command { background: rgba(33,150,243,0.15);  color: var(--windows); }
 .badge-bookmark{ background: rgba(56,139,253,0.15);  color: #58a6ff; }
@@ -620,6 +616,118 @@ kbd {
 .modal-config-warning svg {
   flex-shrink: 0;
   margin-top: 1px;
+}
+
+/* ─── Terminal Windows ─────────────────────────────────────────── */
+.terminal {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 4px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+/* macOS Terminal */
+.terminal-macos .terminal-titlebar {
+  background: #2d2d2d;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.terminal-dot-red    { background: #ff5f57; }
+.terminal-dot-yellow { background: #febc2e; }
+.terminal-dot-green  { background: #28c840; }
+
+.terminal-macos .terminal-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: #888;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  pointer-events: none;
+}
+
+.terminal-macos .terminal-body {
+  background: #1a1a1a;
+  padding: 12px 14px;
+  color: #e6edf3;
+}
+
+.terminal-macos .terminal-prompt {
+  color: #28c840;
+  flex-shrink: 0;
+  user-select: none;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+/* PowerShell Terminal */
+.terminal-ps .terminal-titlebar {
+  background: #012456;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.terminal-ps .terminal-title {
+  font-size: 0.72rem;
+  color: #bbb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.terminal-ps .terminal-body {
+  background: #012456;
+  padding: 12px 14px;
+  color: #eaeaea;
+}
+
+.terminal-ps .terminal-prompt {
+  color: #ffff54;
+  flex-shrink: 0;
+  user-select: none;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.terminal-line {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 2px;
+}
+
+.terminal-cmd {
+  word-break: break-all;
+}
+
+.terminal-cmd-dim {
+  opacity: 0.45;
+}
+
+.terminal-prereq-note {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.35);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.terminal-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 8px 0 10px;
 }
 
 /* ─── Toast ────────────────────────────────────────────────────── */
