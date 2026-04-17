@@ -353,73 +353,82 @@ function Get-TopIOStatus {
 #endregion
 
 #region --- Parallel execution ---
-# Start WAN IP lookup immediately as a background job so it runs while checks execute
-# TODO: Switch to Cloudflare trace endpoint for consistency with rest of tooling:
-#   (Invoke-RestMethod "https://www.cloudflare.com/cdn-cgi/trace") -split "`n" |
-#   Where-Object { $_ -like "ip=*" } | ForEach-Object { ($_ -split "=")[1] }
-$wanJob = Start-Job -ScriptBlock {
-    try { (Invoke-RestMethod -Uri "https://api.ipify.org" -TimeoutSec 5 -ErrorAction Stop).Trim() }
-    catch { "Unavailable" }
-}
-
-# Build an initialisation script that loads all check functions into each job's runspace
-$funcNames  = @(
+$funcNames = @(
     'Get-UptimeStatus','Get-DiskSpaceStatus','Get-CpuStatus','Get-PowerProfileStatus',
     'Get-WindowsUpdatesStatus','Get-RamStatus','Get-SmartDiskStatus','Get-AvStatus',
     'Get-CriticalServicesStatus','Get-BatteryStatus','Get-PageFileStatus','Get-TopIOStatus'
 )
-$funcDefs   = $funcNames | ForEach-Object { "function $_ {`n$((Get-Item ('function:' + $_)).ScriptBlock)`n}" }
-$initScript = [scriptblock]::Create($funcDefs -join "`n`n")
 
-# Show progress screen while jobs spin up
+# Serialize each function definition to a string so it can be injected into runspaces.
+# RunspacePool runs in-process and avoids Start-Job's child-process init/execution-policy issues.
+$funcScript = ($funcNames | ForEach-Object {
+    "function $_ {`n$((Get-Item ('function:' + $_)).ScriptBlock)`n}"
+}) -join "`n`n"
+
+$checkCalls = [ordered]@{
+    "Uptime"            = "Get-UptimeStatus"
+    "Disk Space"        = "Get-DiskSpaceStatus"
+    "CPU Performance"   = "Get-CpuStatus"
+    "Power Scheme"      = "Get-PowerProfileStatus"
+    "Windows Updates"   = "Get-WindowsUpdatesStatus"
+    "RAM Usage"         = "Get-RamStatus"
+    "Page File"         = "Get-PageFileStatus"
+    "SMART Disk Health" = "Get-SmartDiskStatus"
+    "Antivirus"         = "Get-AvStatus"
+    "Critical Services" = "Get-CriticalServicesStatus"
+    "Battery Health"    = "Get-BatteryStatus"
+    "Top I/O Processes" = "Get-TopIOStatus"
+}
+
+$pool = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspacePool(1, ($checkCalls.Count + 1))
+$pool.Open()
+
+# WAN IP lookup runs in parallel with the checks
+$wanPS = [System.Management.Automation.PowerShell]::Create()
+$wanPS.RunspacePool = $pool
+[void]$wanPS.AddScript('try { (Invoke-RestMethod -Uri "https://api.ipify.org" -TimeoutSec 5 -ErrorAction Stop).Trim() } catch { "Unavailable" }')
+$wanHandle = $wanPS.BeginInvoke()
+
 Clear-Host
 Write-Host ("=" * $width) -ForegroundColor White
 Write-Host "  RUNNING CHECKS..." -ForegroundColor White
 Write-Host ("=" * $width) -ForegroundColor White
 Write-Host ""
 
-# Launch all checks simultaneously
-$jobs = [ordered]@{
-    "Uptime"            = Start-Job -InitializationScript $initScript -ScriptBlock { Get-UptimeStatus }
-    "Disk Space"        = Start-Job -InitializationScript $initScript -ScriptBlock { Get-DiskSpaceStatus }
-    "CPU Performance"   = Start-Job -InitializationScript $initScript -ScriptBlock { Get-CpuStatus }
-    "Power Scheme"      = Start-Job -InitializationScript $initScript -ScriptBlock { Get-PowerProfileStatus }
-    "Windows Updates"   = Start-Job -InitializationScript $initScript -ScriptBlock { Get-WindowsUpdatesStatus }
-    "RAM Usage"         = Start-Job -InitializationScript $initScript -ScriptBlock { Get-RamStatus }
-    "Page File"         = Start-Job -InitializationScript $initScript -ScriptBlock { Get-PageFileStatus }
-    "SMART Disk Health" = Start-Job -InitializationScript $initScript -ScriptBlock { Get-SmartDiskStatus }
-    "Antivirus"         = Start-Job -InitializationScript $initScript -ScriptBlock { Get-AvStatus }
-    "Critical Services" = Start-Job -InitializationScript $initScript -ScriptBlock { Get-CriticalServicesStatus }
-    "Battery Health"    = Start-Job -InitializationScript $initScript -ScriptBlock { Get-BatteryStatus }
-    "Top I/O Processes" = Start-Job -InitializationScript $initScript -ScriptBlock { Get-TopIOStatus }
+$runspaces = [ordered]@{}
+foreach ($name in $checkCalls.Keys) {
+    $ps = [System.Management.Automation.PowerShell]::Create()
+    $ps.RunspacePool = $pool
+    [void]$ps.AddScript($funcScript + "`n" + $checkCalls[$name])
+    $runspaces[$name] = @{ PS = $ps; Handle = $ps.BeginInvoke() }
 }
 
-# Show a live elapsed timer while waiting for all jobs to finish
 $timer = [System.Diagnostics.Stopwatch]::StartNew()
-while (@($jobs.Values | Where-Object { $_.State -eq 'Running' }).Count -gt 0) {
-    $elapsed  = $timer.Elapsed
-    $running  = @($jobs.Values | Where-Object { $_.State -eq 'Running' }).Count
-    $done     = $jobs.Count - $running
-    Write-Host "`r  $done/$($jobs.Count) checks complete   [$([string]::Format('{0:D2}:{1:D2}', $elapsed.Minutes, $elapsed.Seconds))]   " -NoNewline -ForegroundColor DarkGray
+while (@($runspaces.Values | Where-Object { -not $_.Handle.IsCompleted }).Count -gt 0) {
+    $elapsed = $timer.Elapsed
+    $done    = @($runspaces.Values | Where-Object { $_.Handle.IsCompleted }).Count
+    Write-Host "`r  $done/$($runspaces.Count) checks complete   [$([string]::Format('{0:D2}:{1:D2}', $elapsed.Minutes, $elapsed.Seconds))]   " -NoNewline -ForegroundColor DarkGray
     Start-Sleep -Milliseconds 500
 }
 $timer.Stop()
 Write-Host "`r  All checks complete [$([string]::Format('{0:D2}:{1:D2}', $timer.Elapsed.Minutes, $timer.Elapsed.Seconds))]          " -ForegroundColor DarkGray
 Write-Host ""
 
-# All jobs are now finished — collect results in order with no further waiting
 $checks = [ordered]@{}
-foreach ($entry in $jobs.GetEnumerator()) {
+foreach ($name in $runspaces.Keys) {
+    $rs = $runspaces[$name]
     try {
-        $result = Receive-Job -Job $entry.Value -ErrorAction Stop
+        $result = $rs.PS.EndInvoke($rs.Handle)
         if (-not $result) { throw "Check returned no result" }
-        $checks[$entry.Key] = $result
+        $checks[$name] = $result[0]
     } catch {
-        $checks[$entry.Key] = [PSCustomObject]@{ Status = "Error"; Message = $_.Exception.Message; Value = "N/A"; Color = "Magenta" }
+        $checks[$name] = [PSCustomObject]@{ Status = "Error"; Message = $_.Exception.Message; Value = "N/A"; Color = "Magenta" }
     } finally {
-        $entry.Value | Remove-Job -Force -ErrorAction SilentlyContinue
+        $rs.PS.Dispose()
     }
 }
+$pool.Close()
+$pool.Dispose()
 #endregion
 
 #region --- Device info ---
@@ -436,11 +445,11 @@ $localIP = try {
     if ($ip) { $ip } else { "Not detected" }
 } catch { "Not detected" }
 
-# Collect WAN IP — should already be done since checks took longer than the lookup
 $wanIP = try {
-    [string]($wanJob | Wait-Job -Timeout 5 | Receive-Job -ErrorAction Stop | Select-Object -First 1)
+    $r = $wanPS.EndInvoke($wanHandle)
+    if ($r -and $r[0]) { [string]$r[0] } else { "Unavailable" }
 } catch { "Unavailable" } finally {
-    $wanJob | Remove-Job -Force -ErrorAction SilentlyContinue
+    $wanPS.Dispose()
 }
 if (-not $wanIP) { $wanIP = "Unavailable" }
 

@@ -27,7 +27,7 @@
     "description": "Comprehensive MSP diagnostic tool. Checks CPU, memory, disk, network, services, and uptime. Paste into a remote terminal session.",
     "tags": ["diagnostic", "health", "endpoint", "msp", "cpu", "memory", "disk", "network"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/get-EndpointHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-EndpointHealth.ps1"
   },
   {
     "name": "Get-EventLogExport",
@@ -90,24 +90,24 @@
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-PrintHealth.ps1"
   },
   {
-    "name": "WIP_diskClean",
-    "file": "Windows/Diagnostics/WIP_diskClean.ps1",
+    "name": "Get-DiskHealth",
+    "file": "Windows/Diagnostics/Get-DiskHealth.ps1",
     "platform": "windows",
     "category": "Diagnostics",
-    "description": "Automates disk cleanup to free up space.",
-    "tags": ["disk", "cleanup", "storage", "space"],
-    "wip": true,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/WIP_diskClean.ps1"
+    "description": "Checks free space on all fixed drives (CRIT ≤5%, WARN ≤15%), temp folder bloat, and Recycle Bin size. Run with -Fix to clear temp files and empty the Recycle Bin.",
+    "tags": ["disk", "storage", "space", "temp", "cleanup", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-DiskHealth.ps1"
   },
   {
-    "name": "WIP_ClearBrowserCache",
-    "file": "Windows/Diagnostics/WIP_ClearBrowserCache.ps1",
+    "name": "Get-BrowserCacheHealth",
+    "file": "Windows/Diagnostics/Get-BrowserCacheHealth.ps1",
     "platform": "windows",
     "category": "Diagnostics",
-    "description": "Clears browser cache across installed browsers.",
-    "tags": ["browser", "cache", "cleanup", "chrome", "edge"],
-    "wip": true,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/WIP_ClearBrowserCache.ps1"
+    "description": "Checks Chrome, Edge, and Firefox cache sizes across all user profiles. Warns if any browser cache exceeds 500 MB. Run with -Fix to clear all caches.",
+    "tags": ["browser", "cache", "chrome", "edge", "firefox", "cleanup", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-BrowserCacheHealth.ps1"
   },
   {
     "name": "Get-NetworkDriveHealth",
