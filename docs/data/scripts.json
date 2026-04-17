@@ -140,6 +140,16 @@
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-SecurityBaseline.ps1"
   },
   {
+    "name": "Get-BitLockerHealth",
+    "file": "Windows/Security/Get-BitLockerHealth.ps1",
+    "platform": "windows",
+    "category": "Security",
+    "description": "Checks BitLocker encryption status and TPM health on the C: drive. Reports protection status, encryption method, disk mode, key protectors, PCR validation profile, TPM state, Secure Boot, and UEFI vs Legacy BIOS. Flags issues relevant to Intune compliance.",
+    "tags": ["bitlocker", "tpm", "encryption", "secure-boot", "uefi", "intune", "compliance", "security", "pcr", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-BitLockerHealth.ps1"
+  },
+  {
     "name": "Get-LocalUserHealth",
     "file": "Windows/Users/Get-LocalUserHealth.ps1",
     "platform": "windows",

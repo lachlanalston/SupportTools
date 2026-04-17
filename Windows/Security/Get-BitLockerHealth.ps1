@@ -92,39 +92,38 @@ try {
     $blProtectionStatus = 'Error'
 }
 
-# Used space only + PCR profile via manage-bde
+# Used space only + PCR profile via WMI (locale-independent)
 $blUsedSpaceOnly = $false
 $pcrProfile      = '(not available)'
 $pcrValid        = $null
 
 try {
-    $bdeStatus       = & manage-bde -status C: 2>&1 | Out-String
-    $blUsedSpaceOnly = $bdeStatus -match 'Used Space Only'
-} catch { }
+    $cimVol = Get-CimInstance -Namespace 'Root\CIMv2\Security\MicrosoftVolumeEncryption' `
+                              -ClassName 'Win32_EncryptableVolume' `
+                              -Filter "DriveLetter='C:'" -ErrorAction Stop
 
-try {
-    $bdeProtectors = @(& manage-bde -protectors -get C: 2>&1)
-    $pcrLineIdx    = -1
-    for ($i = 0; $i -lt $bdeProtectors.Count; $i++) {
-        if ($bdeProtectors[$i] -match 'PCR Validation Profile') { $pcrLineIdx = $i; break }
-    }
-    if ($pcrLineIdx -ge 0) {
-        $pcrValueLine = ''
-        for ($j = $pcrLineIdx + 1; $j -lt $bdeProtectors.Count; $j++) {
-            if ($bdeProtectors[$j].Trim() -match '^[\d,\s]+$') {
-                $pcrValueLine = $bdeProtectors[$j].Trim()
-                break
+    try {
+        $convStatus      = Invoke-CimMethod -InputObject $cimVol -MethodName 'GetConversionStatus' -ErrorAction Stop
+        $blUsedSpaceOnly = ($convStatus.EncryptionFlags -band 1) -ne 0
+    } catch { }
+
+    try {
+        $tpmProt = $blKeyProtectors | Where-Object { $_.KeyProtectorType -in 'Tpm', 'TpmPin', 'TpmStartupKey', 'TpmPinStartupKey' } | Select-Object -First 1
+        if ($tpmProt) {
+            $pcrResult  = Invoke-CimMethod -InputObject $cimVol -MethodName 'GetKeyProtectorValidationProfile' `
+                                           -Arguments @{ VolumeKeyProtectorID = $tpmProt.KeyProtectorId } -ErrorAction Stop
+            $pcrIndices = $pcrResult.ValidationProfile
+            if ($null -ne $pcrIndices -and $pcrIndices.Count -gt 0) {
+                $pcrProfile = ($pcrIndices | Sort-Object) -join ', '
+                $pcrValid   = ($pcrIndices -contains 7) -and ($pcrIndices -contains 11)
+            } else {
+                $pcrProfile = '(empty)'; $pcrValid = $false
             }
-        }
-        if ($pcrValueLine) {
-            $pcrProfile = $pcrValueLine
-            $pcrNums    = $pcrValueLine -split '[,\s]+' | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
-            $pcrValid   = ($pcrNums -contains 7) -and ($pcrNums -contains 11)
         } else {
-            $pcrProfile = '(parse error)'; $pcrValid = $false
+            $pcrProfile = '(no TPM protector)'; $pcrValid = $null
         }
-    } else {
-        $pcrProfile = '(not found)'; $pcrValid = $false
+    } catch {
+        $pcrProfile = '(query error)'; $pcrValid = $false
     }
 } catch { }
 
