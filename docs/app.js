@@ -20,11 +20,12 @@ let scripts   = [];
 let bookmarks = [];
 let commands  = [];
 
-let activeTab    = 'scripts';
-let scriptFilter = 'all';
-let commandFilter = 'all';
+let activeTab      = 'scripts';
+let scriptFilter   = 'all';
+let commandFilter  = 'all';
+let shortcutFilter = 'all';
 let bookmarkFilter = 'all';
-let searchQuery  = '';
+let searchQuery    = '';
 
 let fuseScripts   = null;
 let fuseBookmarks = null;
@@ -101,6 +102,7 @@ function render() {
   renderScripts();
   renderBookmarks();
   renderCommands();
+  renderShortcuts();
   updateCounts();
 }
 
@@ -194,14 +196,10 @@ function renderBookmarks() {
 
 // ── Commands ──
 function renderCommands() {
-  let data = getFiltered(commands, fuseCommands, searchQuery);
+  let data = getFiltered(commands, fuseCommands, searchQuery).filter(c => c.type === 'command');
 
   if (commandFilter !== 'all') {
-    if (commandFilter === 'shortcut' || commandFilter === 'command') {
-      data = data.filter(c => c.type === commandFilter);
-    } else {
-      data = data.filter(c => c.platform === commandFilter || c.platform === 'both');
-    }
+    data = data.filter(c => c.platform === commandFilter || c.platform === 'both');
   }
 
   const grid  = document.getElementById('commands-grid');
@@ -239,11 +237,55 @@ function renderCommands() {
   });
 }
 
+// ── Shortcuts ──
+function renderShortcuts() {
+  let data = getFiltered(commands, fuseCommands, searchQuery).filter(c => c.type === 'shortcut');
+
+  if (shortcutFilter !== 'all') {
+    data = data.filter(c => c.platform === shortcutFilter || c.platform === 'both');
+  }
+
+  const grid  = document.getElementById('shortcuts-grid');
+  const empty = document.getElementById('shortcuts-empty');
+  grid.innerHTML = '';
+
+  if (!data.length) {
+    empty.hidden = false;
+    return;
+  }
+  empty.hidden = true;
+
+  data.forEach(cmd => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.platform = 'shortcut';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-name">${esc(cmd.name)}</span>
+        <div class="card-badges">
+          <span class="badge badge-shortcut">Shortcut</span>
+          <span class="badge badge-${cmd.platform}">${platformLabel(cmd.platform)}</span>
+        </div>
+      </div>
+      <p class="card-desc">${esc(cmd.description)}</p>
+      <div class="card-value">${esc(cmd.value)}</div>
+    `;
+
+    card.addEventListener('click', () => openCommandModal(cmd));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openCommandModal(cmd); });
+    grid.appendChild(card);
+  });
+}
+
 // ─── Counts ───────────────────────────────────────────────────────
 function updateCounts() {
   document.getElementById('count-scripts').textContent   = document.querySelectorAll('#scripts-grid .card').length;
   document.getElementById('count-bookmarks').textContent = document.querySelectorAll('#bookmarks-grid .card').length;
   document.getElementById('count-commands').textContent  = document.querySelectorAll('#commands-grid .card').length;
+  document.getElementById('count-shortcuts').textContent = document.querySelectorAll('#shortcuts-grid .card').length;
 }
 
 // ─── Modals ───────────────────────────────────────────────────────
@@ -539,6 +581,16 @@ function init() {
     document.querySelectorAll('#command-filters .filter-chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     commandFilter = chip.dataset.filter;
+    render();
+  });
+
+  // Shortcut filters
+  document.getElementById('shortcut-filters').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('#shortcut-filters .filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    shortcutFilter = chip.dataset.filter;
     render();
   });
 

@@ -49,6 +49,10 @@
         Commands
         <span class="tab-count" id="count-commands">0</span>
       </button>
+      <button class="tab" data-tab="shortcuts" role="tab" aria-selected="false">
+        Shortcuts
+        <span class="tab-count" id="count-shortcuts">0</span>
+      </button>
       <button class="tab" data-tab="bookmarks" role="tab" aria-selected="false">
         Bookmarks
         <span class="tab-count" id="count-bookmarks">0</span>
@@ -80,8 +84,6 @@
     <div id="tab-commands" class="tab-panel">
       <div class="filters" id="command-filters">
         <button class="filter-chip active" data-filter="all">All</button>
-        <button class="filter-chip" data-filter="shortcut">Shortcuts</button>
-        <button class="filter-chip" data-filter="command">Commands</button>
         <button class="filter-chip" data-filter="windows">
           <span class="dot dot-windows"></span>Windows
         </button>
@@ -94,6 +96,21 @@
       </div>
       <div class="card-grid" id="commands-grid"></div>
       <p class="empty-state" id="commands-empty" hidden>No commands match your search.</p>
+    </div>
+
+    <!-- Shortcuts tab -->
+    <div id="tab-shortcuts" class="tab-panel">
+      <div class="filters" id="shortcut-filters">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="windows">
+          <span class="dot dot-windows"></span>Windows
+        </button>
+        <button class="filter-chip" data-filter="macos">
+          <span class="dot dot-macos"></span>macOS
+        </button>
+      </div>
+      <div class="card-grid" id="shortcuts-grid"></div>
+      <p class="empty-state" id="shortcuts-empty" hidden>No shortcuts match your search.</p>
     </div>
 
     <!-- Bookmarks tab -->
