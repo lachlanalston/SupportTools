@@ -186,10 +186,15 @@ if ($blProtectionStatus -eq 'Off' -and $blVolumeStatus -eq 'FullyDecrypted') {
         'Enable BitLocker via Settings > Privacy & Security > Device Encryption, or manage-bde -on C: — then re-check Intune compliance.'
 }
 
-# BitLocker suspended (protection off but drive is still encrypted)
+# BitLocker protection off but drive is encrypted — distinguish suspended vs waiting for activation
 if ($blProtectionStatus -eq 'Off' -and $blVolumeStatus -eq 'FullyEncrypted') {
-    Add-Finding 'WARN' 'BitLocker protection is suspended on C:' `
-        'Resume via: manage-bde -protectors -enable C: — commonly caused by Windows Update, BIOS changes, or manual suspension.'
+    if ($blKeyProtectors.Count -gt 0) {
+        Add-Finding 'WARN' 'BitLocker protection is suspended on C:' `
+            'Resume via: manage-bde -protectors -enable C: — commonly caused by Windows Update, BIOS changes, or manual suspension.'
+    } else {
+        Add-Finding 'WARN' 'BitLocker is waiting for activation on C:' `
+            'Drive was auto-encrypted by Windows but has no key protectors — sync Intune policy to complete activation, or add a TPM protector manually via manage-bde -protectors -add C: -tpm.'
+    }
 }
 
 # Decryption actively in progress
