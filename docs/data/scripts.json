@@ -140,6 +140,16 @@
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-SecurityBaseline.ps1"
   },
   {
+    "name": "Get-DeviceJoinHealth",
+    "file": "Windows/Security/Get-DeviceJoinHealth.ps1",
+    "platform": "windows",
+    "category": "Security",
+    "description": "Checks device join health across Entra ID, domain, and hybrid environments. Reports join type, PRT status and age, device certificate expiry, MDM enrolment and last sync, domain secure channel, DC reachability, machine account password age, and Kerberos ticket availability.",
+    "tags": ["entra-id", "azure-ad", "hybrid", "domain", "prt", "mdm", "intune", "certificate", "kerberos", "join", "conditional-access", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-DeviceJoinHealth.ps1"
+  },
+  {
     "name": "Get-BitLockerHealth",
     "file": "Windows/Security/Get-BitLockerHealth.ps1",
     "platform": "windows",
