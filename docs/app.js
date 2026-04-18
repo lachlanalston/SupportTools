@@ -152,7 +152,7 @@ function renderScripts() {
         <span class="card-name">${esc(script.name)}</span>
         <div class="card-badges">
           <span class="badge badge-${script.platform}">${platformLabel(script.platform)}</span>
-          ${hasFixFlag ? '<span class="badge badge-fix">Fix</span>' : ''}
+          ${hasFixFlag ? '<span class="badge badge-fix">Remediate</span>' : ''}
         </div>
       </div>
       <p class="card-desc">${esc(script.description)}</p>
@@ -342,7 +342,7 @@ function openScriptModal(script) {
         <div class="modal-flag-item">
           <div class="modal-flag-header">
             <code class="modal-flag-name">${esc(f.flag)}</code>
-            <span class="modal-flag-type modal-flag-type-${esc(f.type)}">${esc(f.type)}</span>
+            <span class="modal-flag-type modal-flag-type-${esc(f.type)}">${f.type === 'fix' ? 'Remediate' : 'Mode'}</span>
             <span class="modal-flag-when">${esc(f.when)}</span>
           </div>
           <div class="modal-oneliner modal-flag-cmd">${esc(flagOneLiner(script, f.flag))}</div>
