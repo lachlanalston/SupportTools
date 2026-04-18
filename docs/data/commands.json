@@ -134,5 +134,29 @@
       "label": "Connect to Exchange Online first",
       "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
     }
+  },
+  {
+    "name": "Find Email Address Across Recipients",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-Recipient -ResultSize Unlimited | Where-Object { $_.EmailAddresses -match \"user@domain.com\" } | Select Name,RecipientType,RecipientTypeDetails,PrimarySmtpAddress",
+    "description": "Searches all recipient types (mailboxes, groups, contacts, etc.) for a specific email address. Useful for finding where an address is assigned across the tenant.",
+    "tags": ["email", "recipient", "search", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Get Distribution Group Members",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-DistributionGroupMember -Identity group@domain.com | Select Name, PrimarySmtpAddress",
+    "description": "Lists all members of a distribution group, showing their display name and primary email address.",
+    "tags": ["distribution-group", "members", "email", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
   }
 ]
