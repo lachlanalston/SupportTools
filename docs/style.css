@@ -244,6 +244,11 @@ kbd {
   color: var(--text);
 }
 
+.filter-chip-fix.active {
+  border-color: #3fb950;
+  color: #3fb950;
+}
+
 .dot {
   width: 8px;
   height: 8px;
@@ -342,6 +347,7 @@ kbd {
 .badge-shortcut{ background: rgba(155,138,244,0.15); color: var(--macos); }
 .badge-command { background: rgba(33,150,243,0.15);  color: var(--windows); }
 .badge-bookmark{ background: rgba(56,139,253,0.15);  color: #58a6ff; }
+.badge-fix     { background: rgba(63,185,80,0.15);   color: #3fb950; }
 
 .card-desc {
   font-size: 0.82rem;
@@ -659,6 +665,28 @@ kbd {
 
 .modal-flag-cmd {
   margin-bottom: 0;
+}
+
+.modal-flag-type {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+.modal-flag-type-fix {
+  background: rgba(63,185,80,0.12);
+  color: #3fb950;
+  border: 1px solid rgba(63,185,80,0.25);
+}
+
+.modal-flag-type-mode {
+  background: rgba(56,139,253,0.1);
+  color: #58a6ff;
+  border: 1px solid rgba(56,139,253,0.2);
 }
 
 .modal-config-warning svg {

@@ -123,7 +123,9 @@ function getFiltered(data, fuse, query) {
 function renderScripts() {
   let data = getFiltered(scripts, fuseScripts, searchQuery);
 
-  if (scriptFilter !== 'all') {
+  if (scriptFilter === 'has-fix') {
+    data = data.filter(s => s.flags && s.flags.some(f => f.type === 'fix'));
+  } else if (scriptFilter !== 'all') {
     data = data.filter(s => s.platform === scriptFilter);
   }
 
@@ -144,11 +146,13 @@ function renderScripts() {
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
 
+    const hasFixFlag = script.flags && script.flags.some(f => f.type === 'fix');
     card.innerHTML = `
       <div class="card-header">
         <span class="card-name">${esc(script.name)}</span>
         <div class="card-badges">
           <span class="badge badge-${script.platform}">${platformLabel(script.platform)}</span>
+          ${hasFixFlag ? '<span class="badge badge-fix">Fix</span>' : ''}
         </div>
       </div>
       <p class="card-desc">${esc(script.description)}</p>
@@ -338,6 +342,7 @@ function openScriptModal(script) {
         <div class="modal-flag-item">
           <div class="modal-flag-header">
             <code class="modal-flag-name">${esc(f.flag)}</code>
+            <span class="modal-flag-type modal-flag-type-${esc(f.type)}">${esc(f.type)}</span>
             <span class="modal-flag-when">${esc(f.when)}</span>
           </div>
           <div class="modal-oneliner modal-flag-cmd">${esc(flagOneLiner(script, f.flag))}</div>

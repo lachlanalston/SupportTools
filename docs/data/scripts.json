@@ -88,7 +88,7 @@
     "tags": ["print", "printer", "queue", "stuck", "spooler", "jobs", "health"],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "when": "Jobs are stuck in the queue and not clearing automatically — stops the spooler, wipes job files, and restarts it." }
+      { "flag": "-Fix", "type": "fix", "when": "Jobs are stuck in the queue and not clearing automatically — stops the spooler, wipes job files, and restarts it." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-PrintHealth.ps1"
   },
@@ -101,7 +101,7 @@
     "tags": ["disk", "storage", "space", "temp", "cleanup", "health"],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "when": "Temp folder or Recycle Bin is bloated and you want to reclaim space immediately without manual cleanup." }
+      { "flag": "-Fix", "type": "fix", "when": "Temp folder or Recycle Bin is bloated and you want to reclaim space immediately without manual cleanup." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-DiskHealth.ps1"
   },
@@ -114,7 +114,7 @@
     "tags": ["browser", "cache", "chrome", "edge", "firefox", "cleanup", "health"],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "when": "Browser cache is bloated and causing slowness or storage pressure — clears all detected caches across every user profile on the device." }
+      { "flag": "-Fix", "type": "fix", "when": "Browser cache is bloated and causing slowness or storage pressure — clears all detected caches across every user profile on the device." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-BrowserCacheHealth.ps1"
   },
@@ -127,7 +127,7 @@
     "tags": ["network", "drives", "mapped", "connectivity", "unc", "health"],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "when": "Disconnected or stale drive mappings need to be wiped before remapping via login script or MDM policy." }
+      { "flag": "-Fix", "type": "fix", "when": "Disconnected or stale drive mappings need to be wiped before remapping via login script or MDM policy." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-NetworkDriveHealth.ps1"
   },
@@ -140,7 +140,7 @@
     "tags": ["time", "ntp", "sync", "w32time", "offset", "health"],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "when": "Time is drifting or the w32time service is broken — re-registers the service, sets a reliable NTP source, and forces an immediate sync." }
+      { "flag": "-Fix", "type": "fix", "when": "Time is drifting or the w32time service is broken — re-registers the service, sets a reliable NTP source, and forces an immediate sync." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-TimeSyncHealth.ps1"
   },
@@ -183,7 +183,7 @@
     "tags": ["admin", "local-user", "account", "password", "unlock", "expiry", "health"],
     "wip": false,
     "flags": [
-      { "flag": "-Fix -Username <name>", "when": "You need to create or re-enable a local admin account — typically for emergency access or a break-glass account when normal login paths are unavailable." }
+      { "flag": "-Fix -Username <name>", "type": "fix", "when": "You need to create or re-enable a local admin account — typically for emergency access or a break-glass account when normal login paths are unavailable." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Users/Get-LocalUserHealth.ps1"
   },
@@ -216,7 +216,7 @@
     "tags": ["printer", "cups", "print", "queue", "stuck", "jobs", "health"],
     "wip": false,
     "flags": [
-      { "flag": "--fix", "when": "Jobs are stuck in the queue and not clearing — cancels all queued jobs, re-enables stopped printers, and restarts the CUPS daemon." }
+      { "flag": "--fix", "type": "fix", "when": "Jobs are stuck in the queue and not clearing — cancels all queued jobs, re-enables stopped printers, and restarts the CUPS daemon." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-printer-health.sh"
   },
@@ -259,7 +259,7 @@
     "tags": ["disk", "storage", "smart", "swap", "apfs", "time-machine", "performance", "health"],
     "wip": false,
     "flags": [
-      { "flag": "--deep", "when": "User reports data corruption, unexpected crashes, or disk errors in Console — runs diskutil verifyContainer to check for APFS filesystem corruption (adds 20–60s)." }
+      { "flag": "--deep", "type": "mode", "when": "User reports data corruption, unexpected crashes, or disk errors in Console — runs diskutil verifyContainer to check for APFS filesystem corruption (adds 20–60s)." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-disk-health.sh"
   },
@@ -302,7 +302,7 @@
     "tags": ["hostname", "bonjour", "airdrop", "bluetooth", "scutil", "local", "dns", "health"],
     "wip": false,
     "flags": [
-      { "flag": "--fix", "when": "HostName or LocalHostName has drifted with a .local suffix — strips the suffix so all three hostname values are consistent." }
+      { "flag": "--fix", "type": "fix", "when": "HostName or LocalHostName has drifted with a .local suffix — strips the suffix so all three hostname values are consistent." }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-hostname-health.sh"
   },
