@@ -106,7 +106,6 @@ main {
 .search-bar-wrap {
   position: relative;
   margin-bottom: 24px;
-  max-width: 780px;
 }
 
 .search-icon {
@@ -125,8 +124,8 @@ main {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text);
-  font-size: 1rem;
-  padding: 13px 120px 13px 42px;
+  font-size: 1.05rem;
+  padding: 15px 120px 15px 42px;
   outline: none;
   transition: border-color var(--transition), box-shadow var(--transition);
   -webkit-appearance: none;
