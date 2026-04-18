@@ -613,6 +613,54 @@ kbd {
   margin-bottom: 8px;
 }
 
+/* ─── Flags section ────────────────────────────────────────────── */
+.modal-flags-label {
+  margin-top: 20px;
+}
+
+.modal-flags {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-flag-item {
+  background: rgba(110,118,129,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.modal-flag-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-flag-name {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  color: #79c0ff;
+  background: rgba(56,139,253,0.1);
+  border: 1px solid rgba(56,139,253,0.2);
+  border-radius: 4px;
+  padding: 2px 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.modal-flag-when {
+  font-size: 0.8rem;
+  color: var(--sub);
+  line-height: 1.5;
+}
+
+.modal-flag-cmd {
+  margin-bottom: 0;
+}
+
 .modal-config-warning svg {
   flex-shrink: 0;
   margin-top: 1px;

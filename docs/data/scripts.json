@@ -87,6 +87,9 @@
     "description": "Checks print spooler health, stuck jobs, and offline printer states. Run with -Fix to stop the spooler, clear job files, and restart.",
     "tags": ["print", "printer", "queue", "stuck", "spooler", "jobs", "health"],
     "wip": false,
+    "flags": [
+      { "flag": "-Fix", "when": "Jobs are stuck in the queue and not clearing automatically — stops the spooler, wipes job files, and restarts it." }
+    ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-PrintHealth.ps1"
   },
   {
@@ -97,6 +100,9 @@
     "description": "Checks free space on all fixed drives (CRIT ≤5%, WARN ≤15%), temp folder bloat, and Recycle Bin size. Run with -Fix to clear temp files and empty the Recycle Bin.",
     "tags": ["disk", "storage", "space", "temp", "cleanup", "health"],
     "wip": false,
+    "flags": [
+      { "flag": "-Fix", "when": "Temp folder or Recycle Bin is bloated and you want to reclaim space immediately without manual cleanup." }
+    ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-DiskHealth.ps1"
   },
   {
@@ -107,6 +113,9 @@
     "description": "Checks Chrome, Edge, and Firefox cache sizes across all user profiles. Warns if any browser cache exceeds 500 MB. Run with -Fix to clear all caches.",
     "tags": ["browser", "cache", "chrome", "edge", "firefox", "cleanup", "health"],
     "wip": false,
+    "flags": [
+      { "flag": "-Fix", "when": "Browser cache is bloated and causing slowness or storage pressure — clears all detected caches across every user profile on the device." }
+    ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-BrowserCacheHealth.ps1"
   },
   {
@@ -117,6 +126,9 @@
     "description": "Reports mapped network drives and their connectivity state. Warns on disconnected drives. Run with -Fix to remove all mapped drives.",
     "tags": ["network", "drives", "mapped", "connectivity", "unc", "health"],
     "wip": false,
+    "flags": [
+      { "flag": "-Fix", "when": "Disconnected or stale drive mappings need to be wiped before remapping via login script or MDM policy." }
+    ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-NetworkDriveHealth.ps1"
   },
   {
@@ -127,6 +139,9 @@
     "description": "Checks Windows Time service health, NTP source, stratum, last sync time, and time offset. Run with -Fix to re-register w32time and sync to the fastest reachable AU/global NTP server.",
     "tags": ["time", "ntp", "sync", "w32time", "offset", "health"],
     "wip": false,
+    "flags": [
+      { "flag": "-Fix", "when": "Time is drifting or the w32time service is broken — re-registers the service, sets a reliable NTP source, and forces an immediate sync." }
+    ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-TimeSyncHealth.ps1"
   },
   {
@@ -167,6 +182,9 @@
     "description": "Reports all local user accounts, enabled state, admin membership, password expiry, and last logon. Run with -Fix -Username <name> to create/enable a local admin account with non-expiring password.",
     "tags": ["admin", "local-user", "account", "password", "unlock", "expiry", "health"],
     "wip": false,
+    "flags": [
+      { "flag": "-Fix -Username <name>", "when": "You need to create or re-enable a local admin account — typically for emergency access or a break-glass account when normal login paths are unavailable." }
+    ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Users/Get-LocalUserHealth.ps1"
   },
   {
@@ -190,34 +208,103 @@
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Apps/Netskope/Get-NetskopeHealth.ps1"
   },
   {
-    "name": "extract_recovery_key",
-    "file": "MacOS/extract_recovery_key.sh",
+    "name": "get-printer-health",
+    "file": "MacOS/get-printer-health.sh",
     "platform": "macos",
     "category": "MacOS",
-    "description": "Checks if FileVault is enabled and extracts the FileVault recovery key.",
-    "tags": ["filevault", "recovery", "encryption", "key", "security"],
+    "description": "Checks CUPS daemon state, printer states (idle/stopped/error), stuck print jobs, default printer, and print sharing. Run with --fix to cancel all queued jobs, re-enable stopped printers, and restart the CUPS daemon.",
+    "tags": ["printer", "cups", "print", "queue", "stuck", "jobs", "health"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/extract_recovery_key.sh"
+    "flags": [
+      { "flag": "--fix", "when": "Jobs are stuck in the queue and not clearing — cancels all queued jobs, re-enables stopped printers, and restarts the CUPS daemon." }
+    ],
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-printer-health.sh"
+  },
+  {
+    "name": "get-security-baseline",
+    "file": "MacOS/get-security-baseline.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Checks the macOS security baseline: SIP, Gatekeeper, Firewall, FileVault, Secure Boot (T2 and Apple Silicon), XProtect and MRT versions, and remote access state (SSH, Screen Sharing). Flags anything that deviates from a hardened managed endpoint.",
+    "tags": ["sip", "gatekeeper", "firewall", "filevault", "secure-boot", "xprotect", "mrt", "ssh", "security", "baseline", "compliance", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-security-baseline.sh"
+  },
+  {
+    "name": "get-update-health",
+    "file": "MacOS/get-update-health.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Checks pending macOS updates by name, whether a restart is required, last successful install date, and recent update history. Flags the restart-required + long-uptime combination as CRIT. softwareupdate runs in the background to keep total time under 30s.",
+    "tags": ["updates", "softwareupdate", "pending", "restart", "patch", "history", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-update-health.sh"
+  },
+  {
+    "name": "get-battery-health",
+    "file": "MacOS/get-battery-health.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Checks battery health, condition label (Normal / Replace Soon / Replace Now / Service Battery), capacity %, cycle count, temperature, charge state, adapter info, and recent low-battery events from the power log. Handles desktop Macs gracefully.",
+    "tags": ["battery", "health", "capacity", "cycles", "temperature", "adapter", "pmset", "macos"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-battery-health.sh"
+  },
+  {
+    "name": "get-disk-health",
+    "file": "MacOS/get-disk-health.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Checks APFS container free space, swap usage, SMART health and sector counts, Time Machine backup age, and live I/O load. Flags the high-swap + low-disk combination that causes most macOS performance complaints. Run with --deep to also verify the APFS container for filesystem corruption (adds 20-60s).",
+    "tags": ["disk", "storage", "smart", "swap", "apfs", "time-machine", "performance", "health"],
+    "wip": false,
+    "flags": [
+      { "flag": "--deep", "when": "User reports data corruption, unexpected crashes, or disk errors in Console — runs diskutil verifyContainer to check for APFS filesystem corruption (adds 20–60s)." }
+    ],
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-disk-health.sh"
+  },
+  {
+    "name": "get-filevault-health",
+    "file": "MacOS/get-filevault-health.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Checks FileVault encryption status, recovery key type (personal or institutional), MDM escrow profile presence, and Secure Token state for the logged-in user. Flags missing keys, deferred encryption, and escrow not configured.",
+    "tags": ["filevault", "encryption", "recovery-key", "secure-token", "mdm", "escrow", "security", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-filevault-health.sh"
+  },
+  {
+    "name": "get-mdm-health",
+    "file": "MacOS/get-mdm-health.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Checks MDM enrolment health across Intune, Kandji, and Jamf. Reports enrolment status, provider detection, supervision state, bootstrap token escrow (Apple Silicon), and provider-specific agent health. Flags Jamf presence as a phase-out advisory.",
+    "tags": ["mdm", "intune", "kandji", "jamf", "enrolment", "supervised", "bootstrap-token", "company-portal", "apple-silicon", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-mdm-health.sh"
   },
   {
     "name": "get-EndpointHealth",
     "file": "MacOS/get-EndpointHealth.sh",
     "platform": "macos",
     "category": "MacOS",
-    "description": "Comprehensive MSP diagnostic tool for macOS. Checks hardware, disk, network, and services. Paste into a remote terminal session.",
-    "tags": ["diagnostic", "health", "endpoint", "msp", "disk", "network"],
+    "description": "Broad endpoint health check for macOS. Runs all checks in parallel — disk space, CPU load, RAM availability, pending updates, SMART disk health, AV/EDR presence, critical system services, and battery capacity. Outputs findings and detail blocks sized for ticket screenshots.",
+    "tags": ["diagnostic", "health", "endpoint", "msp", "disk", "cpu", "ram", "updates", "smart", "battery", "av", "edr", "services"],
     "wip": false,
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-EndpointHealth.sh"
   },
   {
-    "name": "macRename",
-    "file": "MacOS/macRename.sh",
+    "name": "get-hostname-health",
+    "file": "MacOS/get-hostname-health.sh",
     "platform": "macos",
     "category": "MacOS",
-    "description": "Fixes macOS hostnames that gain a .local suffix due to Bluetooth or AirDrop activity. Resets the hostname via scutil.",
-    "tags": ["hostname", "rename", "airdrop", "bluetooth", "network", "local", "scutil"],
+    "description": "Checks macOS hostname consistency across ComputerName, HostName, and LocalHostName. Flags .local suffix drift caused by Bluetooth or AirDrop activity, unset HostName, and mismatches between values. Run with --fix to strip .local suffixes automatically.",
+    "tags": ["hostname", "bonjour", "airdrop", "bluetooth", "scutil", "local", "dns", "health"],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/macRename.sh"
+    "flags": [
+      { "flag": "--fix", "when": "HostName or LocalHostName has drifted with a .local suffix — strips the suffix so all three hostname values are consistent." }
+    ],
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-hostname-health.sh"
   },
   {
     "name": "checkEmail",

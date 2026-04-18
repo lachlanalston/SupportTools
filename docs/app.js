@@ -15,6 +15,14 @@ function oneLiner(script) {
   return `irm '${rawUrl(script.file)}' | iex`;
 }
 
+function flagOneLiner(script, flag) {
+  const url = rawUrl(script.file);
+  if (script.platform === 'macos') {
+    return `bash <(curl -fsSL ${url}) ${flag}`;
+  }
+  return `$s = irm '${url}'; & ([scriptblock]::Create($s)) ${flag}`;
+}
+
 // ─── State ────────────────────────────────────────────────────────
 let scripts   = [];
 let bookmarks = [];
@@ -322,6 +330,25 @@ function openScriptModal(script) {
     </div>
   `;
 
+  const flags = script.flags || [];
+  const flagsSection = flags.length ? `
+    <div class="modal-section-label modal-flags-label">Flags</div>
+    <div class="modal-flags">
+      ${flags.map((f, i) => `
+        <div class="modal-flag-item">
+          <div class="modal-flag-header">
+            <code class="modal-flag-name">${esc(f.flag)}</code>
+            <span class="modal-flag-when">${esc(f.when)}</span>
+          </div>
+          <div class="modal-oneliner modal-flag-cmd">${esc(flagOneLiner(script, f.flag))}</div>
+          <div class="modal-actions" style="margin-top:8px;">
+            <button class="btn btn-secondary" id="copy-flag-${i}-btn">${cpyIcon} Copy</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+
   const body = document.getElementById('modal-body');
   body.innerHTML = `
     <div class="modal-platform-bar" style="background: ${color};"></div>
@@ -336,6 +363,7 @@ function openScriptModal(script) {
     <div class="modal-section-label">Tags</div>
     <div class="modal-tags">${script.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${runSection}
+    ${flagsSection}
   `;
 
   const copyRunBtn = document.getElementById('copy-run-btn');
@@ -344,6 +372,15 @@ function openScriptModal(script) {
       copyToClipboard(cmdText, 'copy-run-btn');
     });
   }
+
+  flags.forEach((f, i) => {
+    const btn = document.getElementById(`copy-flag-${i}-btn`);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        copyToClipboard(flagOneLiner(script, f.flag), `copy-flag-${i}-btn`);
+      });
+    }
+  });
 
   showModal();
 }
