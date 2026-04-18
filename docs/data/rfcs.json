@@ -1,0 +1,572 @@
+[
+  {
+    "name": "RFC 791 \u2014 IPv4",
+    "url": "https://datatracker.ietf.org/doc/html/rfc791",
+    "description": "Internet Protocol version 4 (IPv4) specification.",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "ipv4",
+      "ip",
+      "protocol",
+      "network"
+    ]
+  },
+  {
+    "name": "RFC 793 \u2014 TCP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc793",
+    "description": "Transmission Control Protocol (TCP) specification.",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "tcp",
+      "protocol",
+      "network",
+      "transport"
+    ]
+  },
+  {
+    "name": "RFC 2460 \u2014 IPv6",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2460",
+    "description": "Internet Protocol version 6 (IPv6) specification.",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "ipv6",
+      "ip",
+      "protocol",
+      "network"
+    ]
+  },
+  {
+    "name": "RFC 1034 \u2014 DNS Concepts",
+    "url": "https://datatracker.ietf.org/doc/html/rfc1034",
+    "description": "Domain Names - Concepts and Facilities.",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "dns",
+      "domain",
+      "protocol"
+    ]
+  },
+  {
+    "name": "RFC 1035 \u2014 DNS Implementation",
+    "url": "https://datatracker.ietf.org/doc/html/rfc1035",
+    "description": "Domain Names - Implementation and Specification.",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "dns",
+      "domain",
+      "protocol"
+    ]
+  },
+  {
+    "name": "RFC 2131 \u2014 DHCP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2131",
+    "description": "Dynamic Host Configuration Protocol (DHCP) specification.",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "dhcp",
+      "protocol",
+      "network",
+      "ip"
+    ]
+  },
+  {
+    "name": "RFC 854 \u2014 Telnet",
+    "url": "https://datatracker.ietf.org/doc/html/rfc854",
+    "description": "Telnet Protocol Specification.",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "telnet",
+      "protocol",
+      "remote"
+    ]
+  },
+  {
+    "name": "RFC 5737 \u2014 Documentation IPs",
+    "url": "https://datatracker.ietf.org/doc/rfc5737/",
+    "description": "IPv4 Address Blocks Reserved for Documentation (192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24).",
+    "category": "Network Protocols",
+    "tags": [
+      "rfc",
+      "ipv4",
+      "documentation",
+      "reserved",
+      "test"
+    ]
+  },
+  {
+    "name": "RFC 4251 \u2014 SSH Architecture",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4251",
+    "description": "The Secure Shell (SSH) Protocol Architecture.",
+    "category": "Security & Auth",
+    "tags": [
+      "rfc",
+      "ssh",
+      "security",
+      "protocol",
+      "auth"
+    ]
+  },
+  {
+    "name": "RFC 5246 \u2014 TLS 1.2",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5246",
+    "description": "Transport Layer Security (TLS) Protocol Version 1.2.",
+    "category": "Security & Auth",
+    "tags": [
+      "rfc",
+      "tls",
+      "ssl",
+      "security",
+      "encryption"
+    ]
+  },
+  {
+    "name": "RFC 8446 \u2014 TLS 1.3",
+    "url": "https://datatracker.ietf.org/doc/html/rfc8446",
+    "description": "Transport Layer Security (TLS) Protocol Version 1.3.",
+    "category": "Security & Auth",
+    "tags": [
+      "rfc",
+      "tls",
+      "ssl",
+      "security",
+      "encryption"
+    ]
+  },
+  {
+    "name": "RFC 6749 \u2014 OAuth 2.0",
+    "url": "https://datatracker.ietf.org/doc/html/rfc6749",
+    "description": "OAuth 2.0 Authorization Framework.",
+    "category": "Security & Auth",
+    "tags": [
+      "rfc",
+      "oauth",
+      "auth",
+      "authorization",
+      "api"
+    ]
+  },
+  {
+    "name": "RFC 2865 \u2014 RADIUS",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2865",
+    "description": "Remote Authentication Dial-In User Service (RADIUS) protocol.",
+    "category": "Security & Auth",
+    "tags": [
+      "rfc",
+      "radius",
+      "auth",
+      "aaa",
+      "network"
+    ]
+  },
+  {
+    "name": "RFC 7235 \u2014 HTTP Authentication",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7235",
+    "description": "HTTP Authentication framework specification.",
+    "category": "Security & Auth",
+    "tags": [
+      "rfc",
+      "http",
+      "auth",
+      "authentication",
+      "web"
+    ]
+  },
+  {
+    "name": "RFC 5321 \u2014 SMTP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5321",
+    "description": "Simple Mail Transfer Protocol (SMTP) specification.",
+    "category": "Email",
+    "tags": [
+      "rfc",
+      "smtp",
+      "email",
+      "protocol",
+      "mail"
+    ]
+  },
+  {
+    "name": "RFC 5322 \u2014 Email Format",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5322",
+    "description": "Internet Message Format \u2014 defines email header and body structure.",
+    "category": "Email",
+    "tags": [
+      "rfc",
+      "email",
+      "format",
+      "headers",
+      "message"
+    ]
+  },
+  {
+    "name": "RFC 6376 \u2014 DKIM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc6376",
+    "description": "DomainKeys Identified Mail (DKIM) Signatures.",
+    "category": "Email",
+    "tags": [
+      "rfc",
+      "dkim",
+      "email",
+      "signing",
+      "authentication"
+    ]
+  },
+  {
+    "name": "RFC 7208 \u2014 SPF",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7208",
+    "description": "Sender Policy Framework (SPF) for authorizing mail senders.",
+    "category": "Email",
+    "tags": [
+      "rfc",
+      "spf",
+      "email",
+      "authentication",
+      "dns"
+    ]
+  },
+  {
+    "name": "RFC 7489 \u2014 DMARC",
+    "url": "https://datatracker.ietf.org/doc/html/rfc7489",
+    "description": "Domain-based Message Authentication, Reporting, and Conformance (DMARC).",
+    "category": "Email",
+    "tags": [
+      "rfc",
+      "dmarc",
+      "email",
+      "authentication",
+      "reporting"
+    ]
+  },
+  {
+    "name": "RFC 5424 \u2014 Syslog",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5424",
+    "description": "The Syslog Protocol specification.",
+    "category": "Logging",
+    "tags": [
+      "rfc",
+      "syslog",
+      "logging",
+      "monitoring",
+      "protocol"
+    ]
+  },
+  {
+    "name": "RFC 5425 \u2014 TLS Syslog",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5425",
+    "description": "TLS Transport Mapping for Syslog.",
+    "category": "Logging",
+    "tags": [
+      "rfc",
+      "syslog",
+      "tls",
+      "logging",
+      "secure"
+    ]
+  },
+  {
+    "name": "RFC 3411 \u2014 SNMP Architecture",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3411",
+    "description": "Architecture for describing SNMP Management Frameworks.",
+    "category": "Network Management",
+    "tags": [
+      "rfc",
+      "snmp",
+      "network",
+      "management",
+      "monitoring"
+    ]
+  },
+  {
+    "name": "RFC 3412 \u2014 SNMP Message Processing",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3412",
+    "description": "Message Processing and Dispatching for SNMP.",
+    "category": "Network Management",
+    "tags": [
+      "rfc",
+      "snmp",
+      "network",
+      "management"
+    ]
+  },
+  {
+    "name": "RFC 3413 \u2014 SNMP Applications",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3413",
+    "description": "SNMP Applications specification.",
+    "category": "Network Management",
+    "tags": [
+      "rfc",
+      "snmp",
+      "network",
+      "management"
+    ]
+  },
+  {
+    "name": "RFC 3414 \u2014 SNMPv3 USM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3414",
+    "description": "User-based Security Model (USM) for SNMPv3.",
+    "category": "Network Management",
+    "tags": [
+      "rfc",
+      "snmp",
+      "snmpv3",
+      "security",
+      "usm"
+    ]
+  },
+  {
+    "name": "RFC 3415 \u2014 SNMP VACM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3415",
+    "description": "View-based Access Control Model (VACM) for SNMP.",
+    "category": "Network Management",
+    "tags": [
+      "rfc",
+      "snmp",
+      "access-control",
+      "vacm"
+    ]
+  },
+  {
+    "name": "RFC 1901 \u2014 SNMPv2 Community",
+    "url": "https://datatracker.ietf.org/doc/html/rfc1901",
+    "description": "Introduction to Community-based SNMPv2.",
+    "category": "Network Management",
+    "tags": [
+      "rfc",
+      "snmp",
+      "snmpv2",
+      "community"
+    ]
+  },
+  {
+    "name": "RFC 3261 \u2014 SIP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3261",
+    "description": "Session Initiation Protocol (SIP) core specification.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "protocol",
+      "telephony",
+      "3cx"
+    ]
+  },
+  {
+    "name": "RFC 3263 \u2014 SIP Server Locating",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3263",
+    "description": "Locating SIP Servers using DNS.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "dns",
+      "server"
+    ]
+  },
+  {
+    "name": "RFC 3264 \u2014 SDP Offer/Answer",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3264",
+    "description": "An Offer/Answer Model with the Session Description Protocol.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sdp",
+      "sip",
+      "voip",
+      "offer-answer"
+    ]
+  },
+  {
+    "name": "RFC 3311 \u2014 SIP UPDATE",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3311",
+    "description": "The Session Initiation Protocol (SIP) UPDATE Method.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "update",
+      "method"
+    ]
+  },
+  {
+    "name": "RFC 3323 \u2014 SIP Privacy",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3323",
+    "description": "A Privacy Mechanism for the Session Initiation Protocol.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "privacy",
+      "identity"
+    ]
+  },
+  {
+    "name": "RFC 3325 \u2014 SIP Asserted Identity",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3325",
+    "description": "Private Extensions to SIP for Asserted Identity within Trusted Networks.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "identity",
+      "trust"
+    ]
+  },
+  {
+    "name": "RFC 4028 \u2014 SIP Session Timers",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4028",
+    "description": "Session Timers in the Session Initiation Protocol (SIP).",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "session",
+      "timers"
+    ]
+  },
+  {
+    "name": "RFC 4566 \u2014 SDP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4566",
+    "description": "Session Description Protocol (SDP) specification.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sdp",
+      "sip",
+      "voip",
+      "media"
+    ]
+  },
+  {
+    "name": "RFC 3550 \u2014 RTP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3550",
+    "description": "RTP: A Transport Protocol for Real-Time Applications.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "rtp",
+      "voip",
+      "real-time",
+      "media",
+      "audio",
+      "video"
+    ]
+  },
+  {
+    "name": "RFC 3551 \u2014 RTP Audio/Video Profile",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3551",
+    "description": "RTP Profile for Audio and Video Conferences with Minimal Control.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "rtp",
+      "voip",
+      "audio",
+      "video",
+      "profile"
+    ]
+  },
+  {
+    "name": "RFC 4474 \u2014 SIP Identity",
+    "url": "https://datatracker.ietf.org/doc/html/rfc4474",
+    "description": "Enhancements for Authenticated Identity Management in the Session Initiation Protocol.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "identity",
+      "authentication"
+    ]
+  },
+  {
+    "name": "RFC 3711 \u2014 SRTP",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3711",
+    "description": "The Secure Real-Time Transport Protocol (SRTP).",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "srtp",
+      "rtp",
+      "voip",
+      "encryption",
+      "security"
+    ]
+  },
+  {
+    "name": "RFC 3312 \u2014 SIP Resource Management",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3312",
+    "description": "Integration of Resource Management and SIP.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "resource",
+      "qos"
+    ]
+  },
+  {
+    "name": "RFC 5128 \u2014 SIP NAT Traversal",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5128",
+    "description": "State of Peer-to-Peer Communication across NAT for SIP.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "sip",
+      "voip",
+      "nat",
+      "traversal"
+    ]
+  },
+  {
+    "name": "RFC 5389 \u2014 STUN",
+    "url": "https://datatracker.ietf.org/doc/html/rfc5389",
+    "description": "Session Traversal Utilities for NAT (STUN) specification.",
+    "category": "VoIP & SIP",
+    "tags": [
+      "rfc",
+      "stun",
+      "nat",
+      "voip",
+      "traversal"
+    ]
+  },
+  {
+    "name": "RFC 2806 \u2014 Tel URI",
+    "url": "https://datatracker.ietf.org/doc/html/rfc2806",
+    "description": "URLs for Telephone Calls (tel: URI scheme).",
+    "category": "Number Porting",
+    "tags": [
+      "rfc",
+      "tel",
+      "uri",
+      "telephone",
+      "porting"
+    ]
+  },
+  {
+    "name": "RFC 3952 \u2014 ENUM",
+    "url": "https://datatracker.ietf.org/doc/html/rfc3952",
+    "description": "ENUM: Telephone Number Mapping via DNS.",
+    "category": "Number Porting",
+    "tags": [
+      "rfc",
+      "enum",
+      "telephone",
+      "dns",
+      "porting"
+    ]
+  }
+]

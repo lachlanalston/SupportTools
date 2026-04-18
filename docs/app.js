@@ -27,29 +27,34 @@ function flagOneLiner(script, flag) {
 let scripts   = [];
 let bookmarks = [];
 let commands  = [];
+let rfcs      = [];
 
 let activeTab      = 'scripts';
 let scriptFilter   = 'all';
 let commandFilter  = 'all';
 let shortcutFilter = 'all';
 let bookmarkFilter = 'all';
+let rfcFilter      = 'all';
 let searchQuery    = '';
 
 let fuseScripts   = null;
 let fuseBookmarks = null;
 let fuseCommands  = null;
+let fuseRfcs      = null;
 
 // ─── Load data ────────────────────────────────────────────────────
 async function loadData() {
-  const [s, b, c] = await Promise.all([
+  const [s, b, c, r] = await Promise.all([
     fetch('data/scripts.json').then(r => r.json()),
     fetch('data/bookmarks.json').then(r => r.json()),
     fetch('data/commands.json').then(r => r.json()),
+    fetch('data/rfcs.json').then(r => r.json()),
   ]);
 
   scripts   = s;
   bookmarks = b;
   commands  = c;
+  rfcs      = r;
 
   fuseScripts = new Fuse(scripts, {
     keys: ['name', 'description', 'tags', 'category'],
@@ -69,8 +74,47 @@ async function loadData() {
     includeScore: true,
   });
 
+  fuseRfcs = new Fuse(rfcs, {
+    keys: ['name', 'description', 'tags', 'category'],
+    threshold: 0.35,
+    includeScore: true,
+  });
+
   buildBookmarkFilters();
+  buildRfcFilters();
   render();
+}
+
+// ─── Build RFC category filter chips ──────────────────────────────
+function buildRfcFilters() {
+  const categories = [...new Set(rfcs.map(r => r.category))].sort();
+  const container  = document.getElementById('rfc-filters');
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-chip active';
+  allBtn.dataset.filter = 'all';
+  allBtn.textContent = 'All';
+  allBtn.addEventListener('click', () => {
+    rfcFilter = 'all';
+    container.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    allBtn.classList.add('active');
+    render();
+  });
+  container.appendChild(allBtn);
+
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip';
+    btn.dataset.filter = cat;
+    btn.textContent = cat;
+    btn.addEventListener('click', () => {
+      rfcFilter = cat;
+      container.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+    container.appendChild(btn);
+  });
 }
 
 // ─── Build bookmark category filter chips ─────────────────────────
@@ -111,6 +155,7 @@ function render() {
   renderBookmarks();
   renderCommands();
   renderShortcuts();
+  renderRfcs();
   updateCounts();
 }
 
@@ -201,6 +246,46 @@ function renderBookmarks() {
       <p class="card-desc">${esc(bm.description)}</p>
       <p class="card-category">${esc(bm.category)}</p>
       <div class="card-tags">${bm.tags.slice(0, 5).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── RFCs ──
+function renderRfcs() {
+  let data = getFiltered(rfcs, fuseRfcs, searchQuery);
+
+  if (rfcFilter !== 'all') {
+    data = data.filter(r => r.category === rfcFilter);
+  }
+
+  const grid  = document.getElementById('rfcs-grid');
+  const empty = document.getElementById('rfcs-empty');
+  grid.innerHTML = '';
+
+  if (!data.length) {
+    empty.hidden = false;
+    return;
+  }
+  empty.hidden = true;
+
+  data.forEach(rfc => {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.dataset.platform = 'rfc';
+    card.href = rfc.url;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-name">${esc(rfc.name)}</span>
+        <div class="card-badges">
+          <span class="badge badge-rfc">${esc(rfc.category)}</span>
+        </div>
+      </div>
+      <p class="card-desc">${esc(rfc.description)}</p>
+      <div class="card-tags">${rfc.tags.slice(0, 5).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     `;
     grid.appendChild(card);
   });
@@ -298,6 +383,7 @@ function updateCounts() {
   document.getElementById('count-bookmarks').textContent = document.querySelectorAll('#bookmarks-grid .card').length;
   document.getElementById('count-commands').textContent  = document.querySelectorAll('#commands-grid .card').length;
   document.getElementById('count-shortcuts').textContent = document.querySelectorAll('#shortcuts-grid .card').length;
+  document.getElementById('count-rfcs').textContent      = document.querySelectorAll('#rfcs-grid .card').length;
 }
 
 // ─── Modals ───────────────────────────────────────────────────────

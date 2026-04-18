@@ -11,10 +11,10 @@
   <header>
     <div class="header-inner">
       <div class="brand">
-        <span class="brand-icon">&#9881;</span>
+        <span class="brand-icon">&gt;_</span>
         <div>
-          <h1>SupportTools</h1>
-          <p class="brand-sub">Scripts &amp; references for MSP helpdesk</p>
+          <h1>LRFA Tools</h1>
+          <p class="brand-sub">Scripts &middot; Commands &middot; Bookmarks</p>
         </div>
       </div>
       <a class="github-link" href="https://github.com/lachlanalston/SupportTools" target="_blank" rel="noopener">
@@ -56,6 +56,10 @@
       <button class="tab" data-tab="bookmarks" role="tab" aria-selected="false">
         Bookmarks
         <span class="tab-count" id="count-bookmarks">0</span>
+      </button>
+      <button class="tab" data-tab="rfcs" role="tab" aria-selected="false">
+        RFCs
+        <span class="tab-count" id="count-rfcs">0</span>
       </button>
     </nav>
 
@@ -122,6 +126,13 @@
       <div class="filters" id="bookmark-filters"></div>
       <div class="card-grid" id="bookmarks-grid"></div>
       <p class="empty-state" id="bookmarks-empty" hidden>No bookmarks match your search.</p>
+    </div>
+
+    <!-- RFCs tab -->
+    <div id="tab-rfcs" class="tab-panel">
+      <div class="filters" id="rfc-filters"></div>
+      <div class="card-grid" id="rfcs-grid"></div>
+      <p class="empty-state" id="rfcs-empty" hidden>No RFCs match your search.</p>
     </div>
   </main>
 

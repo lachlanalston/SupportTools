@@ -59,8 +59,12 @@ header {
 }
 
 .brand-icon {
-  font-size: 26px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #388bfd;
   line-height: 1;
+  letter-spacing: -0.5px;
 }
 
 .brand h1 {
@@ -300,6 +304,7 @@ kbd {
 .card[data-platform="shortcut"]::before { background: var(--macos); }
 .card[data-platform="command"]::before  { background: var(--windows); }
 .card[data-platform="bookmark"]::before { background: #388bfd; }
+.card[data-platform="rfc"]::before      { background: #d4a72c; }
 
 .card:hover {
   background: var(--card-hover);
@@ -348,6 +353,7 @@ kbd {
 .badge-command { background: rgba(33,150,243,0.15);  color: var(--windows); }
 .badge-bookmark{ background: rgba(56,139,253,0.15);  color: #58a6ff; }
 .badge-fix     { background: rgba(63,185,80,0.15);   color: #3fb950; }
+.badge-rfc     { background: rgba(210,153,34,0.15);  color: #d4a72c; }
 
 .card-desc {
   font-size: 0.82rem;
