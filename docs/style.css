@@ -193,7 +193,7 @@ kbd {
 
 .tab.active {
   color: var(--text);
-  border-bottom-color: #f78166;
+  border-bottom-color: #388bfd;
 }
 
 .tab-count {
@@ -206,8 +206,8 @@ kbd {
 }
 
 .tab.active .tab-count {
-  background: rgba(247, 129, 102, 0.15);
-  color: #f78166;
+  background: rgba(56, 139, 253, 0.15);
+  color: #388bfd;
 }
 
 /* ─── Tab panels ───────────────────────────────────────────────── */
@@ -324,7 +324,7 @@ kbd {
   font-weight: 600;
   color: var(--text);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .card-badges {
@@ -345,15 +345,16 @@ kbd {
   white-space: nowrap;
 }
 
-.badge-windows { background: rgba(33,150,243,0.15);  color: var(--windows); }
-.badge-macos   { background: rgba(155,138,244,0.15); color: var(--macos); }
-.badge-m365    { background: rgba(216,59,1,0.15);    color: #f05322; }
-.badge-api     { background: rgba(0,168,89,0.15);    color: var(--api); }
-.badge-shortcut{ background: rgba(155,138,244,0.15); color: var(--macos); }
-.badge-command { background: rgba(33,150,243,0.15);  color: var(--windows); }
-.badge-bookmark{ background: rgba(56,139,253,0.15);  color: #58a6ff; }
-.badge-fix     { background: rgba(63,185,80,0.15);   color: #3fb950; }
-.badge-rfc     { background: rgba(210,153,34,0.15);  color: #d4a72c; }
+.badge-windows   { background: rgba(33,150,243,0.15);  color: var(--windows); }
+.badge-macos     { background: rgba(155,138,244,0.15); color: var(--macos); }
+.badge-m365      { background: rgba(216,59,1,0.15);    color: #f05322; }
+.badge-api       { background: rgba(0,168,89,0.15);    color: var(--api); }
+.badge-shortcut  { background: rgba(155,138,244,0.15); color: var(--macos); }
+.badge-command   { background: rgba(33,150,243,0.15);  color: var(--windows); }
+.badge-bookmark  { background: rgba(56,139,253,0.15);  color: #58a6ff; }
+.badge-fix       { background: rgba(63,185,80,0.15);   color: #3fb950; }
+.badge-rfc       { background: rgba(210,153,34,0.15);  color: #d4a72c; }
+.badge-category  { background: rgba(110,118,129,0.15); color: var(--sub); border: 1px solid rgba(110,118,129,0.25); }
 
 .card-desc {
   font-size: 0.82rem;
@@ -488,7 +489,7 @@ kbd {
   color: var(--text);
   margin-bottom: 10px;
   padding-right: 30px;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .modal-badges {

@@ -446,7 +446,7 @@ function openScriptModal(script) {
     <h2 class="modal-name">${esc(script.name)}</h2>
     <div class="modal-badges">
       <span class="badge badge-${script.platform}">${platformLabel(script.platform)}</span>
-      <span class="badge" style="background:rgba(110,118,129,0.15);color:var(--sub);">${esc(script.category)}</span>
+      <span class="badge badge-category">${esc(script.category)}</span>
     </div>
     <p class="modal-desc">${esc(script.description)}</p>
     <div class="modal-section-label">File</div>
