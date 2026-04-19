@@ -95,6 +95,9 @@ async function loadData() {
   buildRfcFilters();
   buildDnsFilters();
   render();
+
+  const { tab: initialHashTab, slug: initialSlug } = parseHash(location.hash);
+  if (initialSlug) openItemBySlug(initialHashTab, initialSlug);
 }
 
 // ─── Build RFC category filter chips ──────────────────────────────
@@ -399,6 +402,22 @@ function openDnsModal(record) {
   const color   = dnsCategoryColor(record.category);
   const extIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M3.75 2h3.5a.75.75 0 010 1.5h-3.5a.25.25 0 00-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25v-3.5a.75.75 0 011.5 0v3.5A1.75 1.75 0 0112.25 14h-8.5A1.75 1.75 0 012 12.25v-8.5C2 2.784 2.784 2 3.75 2zm6.854-1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1z"/></svg>`;
 
+  const { fields = [], note = '' } = record.add_example || {};
+  const addSection = `
+    <div class="modal-section-label">How to add it</div>
+    ${note ? `<p class="dns-add-note">${esc(note)}</p>` : ''}
+    ${fields.length ? `
+      <div class="dns-add-table">
+        <div class="dns-add-row dns-add-header">
+          ${fields.map(f => `<span>${esc(f.label)}</span>`).join('')}
+        </div>
+        <div class="dns-add-row">
+          ${fields.map(f => `<span>${esc(f.value)}</span>`).join('')}
+        </div>
+      </div>
+    ` : ''}
+  `;
+
   const body = document.getElementById('modal-body');
   body.innerHTML = `
     <div class="modal-platform-bar" style="background: ${color};"></div>
@@ -407,9 +426,8 @@ function openDnsModal(record) {
       <span class="badge badge-dns-${dnsCategoryKey(record.category)}">${esc(record.category)}</span>
     </div>
     <p class="modal-desc">${esc(record.explanation)}</p>
-    <div class="modal-section-label">Format</div>
-    <div class="modal-value">${esc(record.format)}</div>
-    <div class="modal-section-label">dig Output</div>
+    ${addSection}
+    <div class="modal-section-label" style="margin-top:4px;">dig Output</div>
     <div class="terminal terminal-linux">
       <div class="terminal-titlebar">
         <span class="terminal-title">bash</span>
@@ -425,12 +443,16 @@ function openDnsModal(record) {
     <div class="modal-section-label" style="margin-top:16px;">Tags</div>
     <div class="modal-tags">${record.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     <div class="modal-actions">
-      <a class="btn btn-secondary" href="${esc(record.learn_more_url)}" target="_blank" rel="noopener">
-        ${extIcon} Learn more
+      <a class="btn btn-secondary" href="${esc(record.cloudflare_url)}" target="_blank" rel="noopener">
+        ${extIcon} Cloudflare
       </a>
+      ${record.rfc_url ? `<a class="btn btn-secondary" href="${esc(record.rfc_url)}" target="_blank" rel="noopener">
+        ${extIcon} RFC
+      </a>` : ''}
     </div>
   `;
 
+  history.replaceState(null, '', `#dns/${slugify(record.type)}`);
   showModal();
 }
 
@@ -617,6 +639,7 @@ function openScriptModal(script) {
     }
   });
 
+  history.replaceState(null, '', `#scripts/${slugify(script.name)}`);
   showModal();
 }
 
@@ -715,6 +738,8 @@ function openCommandModal(cmd) {
     copyToClipboard(cmd.value, 'copy-cmd-btn');
   });
 
+  const cmdTab = cmd.type === 'shortcut' ? 'shortcuts' : 'commands';
+  history.replaceState(null, '', `#${cmdTab}/${slugify(cmd.name)}`);
   showModal();
 }
 
@@ -728,6 +753,7 @@ function showModal() {
 function closeModal() {
   document.getElementById('modal-backdrop').hidden = true;
   document.body.style.overflow = '';
+  history.replaceState(null, '', `#${activeTab}`);
 }
 
 // ─── Clipboard ────────────────────────────────────────────────────
@@ -812,6 +838,27 @@ function shortCategory(cat) {
   return short[cat] || cat;
 }
 
+function slugify(str) {
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function parseHash(hash) {
+  const raw = (hash || '').replace(/^#/, '');
+  const slash = raw.indexOf('/');
+  if (slash === -1) return { tab: raw, slug: null };
+  return { tab: raw.slice(0, slash), slug: raw.slice(slash + 1) };
+}
+
+function openItemBySlug(tab, slug) {
+  if (!slug) return;
+  switch (tab) {
+    case 'scripts': { const item = scripts.find(s => slugify(s.name) === slug); if (item) openScriptModal(item); break; }
+    case 'commands': { const item = commands.find(c => c.type === 'command' && slugify(c.name) === slug); if (item) openCommandModal(item); break; }
+    case 'shortcuts': { const item = commands.find(c => c.type === 'shortcut' && slugify(c.name) === slug); if (item) openCommandModal(item); break; }
+    case 'dns': { const item = dns.find(d => slugify(d.type) === slug); if (item) openDnsModal(item); break; }
+  }
+}
+
 // ─── Event wiring ─────────────────────────────────────────────────
 function init() {
   // Search
@@ -862,10 +909,12 @@ function init() {
   });
 
   window.addEventListener('hashchange', () => {
-    activateTab(location.hash.slice(1));
+    const { tab, slug } = parseHash(location.hash);
+    activateTab(tab);
+    if (slug && scripts.length) openItemBySlug(tab, slug);
   });
 
-  const initialTab = location.hash.slice(1);
+  const { tab: initialTab } = parseHash(location.hash);
   if (VALID_TABS.has(initialTab)) activateTab(initialTab);
 
   // Script filters

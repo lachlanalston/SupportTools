@@ -6,9 +6,17 @@
     "explanation": "The A record translates a human-readable domain name into a machine-readable IPv4 address. When a browser connects to a site, it queries DNS for the A record to find the IP address. Multiple A records can exist for the same domain to distribute traffic across servers via round-robin DNS.",
     "format": "<name> <ttl> IN A <ipv4-address>",
     "example": "93.184.216.34",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "IPv4 address", "value": "93.184.216.34" }
+      ]
+    },
     "dig_command": "dig A example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tA\n\n;; ANSWER SECTION:\nexample.com.\t\t\t300\tIN\tA\t93.184.216.34",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["ipv4", "address", "routing", "fundamental"]
   },
   {
@@ -18,21 +26,37 @@
     "explanation": "The AAAA (Quad-A) record is the IPv6 equivalent of the A record. It maps a domain to a 128-bit IPv6 address. Most modern systems prefer AAAA over A records when both are present. As IPv4 exhaustion continues, AAAA records are increasingly important for dual-stack and IPv6-only environments.",
     "format": "<name> <ttl> IN AAAA <ipv6-address>",
     "example": "2606:2800:220:1:248:1893:25c8:1946",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "IPv6 address", "value": "2606:2800:220:1:248:1893:25c8:1946" }
+      ]
+    },
     "dig_command": "dig AAAA example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tAAAA\n\n;; ANSWER SECTION:\nexample.com.\t\t\t300\tIN\tAAAA\t2606:2800:220:1:248:1893:25c8:1946",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-aaaa-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-aaaa-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc3596",
     "tags": ["ipv6", "address", "routing"]
   },
   {
     "type": "CNAME",
     "category": "Address",
     "description": "Creates an alias that points one domain name to another.",
-    "explanation": "A CNAME (Canonical Name) record maps an alias name to the true canonical domain. DNS resolvers follow CNAME chains until reaching an A or AAAA record. CNAMEs cannot coexist with other record types at the same name and cannot be used at the zone apex (root domain) — use ALIAS/ANAME at apex instead.",
+    "explanation": "A CNAME (Canonical Name) record maps an alias name to the true canonical domain. DNS resolvers follow CNAME chains until reaching an A or AAAA record. CNAMEs cannot coexist with other record types at the same name and cannot be used at the zone apex (root domain) — use ALIAS or ANAME at the apex instead.",
     "format": "<alias> <ttl> IN CNAME <canonical-name>",
-    "example": "www.example.com. → example.com.",
+    "example": "www → example.com.",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "www" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Target", "value": "example.com" }
+      ]
+    },
     "dig_command": "dig CNAME www.example.com",
     "dig_output": ";; QUESTION SECTION:\n;www.example.com.\t\t\tIN\tCNAME\n\n;; ANSWER SECTION:\nwww.example.com.\t\t300\tIN\tCNAME\texample.com.",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-cname-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-cname-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["alias", "canonical", "redirect", "subdomain"]
   },
   {
@@ -42,9 +66,18 @@
     "explanation": "MX (Mail Exchanger) records direct incoming email to the correct mail servers. Each record has a priority value — lower numbers are tried first. Multiple MX records provide redundancy and load balancing. MX records must point to hostnames with A or AAAA records — never directly to IP addresses.",
     "format": "<name> <ttl> IN MX <priority> <mail-server>",
     "example": "10 aspmx.l.google.com.",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Priority", "value": "10" },
+        { "label": "Mail server", "value": "aspmx.l.google.com" }
+      ]
+    },
     "dig_command": "dig MX example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tMX\n\n;; ANSWER SECTION:\nexample.com.\t\t\t300\tIN\tMX\t10 aspmx.l.google.com.\nexample.com.\t\t\t300\tIN\tMX\t20 alt1.aspmx.l.google.com.\nexample.com.\t\t\t300\tIN\tMX\t30 alt2.aspmx.l.google.com.",
-    "learn_more_url": "https://www.cloudflare.com/learning/email-security/what-is-a-mx-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-mx-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["email", "mail", "smtp", "exchanger", "priority"]
   },
   {
@@ -53,22 +86,39 @@
     "description": "Declares which mail servers are authorised to send email on behalf of a domain.",
     "explanation": "SPF (Sender Policy Framework) is published as a TXT record. It tells receiving mail servers which IP addresses and hosts are authorised to send email for your domain. Receiving servers check SPF during the SMTP session and can reject or flag mail from unlisted sources. A domain should have exactly one SPF record. Results: pass, fail, softfail (~all), neutral, or permerror.",
     "format": "\"v=spf1 <mechanisms> <all-modifier>\"",
-    "example": "v=spf1 include:_spf.google.com include:spf.protection.outlook.com ~all",
+    "example": "v=spf1 include:_spf.google.com ~all",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Content", "value": "v=spf1 include:_spf.google.com include:spf.protection.outlook.com ~all" }
+      ]
+    },
     "dig_command": "dig TXT example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tTXT\n\n;; ANSWER SECTION:\nexample.com.\t\t\t300\tIN\tTXT\t\"v=spf1 include:_spf.google.com include:spf.protection.outlook.com ~all\"",
-    "learn_more_url": "https://www.cloudflare.com/learning/email-security/what-is-a-spf-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc7208",
     "tags": ["email", "authentication", "spam", "spf", "security", "txt"]
   },
   {
     "type": "DKIM",
     "category": "Mail",
     "description": "Publishes the public key used to verify cryptographic signatures on outgoing email.",
-    "explanation": "DKIM (DomainKeys Identified Mail) uses public-key cryptography to sign outgoing messages. The sending server signs mail with a private key; the receiving server looks up the DKIM TXT record at <selector>._domainkey.<domain> to retrieve the public key and verify the signature. This proves the email genuinely came from the domain and wasn't modified in transit.",
+    "explanation": "DKIM (DomainKeys Identified Mail) uses public-key cryptography to sign outgoing messages. The sending server signs mail with a private key; the receiving server looks up the DKIM TXT record at <selector>._domainkey.<domain> to retrieve the public key and verify the signature. The public key and selector name are provided by your mail provider (Google, Microsoft, etc.).",
     "format": "\"v=DKIM1; k=rsa; p=<base64-public-key>\"",
-    "example": "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GN...",
+    "example": "v=DKIM1; k=rsa; p=MIGfMA0G...",
+    "add_example": {
+      "note": "The Name and Content values are provided by your mail provider — copy them exactly as given.",
+      "fields": [
+        { "label": "Name", "value": "selector1._domainkey" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Content", "value": "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GN..." }
+      ]
+    },
     "dig_command": "dig TXT selector1._domainkey.example.com",
     "dig_output": ";; QUESTION SECTION:\n;selector1._domainkey.example.com.\tIN\tTXT\n\n;; ANSWER SECTION:\nselector1._domainkey.example.com. 300 IN TXT \"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC3vU...\"",
-    "learn_more_url": "https://www.cloudflare.com/learning/email-security/what-is-a-dkim-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-dkim-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc6376",
     "tags": ["email", "authentication", "signature", "dkim", "security", "txt"]
   },
   {
@@ -77,10 +127,18 @@
     "description": "Defines the policy for handling email that fails SPF or DKIM checks.",
     "explanation": "DMARC (Domain-based Message Authentication, Reporting and Conformance) builds on SPF and DKIM. It instructs receiving servers what to do when email fails authentication: none (monitor only), quarantine (spam folder), or reject (block entirely). It also specifies where to send aggregate reports so you can see who is sending email on your behalf. Published as a TXT record at _dmarc.<domain>.",
     "format": "\"v=DMARC1; p=<policy>; rua=mailto:<report-address>\"",
-    "example": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com; pct=100",
+    "example": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "_dmarc" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Content", "value": "v=DMARC1; p=reject; rua=mailto:dmarc@example.com; pct=100" }
+      ]
+    },
     "dig_command": "dig TXT _dmarc.example.com",
     "dig_output": ";; QUESTION SECTION:\n;_dmarc.example.com.\t\t\tIN\tTXT\n\n;; ANSWER SECTION:\n_dmarc.example.com.\t\t300\tIN\tTXT\t\"v=DMARC1; p=reject; rua=mailto:dmarc@example.com; pct=100\"",
-    "learn_more_url": "https://www.cloudflare.com/learning/email-security/what-is-a-dmarc-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-dmarc-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc7489",
     "tags": ["email", "authentication", "policy", "dmarc", "security", "reporting", "txt"]
   },
   {
@@ -89,10 +147,18 @@
     "description": "Links a verified brand logo to authenticated email for display in supporting mail clients.",
     "explanation": "BIMI (Brand Indicators for Message Identification) is a TXT record at default._bimi.<domain> that links a domain to a brand logo displayed in supporting email clients (Gmail, Apple Mail, Yahoo Mail). Requires DMARC enforcement (p=quarantine or p=reject). Full inbox display in Gmail also requires a Verified Mark Certificate (VMC) proving trademark ownership.",
     "format": "\"v=BIMI1; l=<svg-logo-url>; a=<vmc-url>\"",
-    "example": "v=BIMI1; l=https://example.com/logo.svg; a=https://example.com/cert.pem",
+    "example": "v=BIMI1; l=https://example.com/logo.svg",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "default._bimi" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Content", "value": "v=BIMI1; l=https://example.com/logo.svg; a=https://example.com/cert.pem" }
+      ]
+    },
     "dig_command": "dig TXT default._bimi.example.com",
     "dig_output": ";; QUESTION SECTION:\n;default._bimi.example.com.\t\tIN\tTXT\n\n;; ANSWER SECTION:\ndefault._bimi.example.com.\t300\tIN\tTXT\t\"v=BIMI1; l=https://example.com/logo.svg; a=https://example.com/cert.pem\"",
-    "learn_more_url": "https://bimigroup.org/bimi-explained/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/email-security/dmarc-dkim-spf/",
+    "rfc_url": "https://bimigroup.org/bimi-explained/",
     "tags": ["email", "brand", "logo", "bimi", "authentication", "txt"]
   },
   {
@@ -102,9 +168,18 @@
     "explanation": "MTA-STS (Mail Transfer Agent Strict Transport Security) is a TXT record at _mta-sts.<domain> that tells sending mail servers your domain requires TLS-encrypted SMTP. The DNS record points to a policy file hosted via HTTPS that specifies the enforcement mode (enforce, testing, or none) and the expected MX hostnames. Prevents downgrade attacks on email in transit.",
     "format": "\"v=STSv1; id=<policy-id>\"",
     "example": "v=STSv1; id=20240101120000Z",
+    "add_example": {
+      "note": "Also requires a policy file hosted at https://mta-sts.<domain>/.well-known/mta-sts.txt",
+      "fields": [
+        { "label": "Name", "value": "_mta-sts" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Content", "value": "v=STSv1; id=20240101120000Z" }
+      ]
+    },
     "dig_command": "dig TXT _mta-sts.example.com",
     "dig_output": ";; QUESTION SECTION:\n;_mta-sts.example.com.\t\t\tIN\tTXT\n\n;; ANSWER SECTION:\n_mta-sts.example.com.\t\t300\tIN\tTXT\t\"v=STSv1; id=20240101120000Z\"",
-    "learn_more_url": "https://www.cloudflare.com/learning/email-security/what-is-mta-sts/",
+    "cloudflare_url": "https://developers.cloudflare.com/email-routing/setup/mta-sts/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc8461",
     "tags": ["email", "tls", "encryption", "mta-sts", "security", "transport", "txt"]
   },
   {
@@ -114,9 +189,18 @@
     "explanation": "NS (Name Server) records delegate a DNS zone to a set of authoritative name servers. When resolvers look up a domain, they follow NS delegations from root servers down to the authoritative server. You typically have at least two NS records for redundancy. NS records are configured at your domain registrar, not your DNS hosting provider.",
     "format": "<name> <ttl> IN NS <name-server>",
     "example": "ns1.example.com.",
+    "add_example": {
+      "note": "NS records for the zone apex are managed at your domain registrar, not in your DNS panel.",
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "86400" },
+        { "label": "Name server", "value": "ns1.example.com" }
+      ]
+    },
     "dig_command": "dig NS example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tNS\n\n;; ANSWER SECTION:\nexample.com.\t\t\t86400\tIN\tNS\tns1.example.com.\nexample.com.\t\t\t86400\tIN\tNS\tns2.example.com.",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-ns-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-ns-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["name-server", "delegation", "authoritative", "zone", "fundamental"]
   },
   {
@@ -125,10 +209,15 @@
     "description": "Contains administrative information about a DNS zone — mandatory for every zone.",
     "explanation": "The SOA (Start of Authority) record is required in every DNS zone. It identifies the primary name server, the responsible admin's email (with @ replaced by .), and timing parameters including serial number, refresh interval, retry interval, expiry TTL, and minimum TTL. The serial number must be incremented each time zone data changes so secondary servers know to pull updates.",
     "format": "<name> <ttl> IN SOA <primary-ns> <admin-email> (<serial> <refresh> <retry> <expire> <minimum>)",
-    "example": "ns1.example.com. admin.example.com. 2024041901 3600 900 604800 300",
+    "example": "ns1.example.com. admin.example.com. 2024041901",
+    "add_example": {
+      "note": "SOA records are automatically managed by your DNS provider — you typically cannot and should not edit them directly.",
+      "fields": []
+    },
     "dig_command": "dig SOA example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nexample.com.\t\t\t3600\tIN\tSOA\tns1.example.com. admin.example.com. 2024041901 3600 900 604800 300",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-soa-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-soa-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["zone", "authority", "serial", "refresh", "ttl", "fundamental"]
   },
   {
@@ -137,22 +226,39 @@
     "description": "Stores arbitrary text data — used for domain verification, policy, and service configuration.",
     "explanation": "TXT records store freeform text strings associated with a domain. They are used for domain ownership verification (Google, Microsoft, etc.), email authentication policies (SPF, DMARC), and various other service configurations. A domain can have multiple TXT records. Individual strings are limited to 255 characters, but multiple strings within a single record are concatenated by resolvers.",
     "format": "<name> <ttl> IN TXT \"<text-string>\"",
-    "example": "google-site-verification=abc123xyz456def",
+    "example": "google-site-verification=abc123xyz",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Content", "value": "google-site-verification=abc123xyz456def" }
+      ]
+    },
     "dig_command": "dig TXT example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tTXT\n\n;; ANSWER SECTION:\nexample.com.\t\t\t300\tIN\tTXT\t\"google-site-verification=abc123xyz456def\"\nexample.com.\t\t\t300\tIN\tTXT\t\"v=spf1 include:_spf.google.com ~all\"",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-txt-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-txt-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["text", "verification", "generic", "spf", "fundamental"]
   },
   {
     "type": "PTR",
     "category": "Service",
     "description": "Maps an IP address back to a hostname — used for reverse DNS lookups.",
-    "explanation": "PTR (Pointer) records are the reverse of A records — they map an IP address to a hostname. They live in special reverse DNS zones (e.g. 1.0.0.10.in-addr.arpa for 10.0.0.1). PTR records are set by the IP address owner (usually your ISP or hosting provider). Used for email deliverability checks, network logging, and diagnostics.",
+    "explanation": "PTR (Pointer) records are the reverse of A records — they map an IP address to a hostname. They live in special reverse DNS zones (e.g. 1.0.0.10.in-addr.arpa for 10.0.0.1). PTR records must be set by whoever owns the IP block — usually your ISP or hosting provider, not your DNS registrar. Used for email deliverability checks, network logging, and diagnostics.",
     "format": "<reversed-ip>.in-addr.arpa. <ttl> IN PTR <hostname>",
     "example": "34.216.184.93.in-addr.arpa. → example.com.",
+    "add_example": {
+      "note": "PTR records are set by your ISP or hosting provider who owns the IP block — not in your standard DNS panel. Request this via your provider's portal or support.",
+      "fields": [
+        { "label": "IP address", "value": "93.184.216.34" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Hostname", "value": "example.com" }
+      ]
+    },
     "dig_command": "dig -x 93.184.216.34",
     "dig_output": ";; QUESTION SECTION:\n;34.216.184.93.in-addr.arpa.\t\tIN\tPTR\n\n;; ANSWER SECTION:\n34.216.184.93.in-addr.arpa.\t300\tIN\tPTR\texample.com.",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-ptr-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-ptr-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["reverse-dns", "rdns", "ip", "pointer", "email", "arpa"]
   },
   {
@@ -161,10 +267,21 @@
     "description": "Specifies the hostname and port for a specific service — used for autodiscovery.",
     "explanation": "SRV (Service) records locate specific services by encoding the service name and protocol in the DNS name itself (_service._proto.domain). Each record includes priority, weight, port, and target host. Priority and weight enable load balancing and failover. Used for Microsoft 365 autodiscovery, SIP/VoIP, XMPP, and other application-layer protocols.",
     "format": "_<service>._<proto>.<name> <ttl> IN SRV <priority> <weight> <port> <target>",
-    "example": "_sipfederationtls._tcp.example.com. → 100 1 5061 sipfed.online.lync.com.",
+    "example": "100 1 5061 sipfed.online.lync.com.",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "_sipfederationtls._tcp" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Priority", "value": "100" },
+        { "label": "Weight", "value": "1" },
+        { "label": "Port", "value": "5061" },
+        { "label": "Target", "value": "sipfed.online.lync.com" }
+      ]
+    },
     "dig_command": "dig SRV _sipfederationtls._tcp.example.com",
     "dig_output": ";; QUESTION SECTION:\n;_sipfederationtls._tcp.example.com.\tIN\tSRV\n\n;; ANSWER SECTION:\n_sipfederationtls._tcp.example.com. 300 IN SRV 100 1 5061 sipfed.online.lync.com.",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-srv-record/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc2782",
     "tags": ["service", "port", "sip", "autodiscover", "voip", "m365", "xmpp"]
   },
   {
@@ -174,9 +291,22 @@
     "explanation": "NAPTR (Naming Authority Pointer) records allow complex rewriting and delegation of domain names to URIs, services, or other records. Used in ENUM (telephone number to domain mapping), SIP/VoIP service discovery, and application-layer routing. Each record has an order, preference, flags, service type, regex pattern, and replacement value evaluated in sequence.",
     "format": "<name> <ttl> IN NAPTR <order> <pref> \"<flags>\" \"<service>\" \"<regexp>\" <replacement>",
     "example": "100 10 \"S\" \"SIP+D2T\" \"\" _sip._tcp.example.com.",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Order", "value": "100" },
+        { "label": "Preference", "value": "10" },
+        { "label": "Flags", "value": "S" },
+        { "label": "Service", "value": "SIP+D2T" },
+        { "label": "Regexp", "value": "(empty)" },
+        { "label": "Replacement", "value": "_sip._tcp.example.com" }
+      ]
+    },
     "dig_command": "dig NAPTR example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tNAPTR\n\n;; ANSWER SECTION:\nexample.com.\t\t\t300\tIN\tNAPTR\t100 10 \"S\" \"SIP+D2T\" \"\" _sip._tcp.example.com.\nexample.com.\t\t\t300\tIN\tNAPTR\t100 10 \"S\" \"SIP+D2U\" \"\" _sip._udp.example.com.",
-    "learn_more_url": "https://www.rfc-editor.org/rfc/rfc2915",
+    "cloudflare_url": "https://blog.cloudflare.com/additional-record-types-available-with-cloudflare-dns/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc3403",
     "tags": ["naptr", "voip", "sip", "enum", "routing", "rewrite"]
   },
   {
@@ -186,9 +316,19 @@
     "explanation": "CAA (Certification Authority Authorization) records let domain owners control which CAs can issue TLS certificates for their domain. Before issuing a certificate, compliant CAs must check for CAA records and refuse if they are not listed. The 'issue' tag permits standard cert issuance, 'issuewild' for wildcard certs, and 'iodef' specifies a URL or email for policy violation reports.",
     "format": "<name> <ttl> IN CAA <flags> <tag> \"<value>\"",
     "example": "0 issue \"letsencrypt.org\"",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "3600" },
+        { "label": "Flags", "value": "0" },
+        { "label": "Tag", "value": "issue" },
+        { "label": "Value", "value": "letsencrypt.org" }
+      ]
+    },
     "dig_command": "dig CAA example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tCAA\n\n;; ANSWER SECTION:\nexample.com.\t\t\t3600\tIN\tCAA\t0 issue \"letsencrypt.org\"\nexample.com.\t\t\t3600\tIN\tCAA\t0 issuewild \";\"\nexample.com.\t\t\t3600\tIN\tCAA\t0 iodef \"mailto:security@example.com\"",
-    "learn_more_url": "https://www.cloudflare.com/learning/ssl/what-is-a-caa-record/",
+    "cloudflare_url": "https://developers.cloudflare.com/ssl/edge-certificates/caa-records/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc8659",
     "tags": ["certificate", "tls", "ssl", "ca", "security", "authorization"]
   },
   {
@@ -197,10 +337,22 @@
     "description": "Binds a TLS certificate or public key to a specific port and protocol via DANE.",
     "explanation": "TLSA records implement DANE (DNS-based Authentication of Named Entities). They bind a TLS certificate or public key to a specific port/protocol, stored at _<port>._<proto>.<domain>. This lets clients verify TLS certificates via DNS (secured with DNSSEC) rather than relying solely on CAs. Primarily used for email (SMTP port 25) to prevent certificate substitution attacks.",
     "format": "_<port>._<proto>.<name> <ttl> IN TLSA <usage> <selector> <matching-type> <cert-data>",
-    "example": "3 1 1 abc123def456789abcdef...",
+    "example": "3 1 1 abc123def456...",
+    "add_example": {
+      "note": "Support varies by DNS provider. The certificate hash is generated from your TLS certificate using a tool like tlsa.se or openssl.",
+      "fields": [
+        { "label": "Name", "value": "_25._tcp.mail" },
+        { "label": "TTL", "value": "Auto" },
+        { "label": "Usage", "value": "3" },
+        { "label": "Selector", "value": "1" },
+        { "label": "Matching type", "value": "1" },
+        { "label": "Certificate", "value": "abc123def456789abcdef..." }
+      ]
+    },
     "dig_command": "dig TLSA _25._tcp.mail.example.com",
     "dig_output": ";; QUESTION SECTION:\n;_25._tcp.mail.example.com.\t\tIN\tTLSA\n\n;; ANSWER SECTION:\n_25._tcp.mail.example.com.\t300\tIN\tTLSA\t3 1 1 abc123def456789abcdef0123456789abcdef0123456789abcdef01234567",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dns-tlsa-record/",
+    "cloudflare_url": "https://blog.cloudflare.com/additional-record-types-available-with-cloudflare-dns/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc6698",
     "tags": ["tls", "certificate", "dane", "smtp", "security", "dnssec"]
   },
   {
@@ -209,22 +361,37 @@
     "description": "Stores the public key used to verify DNSSEC signatures in a zone.",
     "explanation": "DNSKEY records hold the public cryptographic keys used in DNSSEC. Two types exist: the Zone Signing Key (ZSK, flag 256) used to sign individual resource records, and the Key Signing Key (KSK, flag 257) used to sign the ZSK. Validating resolvers use these keys to verify the authenticity and integrity of DNS responses and confirm they have not been tampered with.",
     "format": "<name> <ttl> IN DNSKEY <flags> <protocol> <algorithm> <public-key>",
-    "example": "257 3 13 mdsswUyr3DPW132mOi8V9xESWE8jTo0d...",
+    "example": "257 3 13 mdsswUyr3DPW...",
+    "add_example": {
+      "note": "DNSKEY records are auto-generated when you enable DNSSEC on your zone in your DNS provider's control panel — you do not add them manually.",
+      "fields": []
+    },
     "dig_command": "dig DNSKEY example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tDNSKEY\n\n;; ANSWER SECTION:\nexample.com.\t\t\t3600\tIN\tDNSKEY\t257 3 13 mdsswUyr3DPW132mOi8V9xESWE8jTo0dxCjjnopKl+GqJxpVXckHAeF+KkxLbxILfDLUT0rAK9iUzy1L53eKGQ==\nexample.com.\t\t\t3600\tIN\tDNSKEY\t256 3 13 oJMRESz5E4gYzS/q6XDrvU1qMPYIjCWzJaOau8XNEZeqCYKD5ar0IRd8KqXXFJkqmVfRvMGPmM1x8fGAa2XhSA==",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dnskey-ds-resource-records/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dnskey-ds-records/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc4034",
     "tags": ["dnssec", "key", "signing", "security", "cryptography"]
   },
   {
     "type": "DS",
     "category": "Security",
     "description": "Contains a hash of a child zone's DNSKEY — establishes the DNSSEC chain of trust.",
-    "explanation": "DS (Delegation Signer) records create the chain of trust in DNSSEC. A parent zone stores a DS record containing a cryptographic hash of the child zone's Key Signing Key (KSK). When validating resolvers follow a delegation, they verify the child's DNSKEY against the parent's DS record. DS records are stored at the parent zone and registered with your domain registrar.",
+    "explanation": "DS (Delegation Signer) records create the chain of trust in DNSSEC. A parent zone stores a DS record containing a cryptographic hash of the child zone's Key Signing Key (KSK). When validating resolvers follow a delegation, they verify the child's DNSKEY against the parent's DS record. DS records are registered with your domain registrar after enabling DNSSEC on the zone.",
     "format": "<name> <ttl> IN DS <key-tag> <algorithm> <digest-type> <digest>",
-    "example": "31589 8 2 CDE0D742D6998AA554A92D890F8184C6989780...",
+    "example": "31589 8 2 CDE0D742D699...",
+    "add_example": {
+      "note": "DS records are added at your domain registrar after enabling DNSSEC. The values are provided by your DNS provider's DNSSEC settings page.",
+      "fields": [
+        { "label": "Key tag", "value": "31589" },
+        { "label": "Algorithm", "value": "8" },
+        { "label": "Digest type", "value": "2" },
+        { "label": "Digest", "value": "CDE0D742D6998AA554A92D890F8184C698978028..." }
+      ]
+    },
     "dig_command": "dig DS example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tDS\n\n;; ANSWER SECTION:\nexample.com.\t\t\t3600\tIN\tDS\t31589 8 1 3490A6806D47F17A34C29E2CE80E8A999FFBE4BE\nexample.com.\t\t\t3600\tIN\tDS\t31589 8 2 CDE0D742D6998AA554A92D890F8184C698978028A1B7E4B9D73C63F2312AF37",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-records/dnskey-ds-resource-records/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-records/dnskey-ds-records/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc4034",
     "tags": ["dnssec", "delegation", "trust", "security", "hash"]
   },
   {
@@ -233,22 +400,32 @@
     "description": "Contains a cryptographic signature covering a set of DNS records — part of DNSSEC.",
     "explanation": "RRSIG (Resource Record Signature) records hold digital signatures used in DNSSEC validation. Every signed record set in a DNSSEC-enabled zone has a corresponding RRSIG. The signature covers the record type, algorithm, TTL, validity window, and the record data. Validating resolvers verify RRSIGs against the corresponding DNSKEY to confirm the response is authentic.",
     "format": "<name> <ttl> IN RRSIG <type> <alg> <labels> <orig-ttl> <expiry> <inception> <key-tag> <signer> <sig>",
-    "example": "A 13 2 300 20240519000000 20240419000000 12345 example.com. abc123==",
+    "example": "A 13 2 300 20240519000000 20240419000000 12345 example.com.",
+    "add_example": {
+      "note": "RRSIG records are auto-generated by your DNS provider when DNSSEC is enabled — they cannot be added manually.",
+      "fields": []
+    },
     "dig_command": "dig A example.com +dnssec",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tA\n\n;; ANSWER SECTION:\nexample.com.\t\t\t300\tIN\tA\t93.184.216.34\nexample.com.\t\t\t300\tIN\tRRSIG\tA 13 2 300 20240519000000 20240419000000 12345 example.com. abc123xyz456==",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-security/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-security/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc4034",
     "tags": ["dnssec", "signature", "security", "cryptography", "validation"]
   },
   {
     "type": "NSEC",
     "category": "Security",
     "description": "Proves the non-existence of a DNS record — part of DNSSEC authenticated denial.",
-    "explanation": "NSEC (Next Secure) records enable authenticated denial of existence in DNSSEC. When queried for a name or type that does not exist, the authoritative server returns an NSEC record pointing to the next existing name in the zone along with a bitmap of which record types do exist at the current name. This prevents cache poisoning via forged NXDOMAIN responses.",
+    "explanation": "NSEC (Next Secure) records enable authenticated denial of existence in DNSSEC. When queried for a name or type that does not exist, the authoritative server returns an NSEC record pointing to the next existing name in the zone along with a bitmap of which record types exist at the current name. This prevents cache poisoning via forged NXDOMAIN responses.",
     "format": "<name> <ttl> IN NSEC <next-name> <type-bitmap>",
     "example": "www.example.com. A NS SOA MX TXT AAAA RRSIG NSEC DNSKEY",
+    "add_example": {
+      "note": "NSEC records are auto-generated by your DNS provider when DNSSEC is enabled — they cannot be added manually.",
+      "fields": []
+    },
     "dig_command": "dig NSEC example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tNSEC\n\n;; ANSWER SECTION:\nexample.com.\t\t\t3600\tIN\tNSEC\twww.example.com. A NS SOA MX TXT AAAA RRSIG NSEC DNSKEY",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-security/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-security/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc4034",
     "tags": ["dnssec", "non-existence", "security", "denial", "nxdomain"]
   },
   {
@@ -257,22 +434,36 @@
     "description": "Hashed version of NSEC — proves non-existence without revealing zone contents.",
     "explanation": "NSEC3 improves on NSEC by using hashed owner names instead of plain names, preventing zone enumeration (zone walking). Includes a hash algorithm, iteration count, and salt to increase the cost of brute-force attacks against the hashes. An accompanying NSEC3PARAM record tells authoritative servers which parameters to use. Most modern DNSSEC deployments prefer NSEC3 over NSEC.",
     "format": "<hashed-name> <ttl> IN NSEC3 <hash-alg> <flags> <iterations> <salt> <next-hashed> <type-bitmap>",
-    "example": "1 0 10 aabbccdd ABC123XYZ... A NS SOA MX TXT AAAA RRSIG",
+    "example": "1 0 10 aabbccdd ABC123XYZ... A NS SOA MX",
+    "add_example": {
+      "note": "NSEC3 records are auto-generated by your DNS provider when DNSSEC is enabled — they cannot be added manually.",
+      "fields": []
+    },
     "dig_command": "dig NSEC3PARAM example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tNSEC3PARAM\n\n;; ANSWER SECTION:\nexample.com.\t\t\t0\tIN\tNSEC3PARAM\t1 0 10 aabbccdd",
-    "learn_more_url": "https://www.cloudflare.com/learning/dns/dns-security/",
+    "cloudflare_url": "https://www.cloudflare.com/learning/dns/dns-security/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc5155",
     "tags": ["dnssec", "hashed", "non-existence", "security", "zone-walking"]
   },
   {
     "type": "HINFO",
     "category": "General",
     "description": "Describes the CPU type and operating system of a host.",
-    "explanation": "HINFO (Host Information) records store the CPU type and OS of a host as free-text strings. Originally intended to help network administrators document what machines existed on a network, HINFO records are rarely used today — they expose system information to anyone querying DNS, which is a security concern. Still valid and supported by most DNS implementations.",
+    "explanation": "HINFO (Host Information) records store the CPU type and OS of a host as free-text strings. Originally intended to help network administrators document machines on a network, HINFO records are rarely used today — they expose system information to anyone querying DNS, which is a security concern. Still valid and supported by most DNS implementations.",
     "format": "<name> <ttl> IN HINFO \"<cpu>\" \"<os>\"",
     "example": "\"INTEL-XEON\" \"LINUX\"",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "host" },
+        { "label": "TTL", "value": "300" },
+        { "label": "CPU", "value": "INTEL-XEON" },
+        { "label": "OS", "value": "LINUX" }
+      ]
+    },
     "dig_command": "dig HINFO host.example.com",
     "dig_output": ";; QUESTION SECTION:\n;host.example.com.\t\t\tIN\tHINFO\n\n;; ANSWER SECTION:\nhost.example.com.\t\t300\tIN\tHINFO\t\"INTEL-XEON\" \"LINUX\"",
-    "learn_more_url": "https://www.rfc-editor.org/rfc/rfc1035",
+    "cloudflare_url": "https://blog.cloudflare.com/additional-record-types-available-with-cloudflare-dns/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1035",
     "tags": ["hardware", "os", "host", "legacy", "information"]
   },
   {
@@ -281,10 +472,20 @@
     "description": "Stores the physical geographic location of a host in WGS 84 coordinates.",
     "explanation": "LOC records encode the geographic location of a host using WGS 84 coordinates — latitude, longitude, altitude, and precision values. Stored in degrees/minutes/seconds format with optional size and horizontal/vertical precision fields. Not widely used in practice but supported by most DNS implementations. Useful for infrastructure documentation, network mapping, and geolocation-aware services.",
     "format": "<name> <ttl> IN LOC <d> <m> <s> <N/S> <d> <m> <s> <E/W> <alt> <size> <hp> <vp>",
-    "example": "37 46 29.744 N 122 25 9.867 W 0m 1m 10000m 10m",
+    "example": "37 46 29.744 N 122 25 9.867 W 0m",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "3600" },
+        { "label": "Latitude", "value": "37 46 29.744 N" },
+        { "label": "Longitude", "value": "122 25 9.867 W" },
+        { "label": "Altitude", "value": "0m" }
+      ]
+    },
     "dig_command": "dig LOC example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tLOC\n\n;; ANSWER SECTION:\nexample.com.\t\t\t3600\tIN\tLOC\t37 46 29.744 N 122 25 9.867 W 0m 1m 10000m 10m",
-    "learn_more_url": "https://www.rfc-editor.org/rfc/rfc1876",
+    "cloudflare_url": "https://blog.cloudflare.com/the-weird-and-wonderful-world-of-dns-loc-records/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1876",
     "tags": ["location", "geolocation", "latitude", "longitude", "coordinates"]
   },
   {
@@ -294,9 +495,18 @@
     "explanation": "RP (Responsible Person) records identify who is responsible for a particular host or domain. They contain two fields: an email address in DNS format (@ replaced by .) and a pointer to a TXT record with additional contact information. Rarely used in modern deployments but still a valid record type. Provides a standardised way to embed administrative contact information directly in DNS.",
     "format": "<name> <ttl> IN RP <mailbox> <txt-record>",
     "example": "admin.example.com. contact.example.com.",
+    "add_example": {
+      "fields": [
+        { "label": "Name", "value": "@" },
+        { "label": "TTL", "value": "3600" },
+        { "label": "Mailbox", "value": "admin.example.com." },
+        { "label": "TXT record", "value": "contact.example.com." }
+      ]
+    },
     "dig_command": "dig RP example.com",
     "dig_output": ";; QUESTION SECTION:\n;example.com.\t\t\t\tIN\tRP\n\n;; ANSWER SECTION:\nexample.com.\t\t\t3600\tIN\tRP\tadmin.example.com. contact.example.com.",
-    "learn_more_url": "https://www.rfc-editor.org/rfc/rfc1183",
+    "cloudflare_url": "https://blog.cloudflare.com/additional-record-types-available-with-cloudflare-dns/",
+    "rfc_url": "https://www.rfc-editor.org/rfc/rfc1183",
     "tags": ["contact", "responsible", "person", "admin", "legacy"]
   }
 ]

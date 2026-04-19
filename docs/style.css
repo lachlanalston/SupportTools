@@ -828,6 +828,63 @@ kbd {
   margin: 8px 0 10px;
 }
 
+/* ─── DNS Add Record Table ──────────────────────────────────────── */
+.dns-add-note {
+  font-size: 0.78rem;
+  color: var(--sub);
+  line-height: 1.55;
+  padding: 8px 10px;
+  background: rgba(110,118,129,0.07);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+}
+
+.dns-add-table {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 16px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  overflow-x: auto;
+}
+
+.dns-add-row {
+  display: flex;
+}
+
+.dns-add-row span {
+  flex: 1;
+  min-width: 80px;
+  padding: 7px 10px;
+  border-right: 1px solid var(--border);
+  word-break: break-all;
+}
+
+.dns-add-row span:last-child {
+  border-right: none;
+  flex: 2;
+}
+
+.dns-add-header {
+  background: var(--border-sub);
+  border-bottom: 1px solid var(--border);
+}
+
+.dns-add-header span {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--sub2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dns-add-row:not(.dns-add-header) span {
+  color: #79c0ff;
+}
+
 /* Linux Terminal */
 .terminal-linux .terminal-titlebar {
   background: #2d2d2d;
