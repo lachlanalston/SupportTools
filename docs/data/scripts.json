@@ -307,16 +307,6 @@
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-hostname-health.sh"
   },
   {
-    "name": "checkEmail",
-    "file": "M365/checkEmail.ps1",
-    "platform": "m365",
-    "category": "M365",
-    "description": "Finds all recipients and distribution groups a given email address is associated with in Exchange Online.",
-    "tags": ["email", "recipient", "distribution-group", "exchange", "alias"],
-    "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/checkEmail.ps1"
-  },
-  {
     "name": "getCalPerms",
     "file": "M365/getCalPerms.ps1",
     "platform": "m365",
