@@ -1,6 +1,6 @@
 # SupportTools
 
-A curated toolbox of scripts and utilities built for MSPs and helpdesk techs.
+A curated toolbox of scripts, utilities, and DNS references built for MSPs and helpdesk techs.
 
 Browse everything at **[tools.lrfa.dev](http://tools.lrfa.dev)** — scripts, commands, shortcuts, bookmarks, and RFCs, all searchable in one place.
 
