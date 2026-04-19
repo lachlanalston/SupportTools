@@ -28,6 +28,7 @@ let scripts   = [];
 let bookmarks = [];
 let commands  = [];
 let rfcs      = [];
+let dns       = [];
 
 let activeTab      = 'scripts';
 let scriptFilter   = 'all';
@@ -35,26 +36,30 @@ let commandFilter  = 'all';
 let shortcutFilter = 'all';
 let bookmarkFilter = 'all';
 let rfcFilter      = 'all';
+let dnsFilter      = 'all';
 let searchQuery    = '';
 
 let fuseScripts   = null;
 let fuseBookmarks = null;
 let fuseCommands  = null;
 let fuseRfcs      = null;
+let fuseDns       = null;
 
 // ─── Load data ────────────────────────────────────────────────────
 async function loadData() {
-  const [s, b, c, r] = await Promise.all([
+  const [s, b, c, r, d] = await Promise.all([
     fetch('data/scripts.json').then(r => r.json()),
     fetch('data/bookmarks.json').then(r => r.json()),
     fetch('data/commands.json').then(r => r.json()),
     fetch('data/rfcs.json').then(r => r.json()),
+    fetch('data/dns.json').then(r => r.json()),
   ]);
 
   scripts   = s;
   bookmarks = b;
   commands  = c;
   rfcs      = r;
+  dns       = d;
 
   fuseScripts = new Fuse(scripts, {
     keys: ['name', 'description', 'tags', 'category'],
@@ -80,8 +85,15 @@ async function loadData() {
     includeScore: true,
   });
 
+  fuseDns = new Fuse(dns, {
+    keys: ['type', 'description', 'explanation', 'tags', 'category'],
+    threshold: 0.35,
+    includeScore: true,
+  });
+
   buildBookmarkFilters();
   buildRfcFilters();
+  buildDnsFilters();
   render();
 }
 
@@ -156,6 +168,7 @@ function render() {
   renderCommands();
   renderShortcuts();
   renderRfcs();
+  renderDns();
   updateCounts();
 }
 
@@ -291,6 +304,136 @@ function renderRfcs() {
   });
 }
 
+// ── DNS ──
+function buildDnsFilters() {
+  const categories = [...new Set(dns.map(r => r.category))];
+  const order      = ['Address', 'Mail', 'Name Server', 'Security', 'Service', 'General'];
+  categories.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+  const container = document.getElementById('dns-filters');
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-chip active';
+  allBtn.dataset.filter = 'all';
+  allBtn.textContent = 'All';
+  allBtn.addEventListener('click', () => {
+    dnsFilter = 'all';
+    container.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    allBtn.classList.add('active');
+    render();
+  });
+  container.appendChild(allBtn);
+
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip';
+    btn.dataset.filter = cat;
+    btn.textContent = cat;
+    btn.addEventListener('click', () => {
+      dnsFilter = cat;
+      container.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function renderDns() {
+  let data = getFiltered(dns, fuseDns, searchQuery);
+
+  if (dnsFilter !== 'all') {
+    data = data.filter(r => r.category === dnsFilter);
+  }
+
+  const grid  = document.getElementById('dns-grid');
+  const empty = document.getElementById('dns-empty');
+  grid.innerHTML = '';
+
+  if (!data.length) {
+    empty.hidden = false;
+    return;
+  }
+  empty.hidden = true;
+
+  data.forEach(record => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.platform = 'dns';
+    card.dataset.dnsCategory = record.category;
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-name">${esc(record.type)}</span>
+        <span class="badge badge-dns-${dnsCategoryKey(record.category)}">${esc(record.category)}</span>
+      </div>
+      <p class="card-desc">${esc(record.description)}</p>
+      <div class="card-value">${esc(record.example)}</div>
+    `;
+
+    card.addEventListener('click', () => openDnsModal(record));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openDnsModal(record); });
+    grid.appendChild(card);
+  });
+}
+
+function dnsCategoryKey(cat) {
+  return cat.toLowerCase().replace(/\s+/g, '-');
+}
+
+function dnsCategoryColor(cat) {
+  const map = {
+    'Address':     '#64b5f6',
+    'Mail':        '#f05322',
+    'Name Server': '#9b8af4',
+    'Security':    '#3fb950',
+    'Service':     '#26c6da',
+    'General':     '#8b949e',
+  };
+  return map[cat] || '#8b949e';
+}
+
+function openDnsModal(record) {
+  const color   = dnsCategoryColor(record.category);
+  const extIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M3.75 2h3.5a.75.75 0 010 1.5h-3.5a.25.25 0 00-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25v-3.5a.75.75 0 011.5 0v3.5A1.75 1.75 0 0112.25 14h-8.5A1.75 1.75 0 012 12.25v-8.5C2 2.784 2.784 2 3.75 2zm6.854-1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1z"/></svg>`;
+
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <div class="modal-platform-bar" style="background: ${color};"></div>
+    <h2 class="modal-name">${esc(record.type)}</h2>
+    <div class="modal-badges">
+      <span class="badge badge-dns-${dnsCategoryKey(record.category)}">${esc(record.category)}</span>
+    </div>
+    <p class="modal-desc">${esc(record.explanation)}</p>
+    <div class="modal-section-label">Format</div>
+    <div class="modal-value">${esc(record.format)}</div>
+    <div class="modal-section-label">dig Output</div>
+    <div class="terminal terminal-linux">
+      <div class="terminal-titlebar">
+        <span class="terminal-title">bash</span>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-line">
+          <span class="terminal-prompt">$</span>
+          <span class="terminal-cmd">${esc(record.dig_command)}</span>
+        </div>
+        <pre class="terminal-output">${esc(record.dig_output)}</pre>
+      </div>
+    </div>
+    <div class="modal-section-label" style="margin-top:16px;">Tags</div>
+    <div class="modal-tags">${record.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <div class="modal-actions">
+      <a class="btn btn-secondary" href="${esc(record.learn_more_url)}" target="_blank" rel="noopener">
+        ${extIcon} Learn more
+      </a>
+    </div>
+  `;
+
+  showModal();
+}
+
 // ── Commands ──
 function renderCommands() {
   let data = getFiltered(commands, fuseCommands, searchQuery).filter(c => c.type === 'command');
@@ -384,6 +527,7 @@ function updateCounts() {
   document.getElementById('count-commands').textContent  = document.querySelectorAll('#commands-grid .card').length;
   document.getElementById('count-shortcuts').textContent = document.querySelectorAll('#shortcuts-grid .card').length;
   document.getElementById('count-rfcs').textContent      = document.querySelectorAll('#rfcs-grid .card').length;
+  document.getElementById('count-dns').textContent       = document.querySelectorAll('#dns-grid .card').length;
 }
 
 // ─── Modals ───────────────────────────────────────────────────────
@@ -525,9 +669,26 @@ function openCommandModal(cmd) {
         </div>
       </div>`;
   } else {
+    const prereq = cmd.prereq ? `
+          <div class="terminal-prereq-note">${esc(cmd.prereq.label)}</div>
+          <div class="terminal-line">
+            <span class="terminal-prompt">PS C:\\&gt;</span>
+            <span class="terminal-cmd terminal-cmd-dim">${esc(cmd.prereq.value)}</span>
+          </div>
+          <hr class="terminal-divider">` : '';
     commandBlock = `
       <div class="modal-section-label">Command</div>
-      <div class="modal-value">${esc(cmd.value)}</div>`;
+      <div class="terminal terminal-ps">
+        <div class="terminal-titlebar">
+          <span class="terminal-title">Windows PowerShell</span>
+        </div>
+        <div class="terminal-body">${prereq}
+          <div class="terminal-line">
+            <span class="terminal-prompt">PS C:\\&gt;</span>
+            <span class="terminal-cmd">${esc(cmd.value)}</span>
+          </div>
+        </div>
+      </div>`;
   }
 
   const body = document.getElementById('modal-body');
@@ -681,16 +842,31 @@ function init() {
   });
 
   // Tabs
+  const VALID_TABS = new Set(['scripts', 'commands', 'shortcuts', 'bookmarks', 'rfcs', 'dns']);
+
+  function activateTab(name) {
+    if (!VALID_TABS.has(name)) name = 'scripts';
+    document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    const tab = document.querySelector(`.tab[data-tab="${name}"]`);
+    if (tab) { tab.classList.add('active'); tab.setAttribute('aria-selected', 'true'); }
+    document.getElementById(`tab-${name}`).classList.add('active');
+    activeTab = name;
+  }
+
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      tab.setAttribute('aria-selected', 'true');
-      activeTab = tab.dataset.tab;
-      document.getElementById(`tab-${activeTab}`).classList.add('active');
+      activateTab(tab.dataset.tab);
+      history.replaceState(null, '', `#${tab.dataset.tab}`);
     });
   });
+
+  window.addEventListener('hashchange', () => {
+    activateTab(location.hash.slice(1));
+  });
+
+  const initialTab = location.hash.slice(1);
+  if (VALID_TABS.has(initialTab)) activateTab(initialTab);
 
   // Script filters
   document.getElementById('script-filters').addEventListener('click', e => {
@@ -719,6 +895,16 @@ function init() {
     document.querySelectorAll('#shortcut-filters .filter-chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     shortcutFilter = chip.dataset.filter;
+    render();
+  });
+
+  // DNS filters
+  document.getElementById('dns-filters').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('#dns-filters .filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    dnsFilter = chip.dataset.filter;
     render();
   });
 

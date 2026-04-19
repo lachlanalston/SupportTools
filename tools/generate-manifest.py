@@ -20,12 +20,14 @@ REPO_ROOT  = Path(__file__).parent.parent
 MANIFEST   = REPO_ROOT / "docs" / "data" / "scripts.json"
 GITHUB_URL = "https://github.com/lachlanalston/SupportTools/blob/main"
 
-# Folders to scan and their platform/category mapping
+# Folders to scan. Set "category" to None to derive it from the immediate
+# subdirectory name (e.g. Windows/Diagnostics → category "Diagnostics").
 SCAN_DIRS = {
-    "PS":    {"platform": "windows", "category": "PS"},
-    "MacOS": {"platform": "macos",   "category": "MacOS"},
-    "M365":  {"platform": "m365",    "category": "M365"},
-    "3CX":   {"platform": "3cx",     "category": "3CX"},
+    "Windows": {"platform": "windows", "category": None},
+    "MacOS":   {"platform": "macos",   "category": "MacOS"},
+    "M365":    {"platform": "m365",    "category": "M365"},
+    "3CX":     {"platform": "api",     "category": "API"},
+    "Apps":    {"platform": "windows", "category": None},
 }
 
 EXTENSIONS = {".ps1", ".sh"}
@@ -55,7 +57,7 @@ def extract_synopsis(path: Path) -> str:
             if desc:
                 return desc
         elif line:
-            break  # hit code, stop looking
+            break
 
     return ""
 
@@ -77,29 +79,29 @@ def main():
         if not scan_path.is_dir():
             continue
 
-        for script in sorted(scan_path.iterdir()):
-            if script.suffix not in EXTENSIONS:
-                continue
+        for ext in EXTENSIONS:
+            for script in sorted(scan_path.rglob(f"*{ext}")):
+                rel_path = script.relative_to(REPO_ROOT).as_posix()
+                if rel_path in existing_files:
+                    continue
 
-            rel_path = f"{folder}/{script.name}"
-            if rel_path in existing_files:
-                continue
+                is_wip = bool(WIP_PATTERN.match(script.stem))
+                synopsis = extract_synopsis(script)
 
-            is_wip = bool(WIP_PATTERN.match(script.stem))
-            synopsis = extract_synopsis(script)
+                category = meta["category"] or script.parent.name
 
-            entry = {
-                "name":        script.stem,
-                "file":        rel_path,
-                "platform":    meta["platform"],
-                "category":    meta["category"],
-                "description": synopsis or "",
-                "tags":        [],
-                "wip":         is_wip,
-                "github_url":  f"{GITHUB_URL}/{rel_path}",
-            }
-            new_entries.append(entry)
-            print(f"  + {rel_path}")
+                entry = {
+                    "name":        script.stem,
+                    "file":        rel_path,
+                    "platform":    meta["platform"],
+                    "category":    category,
+                    "description": synopsis or "",
+                    "tags":        [],
+                    "wip":         is_wip,
+                    "github_url":  f"{GITHUB_URL}/{rel_path}",
+                }
+                new_entries.append(entry)
+                print(f"  + {rel_path}")
 
     if not new_entries:
         print("No new scripts found. Manifest is up to date.")

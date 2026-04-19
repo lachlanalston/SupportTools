@@ -171,7 +171,10 @@ kbd {
   gap: 2px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.tabs::-webkit-scrollbar { display: none; }
 
 .tab {
   background: none;
@@ -305,6 +308,12 @@ kbd {
 .card[data-platform="command"]::before  { background: var(--windows); }
 .card[data-platform="bookmark"]::before { background: #388bfd; }
 .card[data-platform="rfc"]::before      { background: #d4a72c; }
+.card[data-platform="dns"][data-dns-category="Address"]::before     { background: #64b5f6; }
+.card[data-platform="dns"][data-dns-category="Mail"]::before        { background: #f05322; }
+.card[data-platform="dns"][data-dns-category="Name Server"]::before { background: #9b8af4; }
+.card[data-platform="dns"][data-dns-category="Security"]::before    { background: #3fb950; }
+.card[data-platform="dns"][data-dns-category="Service"]::before     { background: #26c6da; }
+.card[data-platform="dns"][data-dns-category="General"]::before     { background: #8b949e; }
 
 .card:hover {
   background: var(--card-hover);
@@ -355,6 +364,12 @@ kbd {
 .badge-fix       { background: rgba(63,185,80,0.15);   color: #3fb950; }
 .badge-rfc       { background: rgba(210,153,34,0.15);  color: #d4a72c; }
 .badge-category  { background: rgba(110,118,129,0.15); color: var(--sub); border: 1px solid rgba(110,118,129,0.25); }
+.badge-dns-address     { background: rgba(100,181,246,0.15); color: #64b5f6; }
+.badge-dns-mail        { background: rgba(240,83,34,0.15);   color: #f05322; }
+.badge-dns-name-server { background: rgba(155,138,244,0.15); color: #9b8af4; }
+.badge-dns-security    { background: rgba(63,185,80,0.15);   color: #3fb950; }
+.badge-dns-service     { background: rgba(38,198,218,0.15);  color: #26c6da; }
+.badge-dns-general     { background: rgba(139,148,158,0.15); color: #8b949e; }
 
 .card-desc {
   font-size: 0.82rem;
@@ -811,6 +826,46 @@ kbd {
   border: none;
   border-top: 1px solid rgba(255,255,255,0.1);
   margin: 8px 0 10px;
+}
+
+/* Linux Terminal */
+.terminal-linux .terminal-titlebar {
+  background: #2d2d2d;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.terminal-linux .terminal-title {
+  font-size: 0.72rem;
+  color: #bbb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.terminal-linux .terminal-body {
+  background: #1a1a1a;
+  padding: 12px 14px;
+  color: #e6edf3;
+}
+
+.terminal-linux .terminal-prompt {
+  color: #4ec9b0;
+  flex-shrink: 0;
+  user-select: none;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.terminal-output {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.79rem;
+  color: #8b949e;
+  white-space: pre;
+  tab-size: 8;
+  margin-top: 10px;
+  line-height: 1.65;
+  overflow-x: auto;
 }
 
 /* ─── Toast ────────────────────────────────────────────────────── */
