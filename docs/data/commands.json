@@ -3,6 +3,7 @@
     "name": "Reset Password in RDP (Windows)",
     "type": "shortcut",
     "platform": "windows",
+    "category": "Remote Desktop",
     "value": "Ctrl + Alt + End",
     "description": "Sends Ctrl + Alt + Delete to the remote session. Use to change a password or access security options inside a Remote Desktop session.",
     "tags": ["rdp", "remote-desktop", "password", "reset", "shortcut"]
@@ -11,6 +12,7 @@
     "name": "Reset Password in RDP (macOS)",
     "type": "shortcut",
     "platform": "macos",
+    "category": "Remote Desktop",
     "value": "fn + Control + Option + Delete",
     "description": "Sends Ctrl + Alt + Delete to the remote session from a Mac. Some keyboards may require fn + Control + Option + Backspace.",
     "tags": ["rdp", "remote-desktop", "password", "reset", "shortcut", "mac"]
@@ -19,33 +21,406 @@
     "name": "Reload Graphics Driver",
     "type": "shortcut",
     "platform": "windows",
+    "category": "Display",
     "value": "Ctrl + Shift + Win + B",
-    "description": "Restarts the graphics driver without rebooting. Useful for fixing a frozen or glitchy display.",
-    "tags": ["graphics", "driver", "display", "freeze", "shortcut"]
+    "description": "Restarts the graphics driver without rebooting. Screen will go black for a second then recover. First thing to try for a frozen or glitchy display before rebooting.",
+    "tags": ["graphics", "driver", "display", "freeze", "black-screen", "shortcut"]
   },
   {
     "name": "Reset NVRAM / PRAM (Intel Mac)",
     "type": "shortcut",
     "platform": "macos",
+    "category": "BIOS & Startup",
     "value": "Option + Command + P + R  (hold on startup for ~20s)",
-    "description": "Resets NVRAM/PRAM on Intel Macs. Hold the keys immediately after pressing the power button until you hear the startup sound twice.",
-    "tags": ["nvram", "pram", "reset", "mac", "startup", "shortcut"]
+    "description": "Resets NVRAM/PRAM on Intel Macs. Hold the keys immediately after pressing the power button until you hear the startup sound twice. Fixes startup disk, display resolution, and sound issues.",
+    "tags": ["nvram", "pram", "reset", "mac", "startup", "shortcut", "troubleshooting"]
   },
   {
     "name": "Safe Boot (Windows)",
     "type": "shortcut",
     "platform": "windows",
+    "category": "BIOS & Startup",
     "value": "Hold Shift, then click Restart",
-    "description": "Boots into Windows Safe Mode. Hold Shift and click Restart from the power menu in the Start menu or lock screen.",
+    "description": "Boots into Windows Safe Mode. Hold Shift and click Restart from the power menu in the Start menu or lock screen. Safe Mode loads minimal drivers — use to rule out third-party software causing boot or login issues.",
     "tags": ["safe-mode", "boot", "windows", "shortcut", "troubleshooting"]
   },
   {
     "name": "Safe Boot (macOS)",
     "type": "shortcut",
     "platform": "macos",
-    "value": "Hold Shift on startup",
-    "description": "Boots into macOS Safe Mode. Hold Shift immediately after pressing the power button (Intel Mac) or after selecting the startup disk (Apple Silicon).",
+    "category": "BIOS & Startup",
+    "value": "Intel: Hold Shift on startup  |  Apple Silicon: hold Shift after selecting startup disk",
+    "description": "Boots into macOS Safe Mode, which runs only essential kernel extensions and clears caches. Useful for diagnosing login issues, kernel panics, or misbehaving startup agents.",
     "tags": ["safe-mode", "boot", "mac", "shortcut", "troubleshooting"]
+  },
+  {
+    "name": "Dell — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F2  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on Dell laptops and desktops. Start pressing F2 immediately after powering on, before the Dell logo fades. If you miss it, restart and try again.",
+    "tags": ["bios", "uefi", "dell", "startup", "firmware", "setup"]
+  },
+  {
+    "name": "Dell — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F12  (press repeatedly on startup)",
+    "description": "Opens the one-time boot device menu on Dell devices. Lets you boot from USB, network (PXE), or another drive without changing BIOS settings permanently.",
+    "tags": ["boot-menu", "dell", "startup", "usb", "pxe"]
+  },
+  {
+    "name": "HP — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F10  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on HP laptops and desktops. Press F10 immediately after powering on. On some models press Esc first to open the HP Startup Menu, then F10 for Setup.",
+    "tags": ["bios", "uefi", "hp", "startup", "firmware", "setup"]
+  },
+  {
+    "name": "HP — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "Esc → F9  (press Esc on startup, then select Boot Device Options)",
+    "description": "Opens the one-time boot device menu on HP devices. Press Esc at startup to open the HP Startup Menu, then F9 for Boot Device Options.",
+    "tags": ["boot-menu", "hp", "startup", "usb", "pxe"]
+  },
+  {
+    "name": "Lenovo ThinkPad — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F1  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on Lenovo ThinkPad laptops and ThinkCentre desktops. Press F1 immediately after powering on. ThinkPads also have a Novo Button option on some models.",
+    "tags": ["bios", "uefi", "lenovo", "thinkpad", "startup", "firmware"]
+  },
+  {
+    "name": "Lenovo IdeaPad / Yoga — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F2  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on Lenovo IdeaPad and Yoga devices. Press F2 immediately after powering on. Some models may require Fn + F2. Alternatively, use the Novo Button (small pinhole near power).",
+    "tags": ["bios", "uefi", "lenovo", "ideapad", "yoga", "startup", "firmware"]
+  },
+  {
+    "name": "Lenovo — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F12  (press repeatedly on startup)",
+    "description": "Opens the one-time boot device menu on most Lenovo laptops and desktops. Alternatively, power off and use the Novo Button (small pinhole on the side) to access the Novo Button Menu.",
+    "tags": ["boot-menu", "lenovo", "startup", "usb", "thinkpad", "ideapad"]
+  },
+  {
+    "name": "ASUS — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F2  (laptops)  |  Del  (desktop motherboards)",
+    "description": "Opens BIOS/UEFI firmware on ASUS devices. ASUS laptops typically use F2; desktop motherboards use Delete. Press immediately after powering on.",
+    "tags": ["bios", "uefi", "asus", "startup", "firmware"]
+  },
+  {
+    "name": "ASUS — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "Esc  (laptops)  |  F8  (desktop motherboards)",
+    "description": "Opens the one-time boot device menu on ASUS devices. Laptops typically use Esc; desktop boards may use F8. Lets you boot from USB without entering BIOS.",
+    "tags": ["boot-menu", "asus", "startup", "usb"]
+  },
+  {
+    "name": "Acer — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F2  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on Acer laptops and desktops. Most modern Acer models use F2; some older devices may use Del. Press immediately after powering on.",
+    "tags": ["bios", "uefi", "acer", "startup", "firmware"]
+  },
+  {
+    "name": "Acer — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F12  (press repeatedly on startup)",
+    "description": "Opens the one-time boot device menu on Acer devices. Press F12 immediately after powering on to choose a boot device.",
+    "tags": ["boot-menu", "acer", "startup", "usb"]
+  },
+  {
+    "name": "MSI — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "Del  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on MSI laptops and desktop motherboards. Press Delete immediately after powering on. Some MSI laptops use F2 instead.",
+    "tags": ["bios", "uefi", "msi", "startup", "firmware"]
+  },
+  {
+    "name": "MSI — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F11  (press repeatedly on startup)",
+    "description": "Opens the one-time boot device menu on MSI devices. Press F11 at POST to pick a boot device without modifying BIOS settings.",
+    "tags": ["boot-menu", "msi", "startup", "usb"]
+  },
+  {
+    "name": "Microsoft Surface — Enter UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "Hold Volume Down + press Power  (hold until UEFI appears)",
+    "description": "Opens UEFI firmware settings on Microsoft Surface devices. Hold the Volume Down button, press and hold Power, then release both when the Surface UEFI screen loads. The standard keyboard F-key approach does not work on Surface.",
+    "tags": ["bios", "uefi", "surface", "microsoft", "startup", "firmware"]
+  },
+  {
+    "name": "Microsoft Surface — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "Hold Volume Up + press Power  (hold until Surface logo appears)",
+    "description": "Opens the boot options on Microsoft Surface. Hold Volume Up while pressing Power until the Surface logo appears. From the UEFI screen you can change the boot order or boot from USB.",
+    "tags": ["boot-menu", "surface", "microsoft", "startup", "usb"]
+  },
+  {
+    "name": "Gigabyte / AORUS — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "Del  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on Gigabyte and AORUS desktop motherboards. Press Delete immediately at POST. Some older boards may use F2.",
+    "tags": ["bios", "uefi", "gigabyte", "aorus", "startup", "firmware"]
+  },
+  {
+    "name": "Gigabyte / AORUS — Boot Menu",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F12  (press repeatedly on startup)",
+    "description": "Opens the one-time boot device menu on Gigabyte and AORUS boards. Press F12 at POST to choose a boot device without entering BIOS.",
+    "tags": ["boot-menu", "gigabyte", "aorus", "startup", "usb"]
+  },
+  {
+    "name": "Toshiba / Dynabook — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F2  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on Toshiba and Dynabook laptops. Press F2 immediately after powering on. Some older Toshiba models use Esc or F1.",
+    "tags": ["bios", "uefi", "toshiba", "dynabook", "startup", "firmware"]
+  },
+  {
+    "name": "Samsung — Enter BIOS / UEFI",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "BIOS & Startup",
+    "value": "F2  (press repeatedly on startup)",
+    "description": "Opens BIOS/UEFI firmware on Samsung laptops and Galaxy Book devices. Press F2 immediately after powering on.",
+    "tags": ["bios", "uefi", "samsung", "galaxy-book", "startup", "firmware"]
+  },
+  {
+    "name": "macOS Recovery Mode (Intel)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "Command + R  (hold on startup)",
+    "description": "Boots an Intel Mac into macOS Recovery. Hold Cmd + R immediately after pressing the power button until the Apple logo or globe appears. From Recovery you can reinstall macOS, run Disk Utility, restore from Time Machine, or open Terminal.",
+    "tags": ["recovery", "macos", "startup", "reinstall", "disk-utility", "intel"]
+  },
+  {
+    "name": "macOS Recovery Mode (Apple Silicon)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "Hold Power button until 'Loading startup options' appears, then click Options",
+    "description": "Boots an Apple Silicon Mac into Recovery. Hold the power button until 'Loading startup options' appears, then click Options > Continue. From Recovery you can reinstall macOS, run Disk Utility, restore from Time Machine, or open Terminal.",
+    "tags": ["recovery", "macos", "startup", "reinstall", "apple-silicon", "m1", "m2", "m3", "m4"]
+  },
+  {
+    "name": "macOS Startup Manager / Boot Picker (Intel)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "Option  (hold on startup)",
+    "description": "Opens the Startup Manager on Intel Macs to choose which disk to boot from. Hold Option immediately after pressing the power button. Use when booting from a USB installer, external drive, or another volume.",
+    "tags": ["startup-manager", "boot-picker", "macos", "startup", "intel", "external-drive", "usb"]
+  },
+  {
+    "name": "macOS Startup Manager / Boot Picker (Apple Silicon)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "Hold Power button until 'Loading startup options' appears",
+    "description": "Shows the boot picker on Apple Silicon Macs. Hold the power button until 'Loading startup options' appears. Select a disk to boot from or click Options to enter Recovery.",
+    "tags": ["startup-manager", "boot-picker", "macos", "startup", "apple-silicon", "m1", "m2", "usb"]
+  },
+  {
+    "name": "Apple Diagnostics (Intel)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "D  (hold on startup)  |  Option + D for internet diagnostics",
+    "description": "Runs Apple Diagnostics on Intel Macs to test hardware including memory, storage, and the logic board. Hold D after pressing the power button. Use Option + D to download diagnostics from Apple's servers if the local version is missing.",
+    "tags": ["diagnostics", "hardware", "test", "macos", "startup", "intel", "memory"]
+  },
+  {
+    "name": "Apple Diagnostics (Apple Silicon)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "Hold Power → select startup disk → Command + D",
+    "description": "Runs Apple Diagnostics on Apple Silicon Macs. Hold the power button to reach Startup Options, then press Cmd + D. Reports any hardware faults with a reference code you can share with Apple or check online.",
+    "tags": ["diagnostics", "hardware", "test", "macos", "startup", "apple-silicon", "m1", "m2"]
+  },
+  {
+    "name": "Internet Recovery (Intel Mac)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "Option + Command + R  (hold on startup)",
+    "description": "Boots an Intel Mac into Internet Recovery, downloading a recovery environment directly from Apple's servers. Use when the local recovery partition is missing or damaged. Requires Wi-Fi or ethernet. The globe icon with a progress bar will appear.",
+    "tags": ["internet-recovery", "macos", "startup", "reinstall", "intel", "recovery"]
+  },
+  {
+    "name": "Target Disk Mode (Intel Mac)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "T  (hold on startup)",
+    "description": "Boots an Intel Mac into Target Disk Mode, making it appear as an external drive when connected to another Mac via Thunderbolt or USB-C. Useful for data recovery or migrating files off a Mac that won't boot normally.",
+    "tags": ["target-disk", "data-recovery", "macos", "startup", "intel", "thunderbolt", "migration"]
+  },
+  {
+    "name": "Verbose Boot Mode (Intel Mac)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "BIOS & Startup",
+    "value": "Command + V  (hold on startup)",
+    "description": "Boots an Intel Mac in verbose mode, showing detailed kernel log output instead of the progress bar. Use when diagnosing a startup stall or kernel panic — the last line on screen shows where the boot process is hanging.",
+    "tags": ["verbose", "boot", "macos", "startup", "intel", "kernel", "panic", "troubleshooting"]
+  },
+  {
+    "name": "Open Task Manager",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "System",
+    "value": "Ctrl + Shift + Esc",
+    "description": "Opens Task Manager directly. Faster than Ctrl + Alt + Delete. Use to kill hung processes, check CPU/RAM usage, view startup impact, or see which process is hammering a resource.",
+    "tags": ["task-manager", "processes", "cpu", "ram", "hung", "kill", "windows"]
+  },
+  {
+    "name": "Open Run Dialog",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "System",
+    "value": "Win + R",
+    "description": "Opens the Run dialog. Essential for MSP work — type msconfig, services.msc, eventvwr, devmgmt.msc, diskmgmt.msc, regedit, gpedit.msc, or ncpa.cpl to jump straight to system tools without navigating menus.",
+    "tags": ["run", "dialog", "windows", "msconfig", "services", "devmgmt", "regedit", "eventvwr"]
+  },
+  {
+    "name": "Quick Link Menu (Power User Menu)",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "System",
+    "value": "Win + X",
+    "description": "Opens the Power User / Quick Link menu — same as right-clicking the Start button. Gives one-click access to Device Manager, Disk Management, Event Viewer, Terminal (admin), Task Manager, Network Connections, and more.",
+    "tags": ["quick-link", "power-user", "device-manager", "disk-management", "event-viewer", "windows"]
+  },
+  {
+    "name": "System Properties / About",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "System",
+    "value": "Win + Pause",
+    "description": "Opens the System / About page instantly. Shows device name, Windows edition, RAM, and processor — useful for quick system info without running PowerShell.",
+    "tags": ["system", "properties", "info", "windows", "about", "hardware"]
+  },
+  {
+    "name": "Project / Display Mode",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "Display",
+    "value": "Win + P",
+    "description": "Opens the Project panel to switch between PC screen only, Duplicate, Extend, and Second screen only. Use when connecting to a projector or second monitor, or when a user's external display has gone blank.",
+    "tags": ["display", "monitor", "projector", "extend", "duplicate", "second-screen", "windows"]
+  },
+  {
+    "name": "Screen Snip (Screenshot Tool)",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "System",
+    "value": "Win + Shift + S",
+    "description": "Opens the Snipping Tool overlay for capturing a screenshot. Choose rectangle, freeform, window, or full-screen capture. The image is copied to clipboard and shown in a notification for annotation and saving.",
+    "tags": ["screenshot", "snip", "snipping-tool", "capture", "documentation", "windows"]
+  },
+  {
+    "name": "Move Window to Other Monitor",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "Display",
+    "value": "Win + Shift + Left / Right Arrow",
+    "description": "Moves the active window to the monitor on the left or right. Useful on multi-monitor setups when a window has opened on the wrong screen or gone off-screen.",
+    "tags": ["monitor", "multi-monitor", "move", "window", "display", "windows", "off-screen"]
+  },
+  {
+    "name": "Lock Screen",
+    "type": "shortcut",
+    "platform": "windows",
+    "category": "System",
+    "value": "Win + L",
+    "description": "Immediately locks the screen. Use before handing a device back to a user or when leaving a workstation unattended. Required by most security policies.",
+    "tags": ["lock", "screen", "security", "windows"]
+  },
+  {
+    "name": "Lock Screen",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "System",
+    "value": "Command + Control + Q",
+    "description": "Immediately locks the Mac screen and returns to the login window. Use before handing a device back to a user or when leaving a workstation unattended.",
+    "tags": ["lock", "screen", "security", "macos"]
+  },
+  {
+    "name": "Force Quit App",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "System",
+    "value": "Command + Option + Esc",
+    "description": "Opens the Force Quit Applications window. Select a frozen or unresponsive app and click Force Quit to terminate it immediately. macOS equivalent of opening Task Manager to kill a process.",
+    "tags": ["force-quit", "frozen", "unresponsive", "kill", "macos"]
+  },
+  {
+    "name": "Screenshot Full Screen",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "System",
+    "value": "Command + Shift + 3",
+    "description": "Captures the entire screen and saves it to the Desktop as a PNG. If multiple displays are connected, each screen is saved as a separate file. Useful for documenting errors.",
+    "tags": ["screenshot", "capture", "full-screen", "documentation", "macos"]
+  },
+  {
+    "name": "Screenshot Selection",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "System",
+    "value": "Command + Shift + 4",
+    "description": "Activates a crosshair to drag a selection for a screenshot. Press Space after the shortcut to switch to window-capture mode — click any window to capture just that window. Saved to Desktop.",
+    "tags": ["screenshot", "capture", "selection", "documentation", "macos"]
+  },
+  {
+    "name": "Go to Folder (Finder)",
+    "type": "shortcut",
+    "platform": "macos",
+    "category": "System",
+    "value": "Command + Shift + G",
+    "description": "Opens a Go to Folder dialog in Finder. Type any path (e.g. /Library/Logs, /var/log, ~/Library/Application Support) and press Enter. Supports tab completion. Faster than navigating manually to log directories.",
+    "tags": ["finder", "folder", "navigate", "path", "logs", "library", "macos"]
   },
   {
     "name": "Battery Report",

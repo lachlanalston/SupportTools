@@ -74,7 +74,7 @@ async function loadData() {
   });
 
   fuseCommands = new Fuse(commands, {
-    keys: ['name', 'description', 'value', 'tags'],
+    keys: ['name', 'description', 'value', 'tags', 'category'],
     threshold: 0.35,
     includeScore: true,
   });
@@ -503,7 +503,9 @@ function renderCommands() {
 function renderShortcuts() {
   let data = getFiltered(commands, fuseCommands, searchQuery).filter(c => c.type === 'shortcut');
 
-  if (shortcutFilter !== 'all') {
+  if (shortcutFilter === 'bios-startup') {
+    data = data.filter(c => c.category === 'BIOS & Startup');
+  } else if (shortcutFilter !== 'all') {
     data = data.filter(c => c.platform === shortcutFilter || c.platform === 'both');
   }
 
