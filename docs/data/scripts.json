@@ -172,6 +172,13 @@
     "description": "Checks BitLocker encryption status and TPM health on the C: drive. Reports protection status, encryption method, disk mode, key protectors, PCR validation profile, TPM state, Secure Boot, and UEFI vs Legacy BIOS. Flags issues relevant to Intune compliance.",
     "tags": ["bitlocker", "tpm", "encryption", "secure-boot", "uefi", "intune", "compliance", "security", "pcr", "health"],
     "wip": false,
+    "flags": [
+      {
+        "flag": "-Fix",
+        "type": "fix",
+        "when": "N-central / N-able reports BitLocker as not enabled after ImmyBot maintenance"
+      }
+    ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-BitLockerHealth.ps1"
   },
   {

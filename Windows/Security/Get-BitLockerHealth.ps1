@@ -8,17 +8,34 @@
     interpreted results, and a compact DETAIL block for raw reference.
     Designed to fit in one ticket note or terminal screenshot.
 
+    Use -Fix to remediate N-central / N-able false "not enabled" detection after
+    ImmyBot maintenance. Restarts BDESVC, re-enables suspended protectors, flushes
+    the manage-bde cache, and restarts the RMM agent so it re-reads the correct state.
+
+.PARAMETER Fix
+    Runs remediation after the initial diagnostic:
+      1. Re-enables protectors on any encrypted-but-suspended volume
+      2. Restarts BDESVC to flush stale state
+      3. Polls manage-bde on all drives to refresh the WMI cache
+      4. Restarts the N-central/N-able agent (skipped gracefully if not found)
+      5. Re-runs the health check and reports updated findings
+
 .EXAMPLE
     .\Get-BitLockerHealth.ps1
 
+.EXAMPLE
+    .\Get-BitLockerHealth.ps1 -Fix
+
 .NOTES
     Author:  Lachlan Alston
-    Version: v1
-    Updated: 2026-04-17
+    Version: v2
+    Updated: 2026-04-19
 #>
 
 [CmdletBinding()]
-param()
+param(
+    [switch]$Fix
+)
 
 # ─────────────────────────────────────────────────────────────
 #  HELPERS
@@ -36,6 +53,21 @@ function Write-KV { param([string]$K, [string]$V, [string]$C = 'White')
 $findings = [System.Collections.Generic.List[hashtable]]::new()
 function Add-Finding { param([string]$Severity, [string]$Title, [string]$Detail)
     $findings.Add(@{ Severity = $Severity; Title = $Title; Detail = $Detail })
+}
+
+function Restart-ServiceSafely { param([string]$ServiceName, [int]$TimeoutSeconds = 45)
+    $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+    if (-not $svc) { Write-Host "  [--] Service '$ServiceName' not found — skipping." -ForegroundColor DarkGray; return $false }
+    Write-Host "  Restarting $ServiceName ($($svc.Status))..." -ForegroundColor DarkGray
+    try {
+        Restart-Service -Name $ServiceName -Force -ErrorAction Stop
+        $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+        do { Start-Sleep -Seconds 2; $svc.Refresh() } while ($svc.Status -ne 'Running' -and (Get-Date) -lt $deadline)
+        if ($svc.Status -eq 'Running') { Write-Host "  [OK] $ServiceName is Running." -ForegroundColor Green; return $true }
+        Write-Host "  [!!] $ServiceName did not reach Running within ${TimeoutSeconds}s." -ForegroundColor Yellow; return $false
+    } catch {
+        Write-Host "  [!!] Failed to restart ${ServiceName}: $_" -ForegroundColor Red; return $false
+    }
 }
 
 # ─────────────────────────────────────────────────────────────
@@ -378,3 +410,73 @@ Write-Host ""
 $elapsed = [Math]::Round(((Get-Date) - $scriptStart).TotalSeconds, 1)
 Write-Host "  Done in ${elapsed}s  |  $currentUser" -ForegroundColor DarkGray
 Write-Host ""
+
+# ─────────────────────────────────────────────────────────────
+#  FIX  (only runs with -Fix flag)
+# ─────────────────────────────────────────────────────────────
+if ($Fix) {
+    Write-Host ""
+    Write-Divider 'REMEDIATION'
+
+    # 1. Re-enable protectors on any encrypted-but-suspended volume
+    Write-Host "  Checking for suspended BitLocker protection..." -ForegroundColor DarkGray
+    try {
+        $wmiVols = Get-CimInstance -Namespace 'Root\CIMv2\Security\MicrosoftVolumeEncryption' `
+                                   -ClassName 'Win32_EncryptableVolume' -ErrorAction Stop
+        foreach ($vol in $wmiVols) {
+            $prot = Invoke-CimMethod -InputObject $vol -MethodName 'GetProtectionStatus' -ErrorAction Stop
+            $conv = Invoke-CimMethod -InputObject $vol -MethodName 'GetConversionStatus'  -ErrorAction Stop
+            $isEncrypted  = ($conv.ConversionStatus -ne 0)
+            $isProtected  = ($prot.ProtectionStatus -eq 1)
+            if ($isEncrypted -and -not $isProtected) {
+                Write-Host "  [!!] $($vol.DriveLetter): encrypted but suspended — re-enabling protectors..." -ForegroundColor Yellow
+                $out = manage-bde.exe -protectors -enable $vol.DriveLetter 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "  [OK] Protectors re-enabled on $($vol.DriveLetter)." -ForegroundColor Green
+                } else {
+                    Write-Host "  [!!] manage-bde exited $LASTEXITCODE for $($vol.DriveLetter): $($out -join ' ')" -ForegroundColor Yellow
+                }
+            }
+        }
+    } catch {
+        Write-Host "  [!!] Could not query WMI volumes: $_" -ForegroundColor Yellow
+    }
+
+    # 2. Restart BDESVC to flush stale state
+    Write-Host ""
+    Write-Host "  Restarting BitLocker Drive Encryption Service (BDESVC)..." -ForegroundColor DarkGray
+    Restart-ServiceSafely -ServiceName 'BDESVC' | Out-Null
+
+    # 3. Poll manage-bde on all fixed drives to flush the WMI/agent cache
+    Write-Host ""
+    Write-Host "  Flushing manage-bde cache on all drives..." -ForegroundColor DarkGray
+    $drives = (Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Root -match '^[A-Z]:\\$' }).Root
+    foreach ($drive in $drives) {
+        manage-bde.exe -status $drive.TrimEnd('\') | Out-Null
+    }
+    Start-Sleep -Seconds 5
+
+    # 4. Restart N-central/N-able agent so it re-reads the updated state
+    #    Skipped gracefully if not found (e.g. running as an AutoHeal script inside the agent)
+    Write-Host ""
+    Write-Host "  Looking for N-central / N-able agent service..." -ForegroundColor DarkGray
+    $agentNames = @('Windows Agent', 'N-able Windows Agent', 'Windows Agent Service',
+                    'SolarWindsMSP RMMAgent', 'Advanced Monitoring Agent')
+    $agentFound = $false
+    foreach ($svcName in $agentNames) {
+        if (Get-Service -Name $svcName -ErrorAction SilentlyContinue) {
+            $agentFound = $true
+            Restart-ServiceSafely -ServiceName $svcName | Out-Null
+            break
+        }
+    }
+    if (-not $agentFound) {
+        Write-Host "  [--] Agent service not found — it will re-read BitLocker state on its next poll cycle." -ForegroundColor DarkGray
+    }
+
+    # 5. Re-run health check and show updated findings
+    Write-Host ""
+    Write-Host "  Re-running health check after remediation..." -ForegroundColor DarkGray
+    Write-Host ""
+    & $PSCommandPath
+}
