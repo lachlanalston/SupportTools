@@ -158,5 +158,1021 @@
       "label": "Connect to Exchange Online first",
       "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
     }
+  },
+  {
+    "name": "System Uptime",
+    "type": "command",
+    "platform": "windows",
+    "value": "(Get-Date) - (gcim Win32_OperatingSystem).LastBootUpTime",
+    "description": "Calculates how long the system has been running since the last boot. Returns days, hours, minutes, and seconds.",
+    "tags": ["uptime", "boot", "system", "powershell", "health"]
+  },
+  {
+    "name": "Hardware Info",
+    "type": "command",
+    "platform": "windows",
+    "value": "gcim Win32_ComputerSystem | Select Manufacturer, Model, @{N='RAM (GB)';E={[math]::Round($_.TotalPhysicalMemory/1GB,2)}}",
+    "description": "Returns the device manufacturer, model name, and total RAM in GB.",
+    "tags": ["hardware", "model", "manufacturer", "ram", "info", "powershell"]
+  },
+  {
+    "name": "Windows Version (Simple)",
+    "type": "command",
+    "platform": "windows",
+    "value": "(gcim Win32_OperatingSystem).Caption",
+    "description": "Returns the Windows edition and version name, e.g. Microsoft Windows 11 Pro.",
+    "tags": ["windows", "version", "os", "powershell"]
+  },
+  {
+    "name": "Device Serial Number",
+    "type": "command",
+    "platform": "windows",
+    "value": "gcim Win32_BIOS | Select SerialNumber",
+    "description": "Retrieves the device serial number from the BIOS. Useful for warranty lookups and asset tracking.",
+    "tags": ["serial", "bios", "asset", "warranty", "hardware", "powershell"]
+  },
+  {
+    "name": "Disk Space",
+    "type": "command",
+    "platform": "windows",
+    "value": "gcim Win32_LogicalDisk | Select DeviceID, @{N='Size (GB)';E={[math]::Round($_.Size/1GB,2)}}, @{N='Free (GB)';E={[math]::Round($_.FreeSpace/1GB,2)}}",
+    "description": "Lists all drives with their total size and free space in GB.",
+    "tags": ["disk", "storage", "space", "drive", "powershell"]
+  },
+  {
+    "name": "Find Largest Files",
+    "type": "command",
+    "platform": "windows",
+    "value": "gci C:\\ -Recurse -ErrorAction SilentlyContinue | Sort-Object Length -Desc | Select-Object -First 20 FullName, @{N='Size (MB)';E={[math]::Round($_.Length/1MB,2)}}",
+    "description": "Finds the 20 largest files on the C: drive sorted by size. May take a while on large drives.",
+    "tags": ["disk", "files", "large", "storage", "cleanup", "powershell"]
+  },
+  {
+    "name": "List Local Users",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-LocalUser | Select Name, Enabled, LastLogon",
+    "description": "Lists all local user accounts with their enabled status and last logon time.",
+    "tags": ["users", "local", "accounts", "powershell"]
+  },
+  {
+    "name": "List Local Admins",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-LocalGroupMember -Group Administrators",
+    "description": "Lists all members of the local Administrators group, including domain accounts and local users.",
+    "tags": ["admin", "users", "local", "group", "powershell"]
+  },
+  {
+    "name": "AD User Info",
+    "type": "command",
+    "platform": "windows",
+    "value": "net user <username> /domain",
+    "description": "Returns Active Directory info for a user including group memberships, password expiry, and logon hours. Replace <username> with the AD username.",
+    "tags": ["active-directory", "ad", "user", "domain", "net"]
+  },
+  {
+    "name": "Full Network Config",
+    "type": "command",
+    "platform": "windows",
+    "value": "ipconfig /all",
+    "description": "Displays full network adapter configuration including IP, subnet, gateway, DNS servers, and MAC address for all adapters.",
+    "tags": ["network", "ip", "dns", "gateway", "mac", "ipconfig"]
+  },
+  {
+    "name": "Test Port Connectivity",
+    "type": "command",
+    "platform": "windows",
+    "value": "Test-NetConnection google.com -Port 443",
+    "description": "Tests TCP connectivity to a host on a specific port. Replace the host and port as needed. Returns TcpTestSucceeded true or false.",
+    "tags": ["network", "port", "connectivity", "test", "powershell", "firewall"]
+  },
+  {
+    "name": "Active Network Connections",
+    "type": "command",
+    "platform": "windows",
+    "value": "netstat -ano",
+    "description": "Lists all active TCP and UDP connections with local and remote addresses, connection state, and owning process ID (PID).",
+    "tags": ["network", "connections", "ports", "netstat", "pid"]
+  },
+  {
+    "name": "List Installed Software",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-Package | Select Name, Version | Sort-Object Name",
+    "description": "Lists all software packages registered with PackageManagement, sorted alphabetically by name.",
+    "tags": ["software", "installed", "packages", "inventory", "powershell"]
+  },
+  {
+    "name": "List Installed Software (winget)",
+    "type": "command",
+    "platform": "windows",
+    "value": "winget list",
+    "description": "Lists all installed applications via Windows Package Manager, including Store apps, winget packages, and traditional installers.",
+    "tags": ["software", "installed", "winget", "packages", "inventory"]
+  },
+  {
+    "name": "List Licensed M365 Users",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-MsolUser -All | Where-Object {$_.IsLicensed -eq $true} | Select DisplayName, UserPrincipalName",
+    "description": "Returns all licensed users in the tenant with their display name and UPN.",
+    "tags": ["m365", "users", "licenses", "msol", "powershell"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Mailbox Size",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-MailboxStatistics -Identity user@domain.com | Select DisplayName, TotalItemSize, ItemCount",
+    "description": "Returns the total size and item count of a mailbox. Replace user@domain.com with the target address.",
+    "tags": ["mailbox", "size", "m365", "exchange", "powershell"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Flush DNS Cache",
+    "type": "command",
+    "platform": "windows",
+    "value": "ipconfig /flushdns",
+    "description": "Clears the local DNS resolver cache. Use when a DNS change has been made and you need the device to pick it up immediately.",
+    "tags": ["dns", "flush", "cache", "network", "ipconfig"]
+  },
+  {
+    "name": "Clear Temp Files",
+    "type": "command",
+    "platform": "windows",
+    "value": "Remove-Item -Path $env:TEMP\\* -Recurse -Force -ErrorAction SilentlyContinue",
+    "description": "Deletes all files in the current user's temp folder. Files in use will be skipped. Run as the affected user for best results.",
+    "tags": ["temp", "cleanup", "disk", "files", "powershell"]
+  },
+  {
+    "name": "Check Disk for Errors",
+    "type": "command",
+    "platform": "windows",
+    "value": "chkdsk C: /f /r",
+    "description": "Schedules a disk check on the C: drive to find and fix errors and locate bad sectors. Requires a reboot to run. /f fixes errors, /r locates bad sectors.",
+    "tags": ["chkdsk", "disk", "errors", "health", "repair"]
+  },
+  {
+    "name": "Force Group Policy Update",
+    "type": "command",
+    "platform": "windows",
+    "value": "gpupdate /force",
+    "description": "Forces an immediate refresh of all Group Policy settings for the computer and current user, regardless of whether settings have changed.",
+    "tags": ["gpo", "group-policy", "update", "force", "gpupdate"]
+  },
+  {
+    "name": "Top Processes by Memory",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-Process | Sort-Object WorkingSet -Desc | Select-Object -First 20 Name, Id, @{N='Memory (MB)';E={[math]::Round($_.WorkingSet/1MB,2)}}",
+    "description": "Lists the top 20 running processes sorted by memory usage in MB. Useful for identifying resource-heavy applications.",
+    "tags": ["processes", "memory", "performance", "ram", "powershell"]
+  },
+  {
+    "name": "Check Windows Firewall Status",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-NetFirewallProfile | Select Name, Enabled",
+    "description": "Shows whether the Windows Firewall is enabled or disabled for each profile — Domain, Private, and Public.",
+    "tags": ["firewall", "security", "network", "powershell"]
+  },
+  {
+    "name": "Event Log Errors (Last 24hrs)",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-WinEvent -FilterHashtable @{LogName='System'; Level=2; StartTime=(Get-Date).AddHours(-24)} | Select TimeCreated, Id, Message | Format-Table -AutoSize -Wrap",
+    "description": "Returns System event log errors from the last 24 hours. Level 2 = Error. Change LogName to Application to check the application log.",
+    "tags": ["event-log", "errors", "system", "logs", "powershell"]
+  },
+  {
+    "name": "Uninstall App (winget)",
+    "type": "command",
+    "platform": "windows",
+    "value": "winget uninstall --name \"App Name\"",
+    "description": "Silently uninstalls an application by name using Windows Package Manager. Replace App Name with the exact name from winget list.",
+    "tags": ["uninstall", "software", "winget", "remove"]
+  },
+  {
+    "name": "Check Pending Reboot",
+    "type": "command",
+    "platform": "windows",
+    "value": "Test-Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired\"",
+    "description": "Returns True if a Windows Update reboot is pending, False if not. A quick way to confirm whether a device needs a restart.",
+    "tags": ["reboot", "pending", "windows-update", "registry", "powershell"]
+  },
+  {
+    "name": "List Startup Programs",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-CimInstance Win32_StartupCommand | Select Name, Command, Location, User",
+    "description": "Lists all programs configured to run at startup, including their location (registry or startup folder) and which user they apply to.",
+    "tags": ["startup", "programs", "autorun", "powershell"]
+  },
+  {
+    "name": "Get Saved Wi-Fi Password",
+    "type": "command",
+    "platform": "windows",
+    "value": "netsh wlan show profile name=\"SSID\" key=clear",
+    "description": "Displays the saved password for a Wi-Fi network. Replace SSID with the network name. Look for the Key Content field under Security settings.",
+    "tags": ["wifi", "password", "wireless", "netsh", "network"]
+  },
+  {
+    "name": "Export Installed Software to CSV",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-Package | Select Name, Version | Sort-Object Name | Export-Csv -Path \"$env:USERPROFILE\\Desktop\\software.csv\" -NoTypeInformation",
+    "description": "Exports a sorted list of all installed software to a CSV file on the desktop. Useful for audits and asset reporting.",
+    "tags": ["software", "export", "csv", "audit", "inventory", "powershell"]
+  },
+  {
+    "name": "Flush DNS Cache",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder",
+    "description": "Clears the macOS DNS resolver cache and restarts mDNSResponder. Use after a DNS change to force the Mac to pick up new records immediately.",
+    "tags": ["dns", "flush", "cache", "network", "macos"]
+  },
+  {
+    "name": "Top Processes by CPU",
+    "type": "command",
+    "platform": "macos",
+    "value": "ps aux | sort -rk 3 | head -20",
+    "description": "Lists the top 20 running processes sorted by CPU usage. Column 3 is %CPU. Useful for identifying runaway processes.",
+    "tags": ["processes", "cpu", "performance", "ps", "macos"]
+  },
+  {
+    "name": "Check Disk Health",
+    "type": "command",
+    "platform": "macos",
+    "value": "diskutil verifyDisk /",
+    "description": "Verifies the integrity of the startup disk partition structure. Does not repair — use diskutil repairDisk if issues are found.",
+    "tags": ["disk", "health", "verify", "diskutil", "macos"]
+  },
+  {
+    "name": "Get Saved Wi-Fi Password",
+    "type": "command",
+    "platform": "macos",
+    "value": "security find-generic-password -wa \"SSID\"",
+    "description": "Retrieves the saved password for a Wi-Fi network from the keychain. Replace SSID with the network name. Will prompt for admin credentials.",
+    "tags": ["wifi", "password", "wireless", "keychain", "macos"]
+  },
+  {
+    "name": "List Open Ports",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo lsof -i -P -n | grep LISTEN",
+    "description": "Shows all ports currently listening for connections, along with the process name and PID. Useful for identifying what's bound to a port.",
+    "tags": ["ports", "network", "listening", "lsof", "macos"]
+  },
+  {
+    "name": "Show Connected USB Devices",
+    "type": "command",
+    "platform": "macos",
+    "value": "system_profiler SPUSBDataType",
+    "description": "Lists all USB devices currently connected to the Mac, including hubs, peripherals, and storage devices with manufacturer and product info.",
+    "tags": ["usb", "devices", "hardware", "macos", "system_profiler"]
+  },
+  {
+    "name": "System Uptime",
+    "type": "command",
+    "platform": "macos",
+    "value": "uptime",
+    "description": "Shows how long the system has been running, the number of logged-in users, and the 1, 5, and 15 minute load averages.",
+    "tags": ["uptime", "system", "performance", "macos"]
+  },
+  {
+    "name": "Rebuild Spotlight Index",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo mdutil -E /",
+    "description": "Erases and rebuilds the Spotlight search index on the startup volume. Use when Spotlight results are missing or incorrect. Indexing runs in the background.",
+    "tags": ["spotlight", "index", "search", "mdutil", "macos"]
+  },
+  {
+    "name": "Reset Network Interface",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo ifconfig en0 down && sudo ifconfig en0 up",
+    "description": "Brings the primary network interface down and back up. Replace en0 with the correct interface name if needed (use ifconfig to list interfaces).",
+    "tags": ["network", "reset", "interface", "ifconfig", "macos"]
+  },
+  {
+    "name": "List Login Items",
+    "type": "command",
+    "platform": "macos",
+    "value": "osascript -e 'tell application \"System Events\" to get the name of every login item'",
+    "description": "Returns the names of all applications configured to launch at login for the current user.",
+    "tags": ["startup", "login", "items", "macos", "osascript"]
+  },
+  {
+    "name": "Show Network Interfaces",
+    "type": "command",
+    "platform": "macos",
+    "value": "ifconfig",
+    "description": "Lists all network interfaces with their IP addresses, MAC addresses, and status. Use to identify interface names like en0, en1, utun0.",
+    "tags": ["network", "interfaces", "ip", "mac-address", "ifconfig", "macos"]
+  },
+  {
+    "name": "Battery Cycle Count",
+    "type": "command",
+    "platform": "macos",
+    "value": "system_profiler SPPowerDataType | grep \"Cycle Count\"",
+    "description": "Returns the battery cycle count from system profiler. Compare against Apple's maximum cycle count for the model to assess battery health.",
+    "tags": ["battery", "cycle-count", "health", "macos", "system_profiler"]
+  },
+  {
+    "name": "Restart a Service",
+    "type": "command",
+    "platform": "windows",
+    "value": "Restart-Service -Name \"ServiceName\"",
+    "description": "Restarts a Windows service by name. Replace ServiceName with the service's short name (not display name). Use Get-Service to find the correct name.",
+    "tags": ["service", "restart", "powershell", "windows"]
+  },
+  {
+    "name": "Restart Print Spooler",
+    "type": "command",
+    "platform": "windows",
+    "value": "Restart-Service -Name Spooler",
+    "description": "Restarts the Print Spooler service. First step when a printer is stuck or not responding. Clears the service state without deleting queued jobs.",
+    "tags": ["print", "spooler", "printer", "restart", "service", "powershell"]
+  },
+  {
+    "name": "Check DNS Servers",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-DnsClientServerAddress | Where-Object {$_.ServerAddresses -ne $null} | Select InterfaceAlias, ServerAddresses",
+    "description": "Shows the DNS servers configured on each network adapter. Useful for confirming whether a machine is pointing at the correct DNS.",
+    "tags": ["dns", "network", "servers", "powershell", "config"]
+  },
+  {
+    "name": "Get Logged On User (Remote)",
+    "type": "command",
+    "platform": "windows",
+    "value": "(Get-CimInstance -ComputerName <hostname> -ClassName Win32_ComputerSystem).UserName",
+    "description": "Returns the currently logged on user of a remote machine. Replace <hostname> with the target computer name or IP. Requires WinRM or admin access.",
+    "tags": ["user", "remote", "logon", "powershell", "cim"]
+  },
+  {
+    "name": "Map a Network Drive",
+    "type": "command",
+    "platform": "windows",
+    "value": "New-PSDrive -Name \"Z\" -PSProvider FileSystem -Root \"\\\\server\\share\" -Persist",
+    "description": "Maps a persistent network drive to Z:. Replace Z with the desired drive letter and \\\\server\\share with the UNC path. Add -Credential to prompt for credentials.",
+    "tags": ["network", "drive", "map", "share", "powershell"]
+  },
+  {
+    "name": "Clear Print Queue",
+    "type": "command",
+    "platform": "windows",
+    "value": "Stop-Service -Name Spooler -Force; Remove-Item -Path \"$env:SystemRoot\\System32\\spool\\PRINTERS\\*\" -Force -ErrorAction SilentlyContinue; Start-Service -Name Spooler",
+    "description": "Stops the Print Spooler, deletes all queued print jobs, then restarts the service. Use when jobs are stuck and restarting the spooler alone doesn't help.",
+    "tags": ["print", "queue", "clear", "spooler", "printer", "powershell"]
+  },
+  {
+    "name": "Enable RDP",
+    "type": "command",
+    "platform": "windows",
+    "value": "Set-ItemProperty -Path \"HKLM:\\System\\CurrentControlSet\\Control\\Terminal Server\" -Name fDenyTSConnections -Value 0; Enable-NetFirewallRule -DisplayGroup \"Remote Desktop\"",
+    "description": "Enables Remote Desktop and opens the firewall rule. Set fDenyTSConnections to 1 to disable RDP. Run as administrator.",
+    "tags": ["rdp", "remote-desktop", "enable", "firewall", "registry", "powershell"]
+  },
+  {
+    "name": "Check Domain Join Status",
+    "type": "command",
+    "platform": "windows",
+    "value": "(Get-CimInstance Win32_ComputerSystem).PartOfDomain",
+    "description": "Returns True if the machine is joined to a domain, False if it is not. Quick check before troubleshooting domain-related issues.",
+    "tags": ["domain", "joined", "active-directory", "powershell"]
+  },
+  {
+    "name": "Last Windows Update Date",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-HotFix | Sort-Object InstalledOn -Desc | Select-Object -First 5 Description, HotFixID, InstalledOn",
+    "description": "Shows the 5 most recently installed Windows updates with their KB number and install date.",
+    "tags": ["windows-update", "hotfix", "patch", "updates", "powershell"]
+  },
+  {
+    "name": "Test DNS Resolution",
+    "type": "command",
+    "platform": "windows",
+    "value": "Resolve-DnsName google.com",
+    "description": "Resolves a DNS name and returns the result including IP addresses, TTL, and record type. More detailed than nslookup for PowerShell workflows.",
+    "tags": ["dns", "resolve", "test", "network", "powershell"]
+  },
+  {
+    "name": "Check MDM Enrollment Status",
+    "type": "command",
+    "platform": "macos",
+    "value": "profiles status -type enrollment",
+    "description": "Shows whether the Mac is enrolled in an MDM and whether the enrollment profile is active. Useful for confirming Intune or Kandji enrollment.",
+    "tags": ["mdm", "enrollment", "intune", "kandji", "profiles", "macos"]
+  },
+  {
+    "name": "Show Current DNS Servers",
+    "type": "command",
+    "platform": "macos",
+    "value": "scutil --dns | grep nameserver",
+    "description": "Lists all DNS nameservers currently configured on the Mac across all network interfaces and resolvers.",
+    "tags": ["dns", "nameserver", "network", "macos", "scutil"]
+  },
+  {
+    "name": "Ping with Timestamp",
+    "type": "command",
+    "platform": "macos",
+    "value": "ping google.com | while IFS= read -r line; do echo \"$(date '+%T') $line\"; done",
+    "description": "Runs a continuous ping with a timestamp on each line. Useful for intermittent connectivity issues where you need to know exactly when drops occur.",
+    "tags": ["ping", "network", "timestamp", "connectivity", "macos"]
+  },
+  {
+    "name": "Check for Software Updates",
+    "type": "command",
+    "platform": "macos",
+    "value": "softwareupdate -l",
+    "description": "Lists all available macOS software updates without installing them. Use softwareupdate -ia to install all.",
+    "tags": ["updates", "software", "macos", "softwareupdate"]
+  },
+  {
+    "name": "Get Current Wi-Fi SSID",
+    "type": "command",
+    "platform": "macos",
+    "value": "networksetup -getairportnetwork en0",
+    "description": "Returns the SSID of the Wi-Fi network the Mac is currently connected to. Replace en0 with the correct interface if needed.",
+    "tags": ["wifi", "ssid", "network", "macos", "networksetup"]
+  },
+  {
+    "name": "Show ARP Table",
+    "type": "command",
+    "platform": "macos",
+    "value": "arp -a",
+    "description": "Displays the ARP table showing IP-to-MAC address mappings for devices on the local network. Useful for finding a device's IP by its MAC address.",
+    "tags": ["arp", "network", "mac-address", "ip", "macos"]
+  },
+  {
+    "name": "Get macOS Version",
+    "type": "command",
+    "platform": "macos",
+    "value": "sw_vers",
+    "description": "Returns the macOS product name, version number, and build version. Quicker than opening About This Mac.",
+    "tags": ["version", "macos", "os", "sw_vers"]
+  },
+  {
+    "name": "Check SIP Status",
+    "type": "command",
+    "platform": "macos",
+    "value": "csrutil status",
+    "description": "Shows whether System Integrity Protection (SIP) is enabled or disabled. SIP prevents modification of protected system files even with root access.",
+    "tags": ["sip", "security", "csrutil", "macos", "system-integrity"]
+  },
+  {
+    "name": "Toggle Wi-Fi",
+    "type": "command",
+    "platform": "macos",
+    "value": "networksetup -setairportpower en0 off",
+    "description": "Turns Wi-Fi off on en0. Change off to on to re-enable. Replace en0 with the correct interface name if needed.",
+    "tags": ["wifi", "toggle", "network", "macos", "networksetup"]
+  },
+  {
+    "name": "List All User Groups",
+    "type": "command",
+    "platform": "macos",
+    "value": "dscl . list /Groups",
+    "description": "Lists all local groups on the Mac including system groups and any custom groups that have been created.",
+    "tags": ["groups", "users", "macos", "dscl"]
+  },
+  {
+    "name": "Add Email Alias",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-Mailbox -Identity user@domain.com -EmailAddresses @{Add=\"alias@domain.com\"}",
+    "description": "Adds an additional email address to a mailbox without removing existing addresses. Replace both addresses as needed.",
+    "tags": ["alias", "email", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Remove Email Alias",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-Mailbox -Identity user@domain.com -EmailAddresses @{Remove=\"alias@domain.com\"}",
+    "description": "Removes a specific email alias from a mailbox without affecting other addresses. Replace both addresses as needed.",
+    "tags": ["alias", "email", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Convert Mailbox to Shared",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-Mailbox -Identity user@domain.com -Type Shared",
+    "description": "Converts a regular user mailbox to a shared mailbox. The licence can then be removed. Replace user@domain.com with the target mailbox.",
+    "tags": ["shared-mailbox", "convert", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Block User Sign-In",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-MsolUser -UserPrincipalName user@domain.com -BlockCredential $true",
+    "description": "Blocks a user from signing in to Microsoft 365. Use during offboarding or incident response. Set to $false to re-enable access.",
+    "tags": ["block", "user", "sign-in", "offboarding", "m365", "msol"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Reset MFA for a User",
+    "type": "command",
+    "platform": "m365",
+    "value": "Reset-MsolStrongAuthenticationMethodByUpn -UserPrincipalName user@domain.com",
+    "description": "Clears the registered MFA methods for a user, forcing them to re-enrol on next sign-in. Use when a user loses access to their authenticator app.",
+    "tags": ["mfa", "reset", "authentication", "m365", "msol"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Get MFA Status (All Users)",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-MsolUser -All | Select DisplayName, UserPrincipalName, @{N='MFA';E={if($_.StrongAuthenticationRequirements){$_.StrongAuthenticationRequirements[0].State}else{'Disabled'}}}",
+    "description": "Returns MFA status for every user in the tenant. State will be Enabled, Enforced, or Disabled.",
+    "tags": ["mfa", "status", "users", "m365", "msol", "audit"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Add Member to M365 Group",
+    "type": "command",
+    "platform": "m365",
+    "value": "Add-UnifiedGroupLinks -Identity group@domain.com -LinkType Members -Links user@domain.com",
+    "description": "Adds a user to a Microsoft 365 group. Replace group@domain.com with the group address and user@domain.com with the user to add.",
+    "tags": ["group", "members", "m365", "exchange", "unified-group"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Set Out of Office Message",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-MailboxAutoReplyConfiguration -Identity user@domain.com -AutoReplyState Enabled -InternalMessage \"Internal message here\" -ExternalMessage \"External message here\"",
+    "description": "Enables and sets the out of office auto-reply for a mailbox. Set AutoReplyState to Disabled to turn it off. Replace messages as needed.",
+    "tags": ["out-of-office", "auto-reply", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "List All Shared Mailboxes",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-Mailbox -RecipientTypeDetails SharedMailbox | Select DisplayName, PrimarySmtpAddress | Sort DisplayName",
+    "description": "Returns all shared mailboxes in the tenant with their display name and primary email address, sorted alphabetically.",
+    "tags": ["shared-mailbox", "list", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Get Mailbox Forwarding",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-Mailbox -Identity user@domain.com | Select ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward",
+    "description": "Shows whether a mailbox has forwarding configured, where it forwards to, and whether a copy is kept in the original mailbox.",
+    "tags": ["forwarding", "mailbox", "m365", "exchange", "email"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Release and Renew IP",
+    "type": "command",
+    "platform": "windows",
+    "value": "ipconfig /release; ipconfig /renew",
+    "description": "Releases the current DHCP lease and requests a new IP address. Run when a machine has an incorrect IP or cannot reach the network after a change.",
+    "tags": ["ip", "dhcp", "release", "renew", "network", "ipconfig"]
+  },
+  {
+    "name": "System File Checker",
+    "type": "command",
+    "platform": "windows",
+    "value": "sfc /scannow",
+    "description": "Scans all protected Windows system files and repairs corrupted ones. Must be run as administrator. Takes several minutes to complete.",
+    "tags": ["sfc", "system", "repair", "files", "corruption", "windows"]
+  },
+  {
+    "name": "DISM Health Restore",
+    "type": "command",
+    "platform": "windows",
+    "value": "DISM /Online /Cleanup-Image /RestoreHealth",
+    "description": "Checks and repairs the Windows component store. Run this before sfc /scannow if system files are repeatedly flagged as corrupt. Requires internet access.",
+    "tags": ["dism", "health", "repair", "windows", "component-store"]
+  },
+  {
+    "name": "List Mapped Drives",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-PSDrive -PSProvider FileSystem | Where-Object {$_.DisplayRoot -like \"\\\\*\"} | Select Name, DisplayRoot",
+    "description": "Lists all currently mapped network drives for the session, showing the drive letter and UNC path.",
+    "tags": ["drives", "mapped", "network", "share", "powershell"]
+  },
+  {
+    "name": "BitLocker Status",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-BitLockerVolume | Select MountPoint, ProtectionStatus, EncryptionPercentage",
+    "description": "Shows the BitLocker encryption status for all drives. ProtectionStatus will be On, Off, or Unknown. Useful for compliance checks.",
+    "tags": ["bitlocker", "encryption", "security", "compliance", "powershell"]
+  },
+  {
+    "name": "Windows Defender Status",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-MpComputerStatus | Select AMRunningMode, AntivirusEnabled, AntivirusSignatureLastUpdated, LastFullScanTime",
+    "description": "Returns Windows Defender status including whether it is active, the last signature update, and the last full scan time.",
+    "tags": ["defender", "antivirus", "security", "powershell", "windows"]
+  },
+  {
+    "name": "List Network Shares",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-SmbShare | Select Name, Path, Description",
+    "description": "Lists all SMB shares on the local machine including hidden admin shares. Useful for auditing what is being shared on a server or workstation.",
+    "tags": ["shares", "smb", "network", "audit", "powershell"]
+  },
+  {
+    "name": "Force Windows Update Scan",
+    "type": "command",
+    "platform": "windows",
+    "value": "UsoClient StartScan",
+    "description": "Triggers an immediate Windows Update scan in the background. Run when a machine is not picking up updates automatically. Check Settings > Windows Update for results.",
+    "tags": ["windows-update", "scan", "updates", "usoclient"]
+  },
+  {
+    "name": "Check NTP / Time Sync",
+    "type": "command",
+    "platform": "windows",
+    "value": "w32tm /query /status",
+    "description": "Shows the current NTP time sync status including the source server, last sync time, and offset. Useful when Kerberos or domain auth is failing due to clock skew.",
+    "tags": ["ntp", "time", "sync", "w32tm", "kerberos", "domain"]
+  },
+  {
+    "name": "Check FileVault Status",
+    "type": "command",
+    "platform": "macos",
+    "value": "fdesetup status",
+    "description": "Returns whether FileVault full-disk encryption is enabled or disabled on the Mac. Use fdesetup enable or disable to change the state.",
+    "tags": ["filevault", "encryption", "security", "macos", "compliance"]
+  },
+  {
+    "name": "Get Mac Serial Number",
+    "type": "command",
+    "platform": "macos",
+    "value": "system_profiler SPHardwareDataType | grep \"Serial Number\"",
+    "description": "Returns the Mac's serial number from system profiler. Useful for warranty lookups and asset management without physically inspecting the device.",
+    "tags": ["serial", "hardware", "asset", "warranty", "macos"]
+  },
+  {
+    "name": "Force MDM Check-In",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo profiles sync",
+    "description": "Forces the Mac to check in with its MDM server and apply any pending profiles or policies. Use when a device is not receiving configuration changes.",
+    "tags": ["mdm", "check-in", "profiles", "intune", "kandji", "macos"]
+  },
+  {
+    "name": "Check Gatekeeper Status",
+    "type": "command",
+    "platform": "macos",
+    "value": "spctl --status",
+    "description": "Shows whether Gatekeeper is enabled or disabled. Gatekeeper controls which apps can run based on their source. Should be assessments enable on managed devices.",
+    "tags": ["gatekeeper", "security", "macos", "spctl"]
+  },
+  {
+    "name": "List Installed MDM Profiles",
+    "type": "command",
+    "platform": "macos",
+    "value": "profiles list",
+    "description": "Lists all configuration profiles installed on the Mac, including MDM enrollment profiles and pushed configuration payloads.",
+    "tags": ["mdm", "profiles", "macos", "intune", "kandji", "configuration"]
+  },
+  {
+    "name": "Show Routing Table",
+    "type": "command",
+    "platform": "macos",
+    "value": "netstat -rn",
+    "description": "Displays the kernel routing table showing how network traffic is directed. Useful for diagnosing split-tunnel VPN issues or incorrect default gateway.",
+    "tags": ["routing", "network", "gateway", "vpn", "macos", "netstat"]
+  },
+  {
+    "name": "Get Computer Name",
+    "type": "command",
+    "platform": "macos",
+    "value": "scutil --get ComputerName",
+    "description": "Returns the Mac's computer name as set in System Settings. Use scutil --get LocalHostName for the Bonjour name or scutil --get HostName for the full hostname.",
+    "tags": ["hostname", "computer-name", "macos", "scutil"]
+  },
+  {
+    "name": "List Mailbox Inbox Rules",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-InboxRule -Mailbox user@domain.com | Select Name, Enabled, Priority, Description",
+    "description": "Lists all inbox rules configured on a mailbox. Use during security investigations to check for suspicious forwarding or auto-delete rules.",
+    "tags": ["inbox-rules", "mailbox", "m365", "exchange", "security"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Add Full Access to Shared Mailbox",
+    "type": "command",
+    "platform": "m365",
+    "value": "Add-MailboxPermission -Identity shared@domain.com -User user@domain.com -AccessRights FullAccess -InheritanceType All",
+    "description": "Grants a user full access to a shared mailbox. The mailbox will auto-map in Outlook. Replace both addresses as needed.",
+    "tags": ["shared-mailbox", "permissions", "full-access", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Assign M365 Licence",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-MsolUserLicense -UserPrincipalName user@domain.com -AddLicenses \"tenantname:ENTERPRISEPACK\"",
+    "description": "Assigns a licence to a user. Replace tenantname with your tenant prefix and ENTERPRISEPACK with the SKU name. Use Get-MsolAccountSku to list available SKUs and their names.",
+    "tags": ["licence", "assign", "m365", "msol", "user"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Remove M365 Licence",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-MsolUserLicense -UserPrincipalName user@domain.com -RemoveLicenses \"tenantname:ENTERPRISEPACK\"",
+    "description": "Removes a licence from a user. Replace tenantname with your tenant prefix and ENTERPRISEPACK with the SKU name. Use Get-MsolAccountSku to list SKU names.",
+    "tags": ["licence", "remove", "m365", "msol", "user"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Get User's Last Sign-In",
+    "type": "command",
+    "platform": "m365",
+    "value": "(Get-MgUser -UserId user@domain.com -Property SignInActivity).SignInActivity | Select LastSignInDateTime, LastNonInteractiveSignInDateTime",
+    "description": "Returns the last interactive and non-interactive sign-in times for a user. Requires the AuditLog.Read.All scope.",
+    "tags": ["sign-in", "last-login", "audit", "m365", "graph"],
+    "prereq": {
+      "label": "Connect to Microsoft Graph first",
+      "value": "Connect-MgGraph -Scopes \"AuditLog.Read.All\", \"User.Read.All\""
+    }
+  },
+  {
+    "name": "List All M365 Groups",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-UnifiedGroup | Select DisplayName, PrimarySmtpAddress, GroupMemberCount | Sort-Object DisplayName",
+    "description": "Returns all Microsoft 365 groups in the tenant with their email address and member count, sorted alphabetically.",
+    "tags": ["m365-groups", "unified-group", "list", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Hide Mailbox from GAL",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-Mailbox -Identity user@domain.com -HiddenFromAddressListsEnabled $true",
+    "description": "Hides a mailbox from the Global Address List. Set to $false to make it visible again. Commonly used for service accounts or shared mailboxes that should not appear in the directory.",
+    "tags": ["gal", "hide", "mailbox", "address-list", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Kill Process by Name",
+    "type": "command",
+    "platform": "windows",
+    "value": "Stop-Process -Name \"processname\" -Force",
+    "description": "Forcefully terminates all running instances of a process by name. Replace processname with the process name without the .exe extension.",
+    "tags": ["process", "kill", "terminate", "powershell", "windows"]
+  },
+  {
+    "name": "View DNS Cache",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-DnsClientCache | Select Entry, RecordName, RecordType, Data",
+    "description": "Displays all entries currently in the local DNS resolver cache. Useful for confirming what DNS records a machine has cached before flushing.",
+    "tags": ["dns", "cache", "network", "powershell"]
+  },
+  {
+    "name": "Traceroute",
+    "type": "command",
+    "platform": "windows",
+    "value": "tracert google.com",
+    "description": "Traces the network path to a destination, showing each hop and its latency. Replace google.com with the target host. Useful for diagnosing where connectivity drops.",
+    "tags": ["traceroute", "tracert", "network", "hops", "connectivity"]
+  },
+  {
+    "name": "Check if Port is in Use",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-NetTCPConnection -LocalPort 80 -ErrorAction SilentlyContinue | Select LocalAddress, LocalPort, State, OwningProcess",
+    "description": "Shows what process is using a specific local port. Replace 80 with the port number. Use Get-Process -Id <OwningProcess> to identify the process name.",
+    "tags": ["port", "network", "listening", "process", "powershell"]
+  },
+  {
+    "name": "Disable Local User Account",
+    "type": "command",
+    "platform": "windows",
+    "value": "Disable-LocalUser -Name \"username\"",
+    "description": "Disables a local user account without deleting it. Replace username with the account name. Use Enable-LocalUser to re-enable.",
+    "tags": ["user", "disable", "local", "account", "powershell"]
+  },
+  {
+    "name": "List Scheduled Tasks",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-ScheduledTask | Where-Object {$_.TaskPath -notlike \"\\Microsoft\\*\"} | Select TaskName, TaskPath, State | Sort-Object TaskName",
+    "description": "Lists all non-Microsoft scheduled tasks on the machine. Filters out built-in Windows tasks to surface third-party and custom entries.",
+    "tags": ["scheduled-tasks", "tasks", "automation", "powershell", "audit"]
+  },
+  {
+    "name": "Check Proxy Settings",
+    "type": "command",
+    "platform": "windows",
+    "value": "Get-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\" | Select ProxyEnable, ProxyServer, ProxyOverride",
+    "description": "Returns the current user's proxy configuration from the registry. ProxyEnable 1 means proxy is active. Useful when diagnosing connectivity issues on corporate networks.",
+    "tags": ["proxy", "network", "registry", "powershell", "internet"]
+  },
+  {
+    "name": "Flush ARP Cache",
+    "type": "command",
+    "platform": "windows",
+    "value": "arp -d *",
+    "description": "Clears all entries from the local ARP cache. Use when a device has changed IP or MAC address and the machine is still resolving the old one.",
+    "tags": ["arp", "cache", "flush", "network"]
+  },
+  {
+    "name": "Kill Process by Name",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo killall \"App Name\"",
+    "description": "Forcefully terminates a process by its display name. Replace App Name with the exact process name as it appears in Activity Monitor. Use kill -9 $(pgrep name) for CLI process names.",
+    "tags": ["process", "kill", "terminate", "macos"]
+  },
+  {
+    "name": "Traceroute",
+    "type": "command",
+    "platform": "macos",
+    "value": "traceroute google.com",
+    "description": "Traces the network path to a destination showing each hop and its latency. Replace google.com with the target host. Useful for finding where connectivity drops along the route.",
+    "tags": ["traceroute", "network", "hops", "connectivity", "macos"]
+  },
+  {
+    "name": "Disk Usage by Folder",
+    "type": "command",
+    "platform": "macos",
+    "value": "du -sh /* 2>/dev/null | sort -rh | head -20",
+    "description": "Shows the 20 largest top-level directories sorted by size. Useful for finding what is consuming disk space. Run with sudo for accurate results on system folders.",
+    "tags": ["disk", "usage", "storage", "space", "macos", "du"]
+  },
+  {
+    "name": "Change Hostname",
+    "type": "command",
+    "platform": "macos",
+    "value": "sudo scutil --set ComputerName \"NewName\" && sudo scutil --set LocalHostName \"NewName\" && sudo scutil --set HostName \"NewName\"",
+    "description": "Sets all three hostname values — the display name, Bonjour name, and DNS hostname. Replace NewName with the desired name. Avoid spaces in LocalHostName and HostName.",
+    "tags": ["hostname", "computer-name", "rename", "macos", "scutil"]
+  },
+  {
+    "name": "List launchd Services",
+    "type": "command",
+    "platform": "macos",
+    "value": "launchctl list | grep -v \"^-\"",
+    "description": "Lists all loaded launchd jobs excluding anonymous entries. Shows the PID, last exit status, and label. Useful for auditing startup daemons and agents.",
+    "tags": ["launchd", "services", "startup", "macos", "launchctl"]
+  },
+  {
+    "name": "Check if Port is in Use",
+    "type": "command",
+    "platform": "macos",
+    "value": "lsof -i :8080",
+    "description": "Shows the process using a specific port. Replace 8080 with the port number. Returns the process name, PID, and connection state.",
+    "tags": ["port", "network", "listening", "lsof", "process", "macos"]
+  },
+  {
+    "name": "Get All Admin Role Assignments",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-MsolRole | ForEach-Object { $r = $_; Get-MsolRoleMember -RoleObjectId $r.ObjectId | Select @{N='Role';E={$r.Name}}, DisplayName, EmailAddress } | Where-Object {$_.DisplayName}",
+    "description": "Returns every admin role assignment in the tenant, showing which user holds each role. Useful for access audits and offboarding checks.",
+    "tags": ["admin-roles", "audit", "m365", "msol", "security"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Get Send-As Permissions",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-RecipientPermission -Identity user@domain.com | Select Trustee, AccessRights",
+    "description": "Shows who has Send-As permission on a mailbox, allowing them to send email as that address. Replace user@domain.com with the target mailbox.",
+    "tags": ["send-as", "permissions", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Add Send-As Permission",
+    "type": "command",
+    "platform": "m365",
+    "value": "Add-RecipientPermission -Identity shared@domain.com -Trustee user@domain.com -AccessRights SendAs",
+    "description": "Grants a user Send-As permission on a mailbox, allowing them to send email that appears to come from that address. Replace both addresses as needed.",
+    "tags": ["send-as", "permissions", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Get All Guest Users",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-MsolUser -All | Where-Object {$_.UserType -eq \"Guest\"} | Select DisplayName, UserPrincipalName, IsLicensed | Sort DisplayName",
+    "description": "Returns all guest accounts in the tenant. Useful for access audits to identify external users who still have access.",
+    "tags": ["guest", "users", "audit", "m365", "msol", "security"],
+    "prereq": {
+      "label": "Connect to MSOnline first",
+      "value": "Connect-MsolService"
+    }
+  },
+  {
+    "name": "Get All Aliases for a User",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-Mailbox -Identity user@domain.com | Select -ExpandProperty EmailAddresses | Where-Object {$_ -like \"smtp:*\"}",
+    "description": "Lists all email addresses assigned to a mailbox. The primary address is prefixed with SMTP (uppercase), aliases with smtp (lowercase).",
+    "tags": ["aliases", "email", "mailbox", "m365", "exchange"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Get Mail Flow / Transport Rules",
+    "type": "command",
+    "platform": "m365",
+    "value": "Get-TransportRule | Select Name, State, Priority, Description | Sort-Object Priority",
+    "description": "Lists all mail flow rules in the tenant sorted by priority. Use during security reviews or when troubleshooting unexpected email routing behaviour.",
+    "tags": ["transport-rules", "mail-flow", "m365", "exchange", "security"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
+  },
+  {
+    "name": "Set Mailbox Language and Timezone",
+    "type": "command",
+    "platform": "m365",
+    "value": "Set-MailboxRegionalConfiguration -Identity user@domain.com -Language en-AU -TimeZone \"AUS Eastern Standard Time\" -DateFormat \"d/MM/yyyy\"",
+    "description": "Sets the language, timezone, and date format for a mailbox. Useful after migrating a mailbox or onboarding a user whose Outlook shows the wrong timezone or date format.",
+    "tags": ["timezone", "language", "mailbox", "m365", "exchange", "regional"],
+    "prereq": {
+      "label": "Connect to Exchange Online first",
+      "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
+    }
   }
 ]
