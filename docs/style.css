@@ -642,14 +642,11 @@ kbd {
 }
 
 /* ─── Flags section ────────────────────────────────────────────── */
-.modal-flags-label {
-  margin-top: 20px;
-}
-
 .modal-flags {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 14px;
 }
 
 .modal-flag-item {

@@ -573,6 +573,8 @@ function openScriptModal(script) {
   const playIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zm4.879-2.773a.5.5 0 01.52.038l3.5 2.5a.5.5 0 010 .47l-3.5 2.5A.5.5 0 016 10.25v-5a.5.5 0 01.379-.523z"/></svg>`;
   const warnIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13"><path d="M8.22 1.754a.25.25 0 00-.44 0L1.698 13.132a.25.25 0 00.22.368h12.164a.25.25 0 00.22-.368L8.22 1.754zm-1.763-.707c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM9 11a1 1 0 11-2 0 1 1 0 012 0zm-.25-5.25a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z"/></svg>`;
 
+  const flags = script.flags || [];
+
   const runSection = `
     <div class="modal-section-label" style="margin-top:4px;">Run one-liner</div>
     ${needsCfg ? `<div class="modal-config-warning">${warnIcon} Edit required — ${esc(script.config_note || 'configure variables before running.')}</div>` : ''}
@@ -586,27 +588,24 @@ function openScriptModal(script) {
         ${ghIcon} View on GitHub
       </a>
     </div>
+    ${flags.length ? `
+      <div class="modal-flags">
+        ${flags.map((f, i) => `
+          <div class="modal-flag-item">
+            <div class="modal-flag-header">
+              <code class="modal-flag-name">${esc(f.flag)}</code>
+              <span class="modal-flag-type modal-flag-type-${esc(f.type)}">${f.type === 'fix' ? 'Remediate' : 'Mode'}</span>
+              <span class="modal-flag-when">${esc(f.when)}</span>
+            </div>
+            <div class="modal-oneliner modal-flag-cmd">${esc(flagOneLiner(script, f.flag))}</div>
+            <div class="modal-actions" style="margin-top:8px;">
+              <button class="btn ${canRun ? 'btn-run' : 'btn-run-config'}" id="copy-flag-${i}-btn">${canRun ? playIcon : cpyIcon} Copy</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
   `;
-
-  const flags = script.flags || [];
-  const flagsSection = flags.length ? `
-    <div class="modal-section-label modal-flags-label">Flags</div>
-    <div class="modal-flags">
-      ${flags.map((f, i) => `
-        <div class="modal-flag-item">
-          <div class="modal-flag-header">
-            <code class="modal-flag-name">${esc(f.flag)}</code>
-            <span class="modal-flag-type modal-flag-type-${esc(f.type)}">${f.type === 'fix' ? 'Remediate' : 'Mode'}</span>
-            <span class="modal-flag-when">${esc(f.when)}</span>
-          </div>
-          <div class="modal-oneliner modal-flag-cmd">${esc(flagOneLiner(script, f.flag))}</div>
-          <div class="modal-actions" style="margin-top:8px;">
-            <button class="btn btn-secondary" id="copy-flag-${i}-btn">${cpyIcon} Copy</button>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  ` : '';
 
   const body = document.getElementById('modal-body');
   body.innerHTML = `
@@ -622,7 +621,6 @@ function openScriptModal(script) {
     <div class="modal-section-label">Tags</div>
     <div class="modal-tags">${script.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${runSection}
-    ${flagsSection}
   `;
 
   const copyRunBtn = document.getElementById('copy-run-btn');
