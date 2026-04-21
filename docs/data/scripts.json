@@ -301,6 +301,16 @@
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-EndpointHealth.sh"
   },
   {
+    "name": "get-recent-changes",
+    "file": "MacOS/get-recent-changes.sh",
+    "platform": "macos",
+    "category": "MacOS",
+    "description": "Reports all notable changes on a macOS endpoint in the last 72 hours — software installs, reboots, kernel panics, application crashes, new LaunchDaemons/Agents, driver changes, and user logons. Outputs a FINDINGS block, a categorised change timeline, and a plain-text ticket note.",
+    "tags": ["diagnostic", "changes", "installs", "reboots", "crashes", "kernel-panic", "services", "logons", "troubleshooting", "health"],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-recent-changes.sh"
+  },
+  {
     "name": "get-hostname-health",
     "file": "MacOS/get-hostname-health.sh",
     "platform": "macos",
