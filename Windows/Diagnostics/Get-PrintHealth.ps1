@@ -121,6 +121,7 @@ try {
             Jobs      = $jobCount
             IsOffline = $isOffline
             IsDefault = $p.Default
+            Driver    = $p.DriverName
         }
     }
 } catch {
@@ -253,7 +254,8 @@ if ($printerRows.Count -gt 0) {
     foreach ($row in $printerRows) {
         $label = $row.Name
         if ($row.IsDefault) { $label += ' [default]' }
-        $detail = "$($row.Jobs) job(s)"
+        $driver = if ($row.Driver) { $row.Driver } else { '(unknown)' }
+        $detail = "$($row.Jobs) job(s)  |  $driver"
         $color  = if ($row.IsOffline) { 'Red' } elseif ($row.Jobs -gt 0) { 'Yellow' } else { 'White' }
         Write-KV $label $detail $color
     }
