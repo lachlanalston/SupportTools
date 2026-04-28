@@ -16,6 +16,7 @@
   --macos:    #9b8af4;
   --m365:     #d83b01;
   --api:      #00a859;
+  --unifi:    #006fff;
   --wip:      #e3b341;
 
   --radius:   10px;
@@ -266,6 +267,7 @@ kbd {
 .dot-macos   { background: var(--macos); }
 .dot-m365    { background: var(--m365); }
 .dot-api     { background: var(--api); }
+.dot-unifi   { background: var(--unifi); }
 
 /* ─── Card grid ────────────────────────────────────────────────── */
 .card-grid {
@@ -304,6 +306,7 @@ kbd {
 .card[data-platform="macos"]::before    { background: var(--macos); }
 .card[data-platform="m365"]::before     { background: var(--m365); }
 .card[data-platform="api"]::before      { background: var(--api); }
+.card[data-platform="unifi"]::before    { background: var(--unifi); }
 .card[data-platform="shortcut"]::before { background: var(--macos); }
 .card[data-platform="command"]::before  { background: var(--windows); }
 .card[data-platform="bookmark"]::before { background: #388bfd; }
@@ -358,6 +361,7 @@ kbd {
 .badge-macos     { background: rgba(155,138,244,0.15); color: var(--macos); }
 .badge-m365      { background: rgba(216,59,1,0.15);    color: #f05322; }
 .badge-api       { background: rgba(0,168,89,0.15);    color: var(--api); }
+.badge-unifi     { background: rgba(0,111,255,0.15);   color: var(--unifi); }
 .badge-shortcut  { background: rgba(155,138,244,0.15); color: var(--macos); }
 .badge-command   { background: rgba(33,150,243,0.15);  color: var(--windows); }
 .badge-bookmark  { background: rgba(56,139,253,0.15);  color: #58a6ff; }
@@ -761,6 +765,35 @@ kbd {
 
 .terminal-macos .terminal-prompt {
   color: #28c840;
+  flex-shrink: 0;
+  user-select: none;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+/* UniFi Terminal */
+.terminal-unifi .terminal-titlebar {
+  background: #0d1117;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,111,255,0.3);
+}
+
+.terminal-unifi .terminal-title {
+  font-size: 0.72rem;
+  color: #006fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.terminal-unifi .terminal-body {
+  background: #0d1117;
+  padding: 12px 14px;
+  color: #eaeaea;
+}
+
+.terminal-unifi .terminal-prompt {
+  color: #006fff;
   flex-shrink: 0;
   user-select: none;
   margin-right: 8px;

@@ -561,6 +561,7 @@ function openScriptModal(script) {
     macos:   '#9b8af4',
     m365:    '#d83b01',
     api:     '#00a859',
+    unifi:   '#006fff',
   };
 
   const color    = platformColor[script.platform] || '#388bfd';
@@ -644,7 +645,7 @@ function openScriptModal(script) {
 }
 
 function openCommandModal(cmd) {
-  const platformColor = { windows: '#2196f3', macos: '#9b8af4', m365: '#d83b01', both: '#2196f3' };
+  const platformColor = { windows: '#2196f3', macos: '#9b8af4', m365: '#d83b01', both: '#2196f3', unifi: '#006fff' };
   const color  = cmd.type === 'shortcut' ? '#9b8af4' : (platformColor[cmd.platform] || '#388bfd');
   const cpyIcon = `<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>`;
 
@@ -666,6 +667,20 @@ function openCommandModal(cmd) {
         <div class="terminal-body">
           <div class="terminal-line">
             <span class="terminal-prompt">~ %</span>
+            <span class="terminal-cmd">${esc(cmd.value)}</span>
+          </div>
+        </div>
+      </div>`;
+  } else if (cmd.platform === 'unifi') {
+    commandBlock = `
+      <div class="modal-section-label">Command</div>
+      <div class="terminal terminal-unifi">
+        <div class="terminal-titlebar">
+          <span class="terminal-title">UniFi Debug Terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line">
+            <span class="terminal-prompt">#</span>
             <span class="terminal-cmd">${esc(cmd.value)}</span>
           </div>
         </div>
@@ -828,7 +843,7 @@ function esc(str) {
 }
 
 function platformLabel(p) {
-  const map = { windows: 'Windows', macos: 'macOS', m365: 'M365', api: 'API', both: 'Win/Mac' };
+  const map = { windows: 'Windows', macos: 'macOS', m365: 'M365', api: 'API', both: 'Win/Mac', unifi: 'UniFi' };
   return map[p] || p;
 }
 

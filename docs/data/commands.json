@@ -1549,5 +1549,158 @@
       "label": "Connect to Exchange Online first",
       "value": "Connect-ExchangeOnline -UserPrincipalName user@domain.com"
     }
+  },
+  {
+    "name": "Show Device Info",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — All Devices",
+    "value": "info",
+    "description": "Displays firmware version, MAC address, IP address, uptime, and adoption status. First command to run on any UniFi device to confirm what you're connected to.",
+    "tags": ["unifi", "info", "firmware", "adoption", "status"]
+  },
+  {
+    "name": "Reboot Device",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — All Devices",
+    "value": "reboot",
+    "description": "Reboots the UniFi device. Works on APs, switches, and gateways via the debug terminal.",
+    "tags": ["unifi", "reboot", "restart"]
+  },
+  {
+    "name": "Check Uptime",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — All Devices",
+    "value": "uptime",
+    "description": "Shows how long the device has been running since last reboot. Useful for confirming whether a device recently rebooted unexpectedly.",
+    "tags": ["unifi", "uptime", "reboot", "stability"]
+  },
+  {
+    "name": "Re-Adopt Device to Controller",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — All Devices",
+    "value": "set-inform http://<controller-ip>:8080/inform",
+    "description": "Forces the device to connect to a specific controller. Use when a device is orphaned or showing as disconnected in the UI. Replace <controller-ip> with the IP or hostname of your UniFi controller.",
+    "tags": ["unifi", "adopt", "inform", "orphaned", "controller", "reconnect"]
+  },
+  {
+    "name": "Ping Host",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — All Devices",
+    "value": "ping <host>",
+    "description": "Tests connectivity from the device itself. Run this from a device to determine whether the issue is upstream of it or between it and the client.",
+    "tags": ["unifi", "ping", "connectivity", "troubleshooting", "network"]
+  },
+  {
+    "name": "Dump Full Device Stats",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "mca-dump",
+    "description": "Outputs a full JSON stats dump for the AP — includes connected clients, signal strength, retry counts, TX error rates, and channel utilization. Most reliable stats command across all AP firmware versions. Shows data not visible in the UniFi GUI.",
+    "tags": ["unifi", "ap", "clients", "signal", "stats", "mca-dump", "troubleshooting"]
+  },
+  {
+    "name": "List Wireless Interfaces",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "iw dev",
+    "description": "Lists all wireless interfaces on the AP. Use this first to identify radio interface names (typically wifi0 for 2.4GHz, wifi1 for 5GHz) before running other iw commands.",
+    "tags": ["unifi", "ap", "wifi", "interfaces", "radio", "iw"]
+  },
+  {
+    "name": "Show 2.4GHz Radio Info",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "iw dev wifi0 info",
+    "description": "Shows the current channel, frequency, channel width, and TX power for the 2.4GHz radio. Useful for confirming channel assignments and width after making changes in the controller.",
+    "tags": ["unifi", "ap", "2.4ghz", "channel", "frequency", "radio", "iw"]
+  },
+  {
+    "name": "Show 5GHz Radio Info",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "iw dev wifi1 info",
+    "description": "Shows the current channel, frequency, channel width, and TX power for the 5GHz radio. Useful for confirming channel assignments and width after making changes in the controller.",
+    "tags": ["unifi", "ap", "5ghz", "channel", "frequency", "radio", "iw"]
+  },
+  {
+    "name": "Ping Gateway from AP",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "ping <gateway IP>",
+    "description": "Tests connectivity from the AP to the gateway. If this fails but the AP is online in the controller, the AP cannot reach the gateway at layer 3 — check VLAN config or the uplink port.",
+    "tags": ["unifi", "ap", "ping", "gateway", "connectivity", "troubleshooting"]
+  },
+  {
+    "name": "Ping Internet from AP",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "ping 8.8.8.8",
+    "description": "Tests whether the AP itself has internet access. If clients have no internet but this succeeds, the issue is between client and AP. If this fails, the problem is upstream of the AP.",
+    "tags": ["unifi", "ap", "ping", "internet", "connectivity", "troubleshooting"]
+  },
+  {
+    "name": "Show ARP Table",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "arp -a",
+    "description": "Shows the AP's ARP table — which IPs the AP can see at layer 2. Useful when clients get DHCP addresses but have no internet — confirms whether the AP can see the gateway.",
+    "tags": ["unifi", "ap", "arp", "layer2", "connectivity", "troubleshooting"]
+  },
+  {
+    "name": "View Full System Log",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "cat /var/log/messages",
+    "description": "Displays the full system log for the AP. Use to investigate unexpected reboots, service failures, or connectivity events not visible in the UniFi GUI.",
+    "tags": ["unifi", "ap", "logs", "syslog", "troubleshooting"]
+  },
+  {
+    "name": "Search Logs for Errors",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "grep -i error /var/log/messages",
+    "description": "Filters system logs to show only error entries. Faster than reading the full log — good first pass when investigating AP instability or client issues.",
+    "tags": ["unifi", "ap", "logs", "errors", "troubleshooting"]
+  },
+  {
+    "name": "Search Logs for Deauth Events",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "grep -i deauth /var/log/messages",
+    "description": "Shows deauthentication events with reason codes. Use when clients are randomly disconnecting — the reason code tells you whether the AP kicked them, the client left, or there was an interference/auth issue. Not visible in the UniFi GUI.",
+    "tags": ["unifi", "ap", "deauth", "disconnect", "clients", "logs", "troubleshooting"]
+  },
+  {
+    "name": "Search Logs for Association Failures",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "grep -i assoc /var/log/messages",
+    "description": "Shows client association attempts and failures. Use when clients can see the SSID but cannot connect — reveals whether the failure is at the auth or association stage.",
+    "tags": ["unifi", "ap", "association", "connect", "clients", "logs", "troubleshooting"]
+  },
+  {
+    "name": "Check AP Memory Usage",
+    "type": "command",
+    "platform": "unifi",
+    "category": "UniFi — Access Points",
+    "value": "free",
+    "description": "Shows current memory usage on the AP. Low free memory can cause sluggish performance, client drops, or instability. Check this when an AP is behaving erratically without an obvious cause.",
+    "tags": ["unifi", "ap", "memory", "performance", "troubleshooting"]
   }
 ]
