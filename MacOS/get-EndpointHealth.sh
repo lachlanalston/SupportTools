@@ -5,8 +5,8 @@
 # Description: Collects all endpoint data in parallel, reasons across findings,
 #              outputs a clean report sized for ticket screenshots.
 # Author:      Lachlan Alston
-# Version:     v2
-# Updated:     2026-04-18
+# Version:     v3
+# Updated:     2026-04-30
 # ─────────────────────────────────────────────────────────────
 
 # ─────────────────────────────────────────────────────────────
@@ -225,6 +225,17 @@ trap 'rm -rf "$tmpdir"' EXIT
         "$batt_present" "${batt_health_pct}" "${batt_cycles}" "${batt_charge}"
 ) > "$tmpdir/battery" 2>/dev/null &
 
+# Temperature — powermetrics requires root; graceful degrade if unavailable or on VMs
+(
+    cpu_temp=""; gpu_temp=""
+    if $running_as_root; then
+        pm_out=$(powermetrics -n 1 -i 100 --samplers smc 2>/dev/null)
+        cpu_temp=$(echo "$pm_out" | awk '/CPU die temperature:/ {print $4; exit}')
+        gpu_temp=$(echo "$pm_out" | awk '/GPU die temperature:/ {print $4; exit}')
+    fi
+    printf 'temp_cpu=%s\ntemp_gpu=%s\n' "${cpu_temp}" "${gpu_temp}"
+) > "$tmpdir/temps" 2>/dev/null &
+
 wait
 
 # Load all results into the current shell
@@ -236,6 +247,7 @@ _load_vars "$tmpdir/smart"
 _load_vars "$tmpdir/av"
 _load_vars "$tmpdir/services"
 _load_vars "$tmpdir/battery"
+_load_vars "$tmpdir/temps"
 
 # Safe defaults for any blocks that failed silently
 disk_pct_free="${disk_pct_free:-0}"; disk_free_gb="${disk_free_gb:-?}"; disk_total_gb="${disk_total_gb:-?}"
@@ -247,6 +259,18 @@ smart_unhealthy="${smart_unhealthy:-0}"; smart_new="${smart_new:-0}"; smart_unhe
 av_names="${av_names:-None detected}"; av_no_edr="${av_no_edr:-true}"; av_xprotect="${av_xprotect:-false}"
 svc_checked="${svc_checked:-0}"; svc_stopped="${svc_stopped:-}"
 batt_present="${batt_present:-false}"
+temp_cpu="${temp_cpu:-}"; temp_gpu="${temp_gpu:-}"
+
+# Top processes — collected after CPU/RAM results are known, before REASON
+top_cpu_procs=""; top_ram_procs=""
+if [[ "${cpu_load:-0}" -gt 80 ]]; then
+    top_cpu_procs=$(ps -A -o pcpu=,comm= 2>/dev/null | awk '$1 > 0' | sort -rn -k1 | head -5 | \
+        awk '{printf "    %-44s %5.1f%%\n", $2, $1}')
+fi
+if [[ "${ram_free_pct:-100}" -le 20 ]]; then
+    top_ram_procs=$(ps -A -o rss=,comm= 2>/dev/null | awk '$1 > 0' | sort -rn -k1 | head -5 | \
+        awk '{mb=int($1/1024); printf "    %-44s %5d MB\n", $2, mb}')
+fi
 
 # ─────────────────────────────────────────────────────────────
 #  REASON
@@ -310,6 +334,28 @@ fi
 if [[ -n "$svc_stopped" ]]; then
     add_finding "WARN" "Critical system service(s) not running: ${svc_stopped}" \
         "Restart via: sudo launchctl kickstart -k system/<label> — if it fails to start, escalate for further investigation."
+fi
+
+# Temperatures
+temp_sev=""; temp_hot_parts=""
+for _tsource in cpu gpu; do
+    _tval=$(eval echo "\$temp_${_tsource}")
+    [[ -z "$_tval" ]] && continue
+    _tint=${_tval%.*}
+    _tlabel=$(echo "$_tsource" | tr '[:lower:]' '[:upper:]')
+    if   [[ "$_tint" -ge 90 ]]; then
+        temp_sev="CRIT"; temp_hot_parts="${temp_hot_parts:+$temp_hot_parts, }${_tlabel} ${_tval}°C"
+    elif [[ "$_tint" -ge 80 ]]; then
+        [[ "$temp_sev" != "CRIT" ]] && temp_sev="WARN"
+        temp_hot_parts="${temp_hot_parts:+$temp_hot_parts, }${_tlabel} ${_tval}°C"
+    fi
+done
+if [[ "$temp_sev" == "CRIT" ]]; then
+    add_finding "CRIT" "Critical temperature: ${temp_hot_parts}" \
+        "Check for blocked vents and heavy load — thermal throttling likely active, performance degraded."
+elif [[ "$temp_sev" == "WARN" ]]; then
+    add_finding "WARN" "Elevated temperature: ${temp_hot_parts}" \
+        "Check for blocked vents or sustained load — continued high temps accelerate hardware wear."
 fi
 
 # Battery
@@ -396,6 +442,24 @@ write_kv "RAM Free"   "${ram_free_pct}% (${ram_free_gb} GB of ${ram_total_gb} GB
 cpu_color="white"; [[ "$cpu_load" -gt 80 ]] && cpu_color="yellow"
 write_kv "CPU Load"   "${cpu_load}% (3-sample avg)" "$cpu_color"
 
+if [[ -n "$temp_cpu" || -n "$temp_gpu" ]]; then
+    temp_parts=""
+    temp_disp_color="white"
+    [[ -n "$temp_cpu" ]] && temp_parts="CPU ${temp_cpu}°C"
+    [[ -n "$temp_gpu" ]] && temp_parts="${temp_parts:+$temp_parts | }GPU ${temp_gpu}°C"
+    for _t in "$temp_cpu" "$temp_gpu"; do
+        [[ -z "$_t" ]] && continue
+        _ti=${_t%.*}
+        [[ "$_ti" -ge 80 ]] && temp_disp_color="yellow"
+        [[ "$_ti" -ge 90 ]] && temp_disp_color="red"
+    done
+    write_kv "Temperature"  "$temp_parts" "$temp_disp_color"
+elif $running_as_root; then
+    write_kv "Temperature"  "(unavailable)" "gray"
+else
+    write_kv "Temperature"  "(requires root)" "gray"
+fi
+
 uptime_color="white"; [[ "$uptime_days" -ge 14 ]] && uptime_color="yellow"
 write_kv "Uptime"     "$uptime_str" "$uptime_color"
 
@@ -445,6 +509,21 @@ if [[ "$batt_present" == "true" ]]; then
     write_kv "Capacity"   "${batt_health_pct:-(unknown)}%" "$batt_color"
     write_kv "Cycles"     "${batt_cycles:-(unknown)}"  "gray"
     write_kv "Charge"     "${batt_charge:-(unknown)}%" "gray"
+fi
+
+if [[ -n "$top_cpu_procs" || -n "$top_ram_procs" ]]; then
+    printf "\n"
+    write_divider "HIGH RESOURCE PROCESSES"
+    if [[ -n "$top_cpu_procs" ]]; then
+        printf "  \033[33mCPU — Top processes by usage:\033[0m\n"
+        printf "%s\n" "$top_cpu_procs"
+        printf "\n"
+    fi
+    if [[ -n "$top_ram_procs" ]]; then
+        printf "  \033[33mRAM — Top processes by working set:\033[0m\n"
+        printf "%s\n" "$top_ram_procs"
+        printf "\n"
+    fi
 fi
 
 printf "\n  \033[90mDone in %ss  |  %s\033[0m\n\n" "$(( $(date +%s) - script_start ))" "$current_user"

@@ -102,6 +102,13 @@ function Get-CpuStatus {
     # A result below 100% under high load indicates thermal or power throttling.
     $clockReadings       = [System.Collections.Generic.List[double]]::new()
     $utilizationReadings = [System.Collections.Generic.List[double]]::new()
+    $procCount           = [Environment]::ProcessorCount
+
+    # Snapshot processes before the sampling window for CPU delta calculation
+    $snap1 = Get-Process -ErrorAction SilentlyContinue |
+              Where-Object { $_.CPU -ne $null } |
+              Select-Object Id, ProcessName, Description, @{N='CpuSec';E={$_.CPU}}
+    $t1 = [datetime]::UtcNow
 
     1..3 | ForEach-Object {
         $clockReadings.Add((Get-Counter "\Processor Information(_Total)\% Processor Performance").CounterSamples.CookedValue)
@@ -109,16 +116,42 @@ function Get-CpuStatus {
         Start-Sleep -Seconds 1
     }
 
+    $snap2   = Get-Process -ErrorAction SilentlyContinue |
+               Where-Object { $_.CPU -ne $null } |
+               Select-Object Id, ProcessName, Description, @{N='CpuSec';E={$_.CPU}}
+    $elapsed = ([datetime]::UtcNow - $t1).TotalSeconds
+
     $meanClock = [math]::Round(($clockReadings       | Measure-Object -Average).Average, 0)
     $meanUtil  = [math]::Round(($utilizationReadings | Measure-Object -Average).Average, 0)
     $display   = "load: $meanUtil%, clock: $meanClock%"
 
+    $topProcs = $null
+    if ($meanUtil -gt 80 -and $procCount -gt 0 -and $elapsed -gt 0) {
+        $snap1Hash = @{}
+        $snap1 | ForEach-Object { $snap1Hash[$_.Id] = $_.CpuSec }
+
+        $topProcs = $snap2 |
+            Where-Object { $snap1Hash.ContainsKey($_.Id) } |
+            ForEach-Object {
+                $delta = [math]::Max(0, $_.CpuSec - $snap1Hash[$_.Id])
+                [PSCustomObject]@{
+                    Name   = if (![string]::IsNullOrEmpty($_.Description)) { $_.Description } else { $_.ProcessName }
+                    CpuPct = [math]::Round($delta / ($elapsed * $procCount) * 100, 1)
+                }
+            } |
+            Where-Object { $_.CpuPct -gt 0 } |
+            Sort-Object CpuPct -Descending |
+            Select-Object -First 5
+    }
+
     if ($meanUtil -gt 80 -and $meanClock -lt 100) {
-        [PSCustomObject]@{ Status = "Critical"; Message = "CPU throttled — high load but below base clock"; Value = $display; Color = "Red" }
+        $msg = if ($topProcs) { "Throttled — below base clock — top 5 below" } else { "CPU throttled — high load but below base clock" }
+        [PSCustomObject]@{ Status = "Critical"; Message = $msg; Value = $display; Color = "Red";    TopProcs = $topProcs }
     } elseif ($meanUtil -gt 80) {
-        [PSCustomObject]@{ Status = "Warning";  Message = "CPU under sustained high load"; Value = $display; Color = "Yellow" }
+        $msg = if ($topProcs) { "CPU under sustained high load — top 5 below" } else { "CPU under sustained high load" }
+        [PSCustomObject]@{ Status = "Warning";  Message = $msg; Value = $display; Color = "Yellow"; TopProcs = $topProcs }
     } else {
-        [PSCustomObject]@{ Status = "Healthy";  Message = "CPU operating normally"; Value = $display; Color = "Green" }
+        [PSCustomObject]@{ Status = "Healthy";  Message = "CPU operating normally"; Value = $display; Color = "Green"; TopProcs = $null }
     }
 }
 
@@ -168,15 +201,31 @@ function Get-RamStatus {
     $value   = "$freeGB GB free of $totalGB GB"
 
     if ($uptime.TotalMinutes -lt 30) {
-        return [PSCustomObject]@{ Status = "Unknown"; Message = "System just booted — RAM usage not yet representative"; Value = $value; Color = "Cyan" }
+        return [PSCustomObject]@{ Status = "Unknown"; Message = "System just booted — RAM usage not yet representative"; Value = $value; Color = "Cyan"; TopProcs = $null }
+    }
+
+    $topProcs = $null
+    if ($freePct -le 20) {
+        $topProcs = Get-Process -ErrorAction SilentlyContinue |
+            Where-Object { $_.WorkingSet64 -gt 0 } |
+            Sort-Object WorkingSet64 -Descending |
+            Select-Object -First 5 |
+            ForEach-Object {
+                [PSCustomObject]@{
+                    Name  = if (![string]::IsNullOrEmpty($_.Description)) { $_.Description } else { $_.ProcessName }
+                    RamMB = [math]::Round($_.WorkingSet64 / 1MB, 0)
+                }
+            }
     }
 
     if ($freePct -le 10) {
-        [PSCustomObject]@{ Status = "Critical"; Message = "Critically low RAM — $freePct% free"; Value = $value; Color = "Red" }
+        $msg = if ($topProcs) { "Critically low RAM — $freePct% free — top 5 below" } else { "Critically low RAM — $freePct% free" }
+        [PSCustomObject]@{ Status = "Critical"; Message = $msg; Value = $value; Color = "Red";    TopProcs = $topProcs }
     } elseif ($freePct -le 20) {
-        [PSCustomObject]@{ Status = "Warning";  Message = "Low RAM — $freePct% free"; Value = $value; Color = "Yellow" }
+        $msg = if ($topProcs) { "Low RAM — $freePct% free — top 5 below" } else { "Low RAM — $freePct% free" }
+        [PSCustomObject]@{ Status = "Warning";  Message = $msg; Value = $value; Color = "Yellow"; TopProcs = $topProcs }
     } else {
-        [PSCustomObject]@{ Status = "Healthy";  Message = "RAM usage normal — $freePct% free"; Value = $value; Color = "Green" }
+        [PSCustomObject]@{ Status = "Healthy";  Message = "RAM usage normal — $freePct% free"; Value = $value; Color = "Green"; TopProcs = $null }
     }
 }
 
@@ -350,13 +399,73 @@ function Get-TopIOStatus {
     }
     [PSCustomObject]@{ Status = "Info"; Message = $lines -join ', '; Value = "Top $($procs.Count) by I/O"; Color = "Gray" }
 }
+
+function Get-TemperatureStatus {
+    # CPU: MSAcpi_ThermalZoneTemperature reports in deciKelvin — convert: (val - 2732) / 10
+    $cpuMaxC = $null
+    $cpuReadings = @(try {
+        Get-WmiObject -Namespace 'root\WMI' -Class MSAcpi_ThermalZoneTemperature -ErrorAction SilentlyContinue |
+            ForEach-Object { [math]::Round(($_.CurrentTemperature - 2732) / 10, 0) } |
+            Where-Object { $_ -gt 0 -and $_ -lt 120 }
+    } catch {})
+    if ($cpuReadings.Count -gt 0) { $cpuMaxC = ($cpuReadings | Measure-Object -Maximum).Maximum }
+
+    # GPU: nvidia-smi if driver is present — AMD/Intel Arc have no standard CLI on vanilla endpoints
+    $gpuC = $null
+    try {
+        if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
+            $raw = & nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader 2>$null
+            if ($raw -match '^\d+$') { $gpuC = [int]$raw.Trim() }
+        }
+    } catch {}
+
+    # SSD/NVMe: StorageReliabilityCounter — already queried by SMART check, no extra I/O
+    $ssdMaxC = $null
+    try {
+        $ssdTemps = @(Get-PhysicalDisk -ErrorAction SilentlyContinue |
+            Get-StorageReliabilityCounter -ErrorAction SilentlyContinue |
+            Where-Object { $_.Temperature -gt 0 } |
+            Select-Object -ExpandProperty Temperature)
+        if ($ssdTemps.Count -gt 0) { $ssdMaxC = ($ssdTemps | Measure-Object -Maximum).Maximum }
+    } catch {}
+
+    $parts = @()
+    if ($null -ne $cpuMaxC) { $parts += "CPU ${cpuMaxC}°C" }
+    if ($null -ne $gpuC)    { $parts += "GPU ${gpuC}°C"    }
+    if ($null -ne $ssdMaxC) { $parts += "SSD ${ssdMaxC}°C" }
+
+    if ($parts.Count -eq 0) {
+        return [PSCustomObject]@{ Status = "Unknown"; Message = "Temperature data unavailable on this device"; Value = "N/A"; Color = "DarkGray" }
+    }
+
+    $display  = $parts -join ' | '
+    $hotParts = @()
+    $isCrit   = $false
+    $isWarn   = $false
+
+    if ($null -ne $cpuMaxC -and $cpuMaxC -ge 90) { $isCrit = $true; $hotParts += "CPU ${cpuMaxC}°C" }
+    elseif ($null -ne $cpuMaxC -and $cpuMaxC -ge 80) { $isWarn = $true; $hotParts += "CPU ${cpuMaxC}°C" }
+    if ($null -ne $gpuC    -and $gpuC    -ge 90) { $isCrit = $true; $hotParts += "GPU ${gpuC}°C"    }
+    elseif ($null -ne $gpuC    -and $gpuC    -ge 80) { $isWarn = $true; $hotParts += "GPU ${gpuC}°C"    }
+    if ($null -ne $ssdMaxC -and $ssdMaxC -ge 65) { $isCrit = $true; $hotParts += "SSD ${ssdMaxC}°C" }
+    elseif ($null -ne $ssdMaxC -and $ssdMaxC -ge 50) { $isWarn = $true; $hotParts += "SSD ${ssdMaxC}°C" }
+
+    if ($isCrit) {
+        [PSCustomObject]@{ Status = "Critical"; Message = "Critical heat: $($hotParts -join ', ')"; Value = $display; Color = "Red"    }
+    } elseif ($isWarn) {
+        [PSCustomObject]@{ Status = "Warning";  Message = "Elevated temp: $($hotParts -join ', ')"; Value = $display; Color = "Yellow" }
+    } else {
+        [PSCustomObject]@{ Status = "Healthy";  Message = "All temperatures within normal range";   Value = $display; Color = "Green"  }
+    }
+}
 #endregion
 
 #region --- Parallel execution ---
 $funcNames = @(
     'Get-UptimeStatus','Get-DiskSpaceStatus','Get-CpuStatus','Get-PowerProfileStatus',
     'Get-WindowsUpdatesStatus','Get-RamStatus','Get-SmartDiskStatus','Get-AvStatus',
-    'Get-CriticalServicesStatus','Get-BatteryStatus','Get-PageFileStatus','Get-TopIOStatus'
+    'Get-CriticalServicesStatus','Get-BatteryStatus','Get-PageFileStatus','Get-TopIOStatus',
+    'Get-TemperatureStatus'
 )
 
 # Serialize each function definition to a string so it can be injected into runspaces.
@@ -377,6 +486,7 @@ $checkCalls = [ordered]@{
     "Antivirus"         = "Get-AvStatus"
     "Critical Services" = "Get-CriticalServicesStatus"
     "Battery Health"    = "Get-BatteryStatus"
+    "Temperatures"      = "Get-TemperatureStatus"
     "Top I/O Processes" = "Get-TopIOStatus"
 }
 
@@ -485,6 +595,37 @@ foreach ($entry in $checks.GetEnumerator()) {
 }
 
 Write-Divider "White"
+
+$cpuProcs = $checks['CPU Performance'].TopProcs
+$ramProcs  = $checks['RAM Usage'].TopProcs
+
+if ($cpuProcs -or $ramProcs) {
+    Write-Host ""
+    Write-Host ("=" * $width) -ForegroundColor White
+    Write-Host ("  HIGH RESOURCE PROCESSES".PadRight($width - 2)) -ForegroundColor Cyan
+    Write-Host ("=" * $width) -ForegroundColor White
+
+    if ($cpuProcs) {
+        Write-Host "  CPU — Top processes by usage during check window:" -ForegroundColor Yellow
+        foreach ($p in $cpuProcs) {
+            $name = if ($p.Name.Length -gt 48) { $p.Name.Substring(0, 45) + '...' } else { $p.Name }
+            Write-Host ("    {0,-48}  {1,6}%" -f $name, $p.CpuPct) -ForegroundColor White
+        }
+        Write-Host ""
+    }
+
+    if ($ramProcs) {
+        Write-Host "  RAM — Top processes by working set:" -ForegroundColor Yellow
+        foreach ($p in $ramProcs) {
+            $name = if ($p.Name.Length -gt 48) { $p.Name.Substring(0, 45) + '...' } else { $p.Name }
+            Write-Host ("    {0,-48}  {1,6} MB" -f $name, $p.RamMB) -ForegroundColor White
+        }
+        Write-Host ""
+    }
+
+    Write-Host ("=" * $width) -ForegroundColor White
+}
+
 Write-Host ""
 #endregion
 

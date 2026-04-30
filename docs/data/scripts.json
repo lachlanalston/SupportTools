@@ -5,19 +5,34 @@
     "platform": "windows",
     "category": "Updates",
     "description": "Checks for pending Windows updates using the Windows Update COM API. Flags mandatory updates as CRIT and optional updates as WARN.",
-    "tags": ["updates", "windows-update", "patch", "mandatory", "health"],
+    "tags": [
+      "updates",
+      "windows-update",
+      "patch",
+      "mandatory",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Updates/Get-UpdateHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Updates/Get-UpdateHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-UpdateHistory",
     "file": "Windows/Updates/Get-UpdateHistory.ps1",
     "platform": "windows",
     "category": "Updates",
-    "description": "Reports Windows Update install history — last successful install date, recent failures with HResult codes, and a list of the 10 most recent entries.",
-    "tags": ["updates", "windows-update", "history", "failures", "hresult", "health"],
+    "description": "Reports Windows Update install history \u2014 last successful install date, recent failures with HResult codes, and a list of the 10 most recent entries.",
+    "tags": [
+      "updates",
+      "windows-update",
+      "history",
+      "failures",
+      "hresult",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Updates/Get-UpdateHistory.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Updates/Get-UpdateHistory.ps1",
+    "verified": false
   },
   {
     "name": "Get-EndpointHealth",
@@ -25,9 +40,19 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Comprehensive MSP diagnostic tool. Checks CPU, memory, disk, network, services, and uptime. Paste into a remote terminal session.",
-    "tags": ["diagnostic", "health", "endpoint", "msp", "cpu", "memory", "disk", "network"],
+    "tags": [
+      "diagnostic",
+      "health",
+      "endpoint",
+      "msp",
+      "cpu",
+      "memory",
+      "disk",
+      "network"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-EndpointHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-EndpointHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-EventLogExport",
@@ -35,9 +60,19 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Exports System, Application, Security, and Setup event logs (last 48h) to a ZIP of .evtx files. Output goes to C:\\Temp.",
-    "tags": ["event-log", "export", "zip", "logs", "evtx", "system", "application", "security"],
+    "tags": [
+      "event-log",
+      "export",
+      "zip",
+      "logs",
+      "evtx",
+      "system",
+      "application",
+      "security"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-EventLogExport.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-EventLogExport.ps1",
+    "verified": false
   },
   {
     "name": "Get-RecentChanges",
@@ -45,9 +80,18 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Reports all notable changes on a Windows endpoint in the last 72 hours including updates, installs, driver changes, reboots, crashes, and logons.",
-    "tags": ["diagnostic", "changes", "event-log", "installs", "reboots", "crashes", "troubleshooting"],
+    "tags": [
+      "diagnostic",
+      "changes",
+      "event-log",
+      "installs",
+      "reboots",
+      "crashes",
+      "troubleshooting"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-RecentChanges.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-RecentChanges.ps1",
+    "verified": false
   },
   {
     "name": "Get-SystemDetails",
@@ -55,9 +99,19 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Reports OS edition, feature update version, build, architecture, hardware manufacturer and model, active user, install date, and uptime. Warns if uptime exceeds 14 days.",
-    "tags": ["system", "info", "hardware", "os", "build", "version", "uptime", "health"],
+    "tags": [
+      "system",
+      "info",
+      "hardware",
+      "os",
+      "build",
+      "version",
+      "uptime",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-SystemDetails.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-SystemDetails.ps1",
+    "verified": false
   },
   {
     "name": "Get-GraphicsDriverHealth",
@@ -65,9 +119,18 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks GPU driver version and date for all installed video controllers. Warns if any driver is older than 365 days. Works for NVIDIA, AMD, Intel, and any vendor.",
-    "tags": ["driver", "graphics", "gpu", "nvidia", "amd", "intel", "health"],
+    "tags": [
+      "driver",
+      "graphics",
+      "gpu",
+      "nvidia",
+      "amd",
+      "intel",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-GraphicsDriverHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-GraphicsDriverHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-Win11Readiness",
@@ -75,9 +138,18 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks Windows 11 upgrade readiness: TPM 2.0, Secure Boot, CPU generation, RAM (4 GB min), and disk space (64 GB min). Reports CRIT for hard blockers.",
-    "tags": ["windows11", "compatibility", "upgrade", "hardware", "tpm", "secure-boot", "readiness"],
+    "tags": [
+      "windows11",
+      "compatibility",
+      "upgrade",
+      "hardware",
+      "tpm",
+      "secure-boot",
+      "readiness"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-Win11Readiness.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-Win11Readiness.ps1",
+    "verified": false
   },
   {
     "name": "Get-PrintHealth",
@@ -85,25 +157,50 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks print spooler health, stuck jobs, and offline printer states. Run with -Fix to stop the spooler, clear job files, and restart.",
-    "tags": ["print", "printer", "queue", "stuck", "spooler", "jobs", "health"],
+    "tags": [
+      "print",
+      "printer",
+      "queue",
+      "stuck",
+      "spooler",
+      "jobs",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "type": "fix", "when": "Jobs are stuck in the queue and not clearing automatically — stops the spooler, wipes job files, and restarts it." }
+      {
+        "flag": "-Fix",
+        "type": "fix",
+        "when": "Jobs are stuck in the queue and not clearing automatically \u2014 stops the spooler, wipes job files, and restarts it."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-PrintHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-PrintHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-DiskHealth",
     "file": "Windows/Diagnostics/Get-DiskHealth.ps1",
     "platform": "windows",
     "category": "Diagnostics",
-    "description": "Checks free space on all fixed drives (CRIT ≤5%, WARN ≤15%), temp folder bloat, and Recycle Bin size. Run with -Fix to clear temp files and empty the Recycle Bin.",
-    "tags": ["disk", "storage", "space", "temp", "cleanup", "health"],
+    "description": "Checks free space on all fixed drives (CRIT \u22645%, WARN \u226415%), temp folder bloat, and Recycle Bin size. Run with -Fix to clear temp files and empty the Recycle Bin.",
+    "tags": [
+      "disk",
+      "storage",
+      "space",
+      "temp",
+      "cleanup",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "type": "fix", "when": "Temp folder or Recycle Bin is bloated and you want to reclaim space immediately without manual cleanup." }
+      {
+        "flag": "-Fix",
+        "type": "fix",
+        "when": "Temp folder or Recycle Bin is bloated and you want to reclaim space immediately without manual cleanup."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-DiskHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-DiskHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-BrowserCacheHealth",
@@ -111,12 +208,25 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks Chrome, Edge, and Firefox cache sizes across all user profiles. Warns if any browser cache exceeds 500 MB. Run with -Fix to clear all caches.",
-    "tags": ["browser", "cache", "chrome", "edge", "firefox", "cleanup", "health"],
+    "tags": [
+      "browser",
+      "cache",
+      "chrome",
+      "edge",
+      "firefox",
+      "cleanup",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "type": "fix", "when": "Browser cache is bloated and causing slowness or storage pressure — clears all detected caches across every user profile on the device." }
+      {
+        "flag": "-Fix",
+        "type": "fix",
+        "when": "Browser cache is bloated and causing slowness or storage pressure \u2014 clears all detected caches across every user profile on the device."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-BrowserCacheHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-BrowserCacheHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-NetworkDriveHealth",
@@ -124,12 +234,24 @@
     "platform": "windows",
     "category": "Network",
     "description": "Reports mapped network drives and their connectivity state. Warns on disconnected drives. Run with -Fix to remove all mapped drives.",
-    "tags": ["network", "drives", "mapped", "connectivity", "unc", "health"],
+    "tags": [
+      "network",
+      "drives",
+      "mapped",
+      "connectivity",
+      "unc",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "type": "fix", "when": "Disconnected or stale drive mappings need to be wiped before remapping via login script or MDM policy." }
+      {
+        "flag": "-Fix",
+        "type": "fix",
+        "when": "Disconnected or stale drive mappings need to be wiped before remapping via login script or MDM policy."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-NetworkDriveHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-NetworkDriveHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-TimeSyncHealth",
@@ -137,12 +259,24 @@
     "platform": "windows",
     "category": "Network",
     "description": "Checks Windows Time service health, NTP source, stratum, last sync time, and time offset. Run with -Fix to re-register w32time and sync to the fastest reachable AU/global NTP server.",
-    "tags": ["time", "ntp", "sync", "w32time", "offset", "health"],
+    "tags": [
+      "time",
+      "ntp",
+      "sync",
+      "w32time",
+      "offset",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "-Fix", "type": "fix", "when": "Time is drifting or the w32time service is broken — re-registers the service, sets a reliable NTP source, and forces an immediate sync." }
+      {
+        "flag": "-Fix",
+        "type": "fix",
+        "when": "Time is drifting or the w32time service is broken \u2014 re-registers the service, sets a reliable NTP source, and forces an immediate sync."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-TimeSyncHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-TimeSyncHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-SecurityBaseline",
@@ -150,9 +284,18 @@
     "platform": "windows",
     "category": "Security",
     "description": "Checks Windows security baseline: Secure Boot, TPM presence and readiness, Fast Startup state, and Windows Firewall profile status. Flags CRIT/WARN for any failures.",
-    "tags": ["secure-boot", "tpm", "fast-startup", "firewall", "security", "baseline", "uefi"],
+    "tags": [
+      "secure-boot",
+      "tpm",
+      "fast-startup",
+      "firewall",
+      "security",
+      "baseline",
+      "uefi"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-SecurityBaseline.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-SecurityBaseline.ps1",
+    "verified": false
   },
   {
     "name": "Get-DeviceJoinHealth",
@@ -160,9 +303,23 @@
     "platform": "windows",
     "category": "Security",
     "description": "Checks device join health across Entra ID, domain, and hybrid environments. Reports join type, PRT status and age, device certificate expiry, MDM enrolment and last sync, domain secure channel, DC reachability, machine account password age, and Kerberos ticket availability.",
-    "tags": ["entra-id", "azure-ad", "hybrid", "domain", "prt", "mdm", "intune", "certificate", "kerberos", "join", "conditional-access", "health"],
+    "tags": [
+      "entra-id",
+      "azure-ad",
+      "hybrid",
+      "domain",
+      "prt",
+      "mdm",
+      "intune",
+      "certificate",
+      "kerberos",
+      "join",
+      "conditional-access",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-DeviceJoinHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-DeviceJoinHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-BitLockerHealth",
@@ -170,7 +327,18 @@
     "platform": "windows",
     "category": "Security",
     "description": "Checks BitLocker encryption status and TPM health on the C: drive. Reports protection status, encryption method, disk mode, key protectors, PCR validation profile, TPM state, Secure Boot, and UEFI vs Legacy BIOS. Flags issues relevant to Intune compliance.",
-    "tags": ["bitlocker", "tpm", "encryption", "secure-boot", "uefi", "intune", "compliance", "security", "pcr", "health"],
+    "tags": [
+      "bitlocker",
+      "tpm",
+      "encryption",
+      "secure-boot",
+      "uefi",
+      "intune",
+      "compliance",
+      "security",
+      "pcr",
+      "health"
+    ],
     "wip": false,
     "flags": [
       {
@@ -179,7 +347,8 @@
         "when": "N-central / N-able reports BitLocker as not enabled after ImmyBot maintenance"
       }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-BitLockerHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Get-BitLockerHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-LocalUserHealth",
@@ -187,12 +356,25 @@
     "platform": "windows",
     "category": "Users",
     "description": "Reports all local user accounts, enabled state, admin membership, password expiry, and last logon. Run with -Fix -Username <name> to create/enable a local admin account with non-expiring password.",
-    "tags": ["admin", "local-user", "account", "password", "unlock", "expiry", "health"],
+    "tags": [
+      "admin",
+      "local-user",
+      "account",
+      "password",
+      "unlock",
+      "expiry",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "-Fix -Username <name>", "type": "fix", "when": "You need to create or re-enable a local admin account — typically for emergency access or a break-glass account when normal login paths are unavailable." }
+      {
+        "flag": "-Fix -Username <name>",
+        "type": "fix",
+        "when": "You need to create or re-enable a local admin account \u2014 typically for emergency access or a break-glass account when normal login paths are unavailable."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Users/Get-LocalUserHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Users/Get-LocalUserHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-OutlookHealth",
@@ -200,9 +382,18 @@
     "platform": "windows",
     "category": "Outlook",
     "description": "Checks Outlook process state, install path, DNS resolution for outlook.office365.com, and internet connectivity. Flags missing install and DNS/connectivity failures.",
-    "tags": ["outlook", "email", "dns", "office365", "connectivity", "exchange", "health"],
+    "tags": [
+      "outlook",
+      "email",
+      "dns",
+      "office365",
+      "connectivity",
+      "exchange",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Apps/Outlook/Get-OutlookHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Apps/Outlook/Get-OutlookHealth.ps1",
+    "verified": false
   },
   {
     "name": "Get-NetskopeHealth",
@@ -210,9 +401,38 @@
     "platform": "windows",
     "category": "Netskope",
     "description": "Checks Netskope client installation state, version, agent service status, and certificate presence. Run with -Remove to fully uninstall Netskope including service, MSI, folders, certs, and roaming data.",
-    "tags": ["netskope", "agent", "uninstall", "removal", "vpn", "security", "health"],
+    "tags": [
+      "netskope",
+      "agent",
+      "uninstall",
+      "removal",
+      "vpn",
+      "security",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Apps/Netskope/Get-NetskopeHealth.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Apps/Netskope/Get-NetskopeHealth.ps1",
+    "verified": false
+  },
+  {
+    "name": "Get-BatteryHealth",
+    "file": "Windows/Diagnostics/Get-BatteryHealth.ps1",
+    "platform": "windows",
+    "category": "Diagnostics",
+    "description": "Checks battery health, capacity %, cycle count, charge state, and adapter info. Parses powercfg /batteryreport for capacity trend and flat-discharge history. Handles multi-battery devices and desktop/VM gracefully.",
+    "tags": [
+      "battery",
+      "health",
+      "capacity",
+      "cycles",
+      "adapter",
+      "powercfg",
+      "laptop",
+      "windows"
+    ],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-BatteryHealth.ps1",
+    "verified": false
   },
   {
     "name": "get-printer-health",
@@ -220,12 +440,25 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks CUPS daemon state, printer states (idle/stopped/error), stuck print jobs, default printer, and print sharing. Run with --fix to cancel all queued jobs, re-enable stopped printers, and restart the CUPS daemon.",
-    "tags": ["printer", "cups", "print", "queue", "stuck", "jobs", "health"],
+    "tags": [
+      "printer",
+      "cups",
+      "print",
+      "queue",
+      "stuck",
+      "jobs",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "--fix", "type": "fix", "when": "Jobs are stuck in the queue and not clearing — cancels all queued jobs, re-enables stopped printers, and restarts the CUPS daemon." }
+      {
+        "flag": "--fix",
+        "type": "fix",
+        "when": "Jobs are stuck in the queue and not clearing \u2014 cancels all queued jobs, re-enables stopped printers, and restarts the CUPS daemon."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-printer-health.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-printer-health.sh",
+    "verified": false
   },
   {
     "name": "get-security-baseline",
@@ -233,9 +466,23 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks the macOS security baseline: SIP, Gatekeeper, Firewall, FileVault, Secure Boot (T2 and Apple Silicon), XProtect and MRT versions, and remote access state (SSH, Screen Sharing). Flags anything that deviates from a hardened managed endpoint.",
-    "tags": ["sip", "gatekeeper", "firewall", "filevault", "secure-boot", "xprotect", "mrt", "ssh", "security", "baseline", "compliance", "health"],
+    "tags": [
+      "sip",
+      "gatekeeper",
+      "firewall",
+      "filevault",
+      "secure-boot",
+      "xprotect",
+      "mrt",
+      "ssh",
+      "security",
+      "baseline",
+      "compliance",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-security-baseline.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-security-baseline.sh",
+    "verified": false
   },
   {
     "name": "get-update-health",
@@ -243,9 +490,18 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks pending macOS updates by name, whether a restart is required, last successful install date, and recent update history. Flags the restart-required + long-uptime combination as CRIT. softwareupdate runs in the background to keep total time under 30s.",
-    "tags": ["updates", "softwareupdate", "pending", "restart", "patch", "history", "health"],
+    "tags": [
+      "updates",
+      "softwareupdate",
+      "pending",
+      "restart",
+      "patch",
+      "history",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-update-health.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-update-health.sh",
+    "verified": false
   },
   {
     "name": "get-battery-health",
@@ -253,9 +509,19 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks battery health, condition label (Normal / Replace Soon / Replace Now / Service Battery), capacity %, cycle count, temperature, charge state, adapter info, and recent low-battery events from the power log. Handles desktop Macs gracefully.",
-    "tags": ["battery", "health", "capacity", "cycles", "temperature", "adapter", "pmset", "macos"],
+    "tags": [
+      "battery",
+      "health",
+      "capacity",
+      "cycles",
+      "temperature",
+      "adapter",
+      "pmset",
+      "macos"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-battery-health.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-battery-health.sh",
+    "verified": false
   },
   {
     "name": "get-disk-health",
@@ -263,12 +529,26 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks APFS container free space, swap usage, SMART health and sector counts, Time Machine backup age, and live I/O load. Flags the high-swap + low-disk combination that causes most macOS performance complaints. Run with --deep to also verify the APFS container for filesystem corruption (adds 20-60s).",
-    "tags": ["disk", "storage", "smart", "swap", "apfs", "time-machine", "performance", "health"],
+    "tags": [
+      "disk",
+      "storage",
+      "smart",
+      "swap",
+      "apfs",
+      "time-machine",
+      "performance",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "--deep", "type": "mode", "when": "User reports data corruption, unexpected crashes, or disk errors in Console — runs diskutil verifyContainer to check for APFS filesystem corruption (adds 20–60s)." }
+      {
+        "flag": "--deep",
+        "type": "mode",
+        "when": "User reports data corruption, unexpected crashes, or disk errors in Console \u2014 runs diskutil verifyContainer to check for APFS filesystem corruption (adds 20\u201360s)."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-disk-health.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-disk-health.sh",
+    "verified": false
   },
   {
     "name": "get-filevault-health",
@@ -276,9 +556,19 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks FileVault encryption status, recovery key type (personal or institutional), MDM escrow profile presence, and Secure Token state for the logged-in user. Flags missing keys, deferred encryption, and escrow not configured.",
-    "tags": ["filevault", "encryption", "recovery-key", "secure-token", "mdm", "escrow", "security", "health"],
+    "tags": [
+      "filevault",
+      "encryption",
+      "recovery-key",
+      "secure-token",
+      "mdm",
+      "escrow",
+      "security",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-filevault-health.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-filevault-health.sh",
+    "verified": false
   },
   {
     "name": "get-mdm-health",
@@ -286,29 +576,68 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks MDM enrolment health across Intune, Kandji, and Jamf. Reports enrolment status, provider detection, supervision state, bootstrap token escrow (Apple Silicon), and provider-specific agent health. Flags Jamf presence as a phase-out advisory.",
-    "tags": ["mdm", "intune", "kandji", "jamf", "enrolment", "supervised", "bootstrap-token", "company-portal", "apple-silicon", "health"],
+    "tags": [
+      "mdm",
+      "intune",
+      "kandji",
+      "jamf",
+      "enrolment",
+      "supervised",
+      "bootstrap-token",
+      "company-portal",
+      "apple-silicon",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-mdm-health.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-mdm-health.sh",
+    "verified": false
   },
   {
     "name": "get-EndpointHealth",
     "file": "MacOS/get-EndpointHealth.sh",
     "platform": "macos",
     "category": "MacOS",
-    "description": "Broad endpoint health check for macOS. Runs all checks in parallel — disk space, CPU load, RAM availability, pending updates, SMART disk health, AV/EDR presence, critical system services, and battery capacity. Outputs findings and detail blocks sized for ticket screenshots.",
-    "tags": ["diagnostic", "health", "endpoint", "msp", "disk", "cpu", "ram", "updates", "smart", "battery", "av", "edr", "services"],
+    "description": "Broad endpoint health check for macOS. Runs all checks in parallel \u2014 disk space, CPU load, RAM availability, pending updates, SMART disk health, AV/EDR presence, critical system services, and battery capacity. Outputs findings and detail blocks sized for ticket screenshots.",
+    "tags": [
+      "diagnostic",
+      "health",
+      "endpoint",
+      "msp",
+      "disk",
+      "cpu",
+      "ram",
+      "updates",
+      "smart",
+      "battery",
+      "av",
+      "edr",
+      "services"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-EndpointHealth.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-EndpointHealth.sh",
+    "verified": false
   },
   {
     "name": "get-recent-changes",
     "file": "MacOS/get-recent-changes.sh",
     "platform": "macos",
     "category": "MacOS",
-    "description": "Reports all notable changes on a macOS endpoint in the last 72 hours — software installs, reboots, kernel panics, application crashes, new LaunchDaemons/Agents, driver changes, and user logons. Outputs a FINDINGS block, a categorised change timeline, and a plain-text ticket note.",
-    "tags": ["diagnostic", "changes", "installs", "reboots", "crashes", "kernel-panic", "services", "logons", "troubleshooting", "health"],
+    "description": "Reports all notable changes on a macOS endpoint in the last 72 hours \u2014 software installs, reboots, kernel panics, application crashes, new LaunchDaemons/Agents, driver changes, and user logons. Outputs a FINDINGS block, a categorised change timeline, and a plain-text ticket note.",
+    "tags": [
+      "diagnostic",
+      "changes",
+      "installs",
+      "reboots",
+      "crashes",
+      "kernel-panic",
+      "services",
+      "logons",
+      "troubleshooting",
+      "health"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-recent-changes.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-recent-changes.sh",
+    "verified": false
   },
   {
     "name": "get-hostname-health",
@@ -316,12 +645,26 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks macOS hostname consistency across ComputerName, HostName, and LocalHostName. Flags .local suffix drift caused by Bluetooth or AirDrop activity, unset HostName, and mismatches between values. Run with --fix to strip .local suffixes automatically.",
-    "tags": ["hostname", "bonjour", "airdrop", "bluetooth", "scutil", "local", "dns", "health"],
+    "tags": [
+      "hostname",
+      "bonjour",
+      "airdrop",
+      "bluetooth",
+      "scutil",
+      "local",
+      "dns",
+      "health"
+    ],
     "wip": false,
     "flags": [
-      { "flag": "--fix", "type": "fix", "when": "HostName or LocalHostName has drifted with a .local suffix — strips the suffix so all three hostname values are consistent." }
+      {
+        "flag": "--fix",
+        "type": "fix",
+        "when": "HostName or LocalHostName has drifted with a .local suffix \u2014 strips the suffix so all three hostname values are consistent."
+      }
     ],
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-hostname-health.sh"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-hostname-health.sh",
+    "verified": false
   },
   {
     "name": "getCalPerms",
@@ -329,9 +672,16 @@
     "platform": "m365",
     "category": "M365",
     "description": "Retrieves calendar permissions for a mailbox via the Microsoft Graph API using client credentials.",
-    "tags": ["calendar", "permissions", "graph", "exchange", "mailbox"],
+    "tags": [
+      "calendar",
+      "permissions",
+      "graph",
+      "exchange",
+      "mailbox"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/getCalPerms.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/getCalPerms.ps1",
+    "verified": false
   },
   {
     "name": "getUserGUID",
@@ -339,9 +689,17 @@
     "platform": "m365",
     "category": "M365",
     "description": "Looks up a user's Object ID / GUID from Microsoft Graph by UPN.",
-    "tags": ["user", "guid", "object-id", "graph", "azure-ad", "upn"],
+    "tags": [
+      "user",
+      "guid",
+      "object-id",
+      "graph",
+      "azure-ad",
+      "upn"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/getUserGUID.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/getUserGUID.ps1",
+    "verified": false
   },
   {
     "name": "listUsers",
@@ -349,9 +707,17 @@
     "platform": "m365",
     "category": "M365",
     "description": "Lists all users in a tenant via the Microsoft Graph API using OAuth client credentials flow.",
-    "tags": ["users", "list", "graph", "tenant", "azure-ad", "entra"],
+    "tags": [
+      "users",
+      "list",
+      "graph",
+      "tenant",
+      "azure-ad",
+      "entra"
+    ],
     "wip": false,
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/listUsers.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/listUsers.ps1",
+    "verified": false
   },
   {
     "name": "TenantDataExport",
@@ -359,11 +725,20 @@
     "platform": "m365",
     "category": "M365",
     "description": "Template script to export M365 tenant data (users, Exchange, OneDrive, SharePoint, licenses) to an Excel workbook.",
-    "tags": ["export", "excel", "tenant", "users", "sharepoint", "licenses", "onedrive"],
+    "tags": [
+      "export",
+      "excel",
+      "tenant",
+      "users",
+      "sharepoint",
+      "licenses",
+      "onedrive"
+    ],
     "wip": false,
     "requires_config": true,
-    "config_note": "Template script — review and configure before running. Requires ImportExcel module.",
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/TenantDataExport.ps1"
+    "config_note": "Template script \u2014 review and configure before running. Requires ImportExcel module.",
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/TenantDataExport.ps1",
+    "verified": false
   },
   {
     "name": "ConfigAPI_Test",
@@ -371,11 +746,19 @@
     "platform": "api",
     "category": "API",
     "description": "Tests connectivity to the 3CX Configuration API using the /xapi/v1/Defs endpoint with Bearer token auth.",
-    "tags": ["3cx", "api", "voip", "connectivity", "test", "xapi"],
+    "tags": [
+      "3cx",
+      "api",
+      "voip",
+      "connectivity",
+      "test",
+      "xapi"
+    ],
     "wip": false,
     "requires_config": true,
     "config_note": "Set $BaseUrl, $ClientId, and $ApiKey at the top of the script before running.",
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/ConfigAPI_Test.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/ConfigAPI_Test.ps1",
+    "verified": false
   },
   {
     "name": "get3CXVersion",
@@ -383,10 +766,18 @@
     "platform": "api",
     "category": "API",
     "description": "Authenticates to a 3CX PBX via OAuth client credentials and retrieves the current PBX version.",
-    "tags": ["3cx", "version", "oauth", "api", "voip", "pbx"],
+    "tags": [
+      "3cx",
+      "version",
+      "oauth",
+      "api",
+      "voip",
+      "pbx"
+    ],
     "wip": false,
     "requires_config": true,
     "config_note": "Set $pbxFqdn, $clientId, and $clientSecret before running.",
-    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/get3CXVersion.ps1"
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/get3CXVersion.ps1",
+    "verified": false
   }
 ]

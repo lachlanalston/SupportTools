@@ -257,6 +257,11 @@ kbd {
   color: #3fb950;
 }
 
+.filter-chip-verified.active {
+  border-color: #e3b341;
+  color: #e3b341;
+}
+
 .dot {
   width: 8px;
   height: 8px;
@@ -366,6 +371,7 @@ kbd {
 .badge-command   { background: rgba(33,150,243,0.15);  color: var(--windows); }
 .badge-bookmark  { background: rgba(56,139,253,0.15);  color: #58a6ff; }
 .badge-fix       { background: rgba(63,185,80,0.15);   color: #3fb950; }
+.badge-verified  { background: rgba(227,179,65,0.15);  color: #e3b341; border: 1px solid rgba(227,179,65,0.35); display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
 .badge-rfc       { background: rgba(210,153,34,0.15);  color: #d4a72c; }
 .badge-category  { background: rgba(110,118,129,0.15); color: var(--sub); border: 1px solid rgba(110,118,129,0.25); }
 .badge-dns-address     { background: rgba(100,181,246,0.15); color: #64b5f6; }

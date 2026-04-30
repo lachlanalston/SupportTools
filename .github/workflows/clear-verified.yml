@@ -1,0 +1,73 @@
+name: Clear verified on script change
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.ps1'
+      - '**/*.sh'
+
+jobs:
+  clear-verified:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Reset verified for changed scripts
+        run: |
+          python3 - <<'EOF'
+          import json, subprocess, sys, os
+
+          # Files changed in this push (compare HEAD to previous commit)
+          result = subprocess.run(
+              ['git', 'diff', '--name-only', 'HEAD~1', 'HEAD'],
+              capture_output=True, text=True
+          )
+          changed = result.stdout.strip().splitlines()
+
+          script_files = {
+              f for f in changed
+              if (f.endswith('.ps1') or f.endswith('.sh'))
+              and not f.startswith('docs/')
+              and not f.startswith('tools/')
+          }
+
+          if not script_files:
+              print('No script files changed — nothing to clear.')
+              sys.exit(0)
+
+          json_path = 'docs/data/scripts.json'
+          with open(json_path) as f:
+              data = json.load(f)
+
+          modified = False
+          for entry in data:
+              if entry.get('file') in script_files and entry.get('verified', False):
+                  entry['verified'] = False
+                  modified = True
+                  print(f'Cleared verified: {entry["file"]}')
+
+          if not modified:
+              print('No verified entries matched changed scripts.')
+              sys.exit(0)
+
+          with open(json_path, 'w') as f:
+              json.dump(data, f, indent=2)
+              f.write('\n')
+
+          EOF
+
+      - name: Commit if scripts.json changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet docs/data/scripts.json || (
+            git add docs/data/scripts.json &&
+            git commit -m "chore: clear verified for updated scripts [skip ci]"
+          )
+          git push

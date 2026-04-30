@@ -186,6 +186,8 @@ function renderScripts() {
 
   if (scriptFilter === 'has-fix') {
     data = data.filter(s => s.flags && s.flags.some(f => f.type === 'fix'));
+  } else if (scriptFilter === 'verified') {
+    data = data.filter(s => s.verified === true);
   } else if (scriptFilter !== 'all') {
     data = data.filter(s => s.platform === scriptFilter);
   }
@@ -214,6 +216,7 @@ function renderScripts() {
         <div class="card-badges">
           <span class="badge badge-${script.platform}">${platformLabel(script.platform)}</span>
           ${hasFixFlag ? '<span class="badge badge-fix">Remediate</span>' : ''}
+          ${script.verified ? '<span class="badge badge-verified"><svg viewBox="0 0 16 16" fill="currentColor" width="10" height="10"><path d="M7.467.133a1.748 1.748 0 0 1 1.066 0l5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667Zm.61 1.429a.25.25 0 0 0-.153 0l-5.25 1.68a.25.25 0 0 0-.174.238V7c0 1.358.275 2.666 1.057 3.86.784 1.194 2.121 2.34 4.366 3.297a.196.196 0 0 0 .154 0c2.245-.956 3.582-2.104 4.366-3.298C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.237l-5.25-1.68ZM11.28 6.28a.75.75 0 0 0-1.06-1.06L7 8.44l-1.22-1.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75Z"/></svg>Verified</span>' : ''}
         </div>
       </div>
       <p class="card-desc">${esc(script.description)}</p>
@@ -615,6 +618,7 @@ function openScriptModal(script) {
     <div class="modal-badges">
       <span class="badge badge-${script.platform}">${platformLabel(script.platform)}</span>
       <span class="badge badge-category">${esc(script.category)}</span>
+      ${script.verified ? '<span class="badge badge-verified"><svg viewBox="0 0 16 16" fill="currentColor" width="10" height="10"><path d="M7.467.133a1.748 1.748 0 0 1 1.066 0l5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667Zm.61 1.429a.25.25 0 0 0-.153 0l-5.25 1.68a.25.25 0 0 0-.174.238V7c0 1.358.275 2.666 1.057 3.86.784 1.194 2.121 2.34 4.366 3.297a.196.196 0 0 0 .154 0c2.245-.956 3.582-2.104 4.366-3.298C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.237l-5.25-1.68ZM11.28 6.28a.75.75 0 0 0-1.06-1.06L7 8.44l-1.22-1.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75Z"/></svg>Verified</span>' : ''}
     </div>
     <p class="modal-desc">${esc(script.description)}</p>
     <div class="modal-section-label">File</div>
