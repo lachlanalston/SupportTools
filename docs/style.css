@@ -622,6 +622,16 @@ kbd {
   border-color: var(--wip);
 }
 
+.btn-report {
+  background: rgba(248,81,73,0.08);
+  border-color: rgba(248,81,73,0.3);
+  color: #f85149;
+}
+.btn-report:hover {
+  background: rgba(248,81,73,0.15);
+  border-color: #f85149;
+}
+
 /* ─── One-liner block ──────────────────────────────────────────── */
 .modal-oneliner {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
