@@ -15,8 +15,8 @@
 
 .NOTES
     Author:  Lachlan Alston
-    Version: v1
-    Updated: 2026-04-14
+    Version: v2
+    Updated: 2026-04-30
 #>
 
 [CmdletBinding()]
@@ -122,6 +122,64 @@ foreach ($log in $logs) {
     }
 }
 
+# Reliability Monitor history — collected before ZIP so it is bundled automatically
+$reliabilityOk    = $false
+$reliabilityCount = 0
+$reliabilityError = ''
+
+if ($dirOk) {
+    try {
+        $relRecords = @(Get-WmiObject -Class Win32_ReliabilityRecords -ErrorAction Stop |
+            Sort-Object TimeGenerated -Descending)
+        $reliabilityCount = $relRecords.Count
+
+        $htmlRows = ($relRecords | ForEach-Object {
+            try   { $dt = [Management.ManagementDateTimeConverter]::ToDateTime($_.TimeGenerated).ToString('yyyy-MM-dd HH:mm') }
+            catch { $dt = $_.TimeGenerated }
+            $src  = $_.SourceName  -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;'
+            $prod = $_.ProductName -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;'
+            $msg  = ($_.Message    -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;') -replace '\r?\n',' '
+            $cls  = if ($src -match 'Error|Hang|Failure') { ' class="err"' } else { '' }
+            "<tr$cls><td>$dt</td><td>$src</td><td>$prod</td><td>$msg</td></tr>"
+        }) -join "`n"
+
+        $relHtml = @"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reliability History — $($env:COMPUTERNAME)</title>
+  <style>
+    body  { font-family:'Segoe UI',sans-serif; background:#0d1117; color:#e6edf3; margin:0; padding:24px; }
+    h1    { color:#58a6ff; font-size:1.1rem; margin:0 0 4px; }
+    .meta { color:#8b949e; font-size:0.82rem; margin:0 0 20px; }
+    table { border-collapse:collapse; width:100%; font-size:0.82rem; }
+    th    { background:#161b22; color:#58a6ff; text-align:left; padding:8px 12px; border-bottom:2px solid #30363d; white-space:nowrap; }
+    td    { padding:6px 12px; border-bottom:1px solid #21262d; vertical-align:top; }
+    tr:hover td { background:#161b22; }
+    tr.err td   { color:#f85149; }
+  </style>
+</head>
+<body>
+  <h1>Reliability Monitor History</h1>
+  <p class="meta">Host: $($env:COMPUTERNAME) &nbsp;|&nbsp; Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm') &nbsp;|&nbsp; $reliabilityCount event(s)</p>
+  <table>
+    <thead><tr><th>Date / Time</th><th>Source</th><th>Product / Application</th><th>Description</th></tr></thead>
+    <tbody>
+$htmlRows
+    </tbody>
+  </table>
+</body>
+</html>
+"@
+        $relPath = Join-Path $exportDir 'ReliabilityHistory.html'
+        [System.IO.File]::WriteAllText($relPath, $relHtml, [System.Text.Encoding]::UTF8)
+        $reliabilityOk = $true
+    } catch {
+        $reliabilityError = $_.Exception.Message
+    }
+}
+
 # Bundle into ZIP and remove staging folder
 $zipOk     = $false
 $zipSizeKB = 0
@@ -159,6 +217,11 @@ foreach ($log in $logs) {
 if ($dirOk -and -not $zipOk) {
     Add-Finding 'WARN' 'ZIP creation failed' `
         "Individual .evtx files remain at $exportDir — retrieve folder directly. Error: $zipError"
+}
+
+if ($dirOk -and -not $reliabilityOk) {
+    Add-Finding 'WARN' 'Reliability history report unavailable' `
+        "Win32_ReliabilityRecords could not be read — excluded from ZIP. Error: $reliabilityError"
 }
 
 # ─────────────────────────────────────────────────────────────
@@ -213,12 +276,21 @@ Write-KV 'Format' '.evtx (opens in Event Viewer)'
 Write-Host ''
 
 foreach ($log in $logs) {
+
     $r = $result[$log]
     switch ($r.Status) {
         'OK'   { Write-KV $log "$($r.SizeKB) KB" }
         'FAIL' { Write-KV $log 'EXPORT FAILED' 'Red' }
         'SKIP' { Write-KV $log 'SKIPPED' 'Yellow' }
     }
+}
+
+Write-Host ''
+
+if ($reliabilityOk) {
+    Write-KV 'Reliability' "$reliabilityCount event(s) — ReliabilityHistory.html"
+} elseif ($dirOk) {
+    Write-KV 'Reliability' 'UNAVAILABLE' 'Yellow'
 }
 
 Write-Host ''
