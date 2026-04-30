@@ -1,0 +1,53 @@
+name: PSScriptAnalyzer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.ps1'
+  pull_request:
+    paths:
+      - '**/*.ps1'
+
+jobs:
+  analyze:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: Install-Module PSScriptAnalyzer -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          # Scripts intentionally use Write-Host for terminal output and are read-only diagnostics
+          $exclude = @(
+              'PSAvoidUsingWriteHost',
+              'PSUseShouldProcessForStateChangingFunctions'
+          )
+
+          $scripts = Get-ChildItem -Recurse -Filter *.ps1 |
+              Where-Object { $_.FullName -notmatch '\\tools\\' }
+
+          $results = $scripts | ForEach-Object {
+              Invoke-ScriptAnalyzer -Path $_.FullName -ExcludeRule $exclude
+          }
+
+          $repoRoot = (Get-Location).Path.Replace('\', '/') + '/'
+
+          foreach ($r in $results) {
+              $sev   = if ($r.Severity -eq 'Error') { 'error' } else { 'warning' }
+              $file  = $r.ScriptPath.Replace('\', '/') -replace [regex]::Escape($repoRoot), ''
+              Write-Host "::${sev} file=${file},line=$($r.Line),col=$($r.Column)::[$($r.RuleName)] $($r.Message)"
+          }
+
+          $errCount  = ($results | Where-Object Severity -eq 'Error').Count
+          $warnCount = ($results | Where-Object Severity -eq 'Warning').Count
+
+          Write-Host ""
+          Write-Host "$errCount error(s), $warnCount warning(s) across $($scripts.Count) script(s)"
+
+          if ($errCount -gt 0) { exit 1 }

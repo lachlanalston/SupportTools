@@ -1,0 +1,58 @@
+name: Validate scripts.json
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/data/scripts.json'
+      - '**/*.ps1'
+      - '**/*.sh'
+  pull_request:
+    paths:
+      - 'docs/data/scripts.json'
+      - '**/*.ps1'
+      - '**/*.sh'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate scripts.json
+        run: |
+          python3 - <<'EOF'
+          import json, sys, os
+
+          json_path = 'docs/data/scripts.json'
+          required_fields = ['name', 'description', 'tags', 'platform', 'file', 'category']
+
+          try:
+              with open(json_path) as f:
+                  data = json.load(f)
+          except json.JSONDecodeError as e:
+              print(f'::error file={json_path}::Invalid JSON: {e}')
+              sys.exit(1)
+
+          errors = []
+
+          for i, entry in enumerate(data):
+              name = entry.get('name', f'entry[{i}]')
+
+              for field in required_fields:
+                  if field not in entry or not entry[field]:
+                      errors.append(f'::error file={json_path}::{name}: missing or empty field "{field}"')
+
+              file_path = entry.get('file')
+              if file_path and not os.path.exists(file_path):
+                  errors.append(f'::error file={json_path}::{name}: file not found: {file_path}')
+
+          for err in errors:
+              print(err)
+
+          if errors:
+              sys.exit(1)
+
+          print(f'✓ {len(data)} entries — JSON valid, all file paths exist')
+          EOF
