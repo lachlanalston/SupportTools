@@ -15,8 +15,8 @@
 
 .NOTES
     Author:  Lachlan Alston
-    Version: v2
-    Updated: 2026-04-30
+    Version: v3
+    Updated: 2026-05-01
 #>
 
 [CmdletBinding()]
@@ -108,14 +108,15 @@ foreach ($log in $logs) {
         $result[$log] = @{ Status = 'SKIP' }
         continue
     }
-    $outFile = Join-Path $exportDir "$log.evtx"
+    $outFile = Join-Path $exportDir "$log.xml"
     try {
-        $wevOut = & wevtutil epl $log $outFile /q:$xpQuery /ow:true 2>&1
-        if ($LASTEXITCODE -eq 0 -and (Test-Path $outFile)) {
+        $xmlContent = & wevtutil qe $log /q:$xpQuery /f:XML /e:Events 2>&1
+        if ($LASTEXITCODE -eq 0 -and $xmlContent) {
+            [System.IO.File]::WriteAllText($outFile, ($xmlContent -join "`n"), [System.Text.Encoding]::UTF8)
             $sizeKB        = [Math]::Round((Get-Item $outFile).Length / 1KB, 1)
             $result[$log]  = @{ Status = 'OK'; SizeKB = $sizeKB }
         } else {
-            $result[$log]  = @{ Status = 'FAIL'; Error = ($wevOut -join ' ').Trim() }
+            $result[$log]  = @{ Status = 'FAIL'; Error = ($xmlContent -join ' ').Trim() }
         }
     } catch {
         $result[$log] = @{ Status = 'FAIL'; Error = $_.Exception.Message }
@@ -272,7 +273,7 @@ Write-Host ''
 # DETAIL
 Write-Divider 'DETAIL'
 Write-KV 'Range'  'Last 48 hours'
-Write-KV 'Format' '.evtx (opens in Event Viewer)'
+Write-KV 'Format' '.xml (rendered — opens in Event Viewer, browser, or text editor)'
 Write-Host ''
 
 foreach ($log in $logs) {
