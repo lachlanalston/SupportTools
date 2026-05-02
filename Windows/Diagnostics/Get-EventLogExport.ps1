@@ -15,8 +15,8 @@
 
 .NOTES
     Author:  Lachlan Alston
-    Version: v3
-    Updated: 2026-05-01
+    Version: v4
+    Updated: 2026-05-02
 #>
 
 [CmdletBinding()]
@@ -110,7 +110,7 @@ foreach ($log in $logs) {
     }
     $outFile = Join-Path $exportDir "$log.xml"
     try {
-        $xmlContent = & wevtutil qe $log /q:$xpQuery /f:XML /e:Events 2>&1
+        $xmlContent = & wevtutil qe $log /q:$xpQuery /f:XML /e:Events /rd:true 2>&1
         if ($LASTEXITCODE -eq 0 -and $xmlContent) {
             [System.IO.File]::WriteAllText($outFile, ($xmlContent -join "`n"), [System.Text.Encoding]::UTF8)
             $sizeKB        = [Math]::Round((Get-Item $outFile).Length / 1KB, 1)
@@ -273,7 +273,7 @@ Write-Host ''
 # DETAIL
 Write-Divider 'DETAIL'
 Write-KV 'Range'  'Last 48 hours'
-Write-KV 'Format' '.xml (rendered — opens in Event Viewer, browser, or text editor)'
+Write-KV 'Format' '.xml (rendered messages embedded — open in browser or text editor)'
 Write-Host ''
 
 foreach ($log in $logs) {
