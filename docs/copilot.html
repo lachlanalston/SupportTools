@@ -3,54 +3,331 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M365 Copilot Setup — LRFA Tools</title>
+  <title>Connect to M365 Copilot — LRFA Tools</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1117'/><text x='4' y='23' font-family='monospace' font-size='16' font-weight='700' fill='%23388bfd'>%3E_</text></svg>" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .coming-soon-wrap {
-      max-width: 520px;
+    .guide-wrap {
+      max-width: 760px;
       margin: 0 auto;
-      padding: 80px 24px;
-      text-align: center;
+      padding: 48px 24px 80px;
     }
 
-    .coming-soon-icon {
-      font-size: 2.8rem;
-      margin-bottom: 24px;
-      display: block;
+    .guide-hero {
+      margin-bottom: 48px;
     }
 
-    .coming-soon-wrap h2 {
-      font-size: 1.6rem;
+    .guide-hero h2 {
+      font-size: 1.7rem;
       font-weight: 700;
       color: var(--text);
+      letter-spacing: -0.4px;
       margin-bottom: 12px;
-      letter-spacing: -0.3px;
     }
 
-    .coming-soon-wrap p {
-      font-size: 0.95rem;
+    .guide-hero p {
+      font-size: 0.97rem;
       color: var(--sub);
       line-height: 1.7;
-      margin-bottom: 32px;
+      max-width: 600px;
     }
 
-    .coming-soon-back {
+    /* What you're building box */
+    .guide-outcome {
+      background: #1a2332;
+      border: 1px solid #2d4a7a;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 48px;
+    }
+
+    .guide-outcome h3 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #388bfd;
+      margin-bottom: 12px;
+    }
+
+    .guide-outcome ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .guide-outcome li {
+      font-size: 0.9rem;
+      color: #a8c4e8;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .guide-outcome li::before {
+      content: '→';
+      color: #388bfd;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Steps */
+    .guide-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .guide-step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 0 20px;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #1c2128;
+      border: 1px solid #30363d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #388bfd;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-body {
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border-sub);
+    }
+
+    .guide-step:last-child .step-body {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .step-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--sub2);
+      margin-bottom: 4px;
+    }
+
+    .step-body h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .step-body > p {
+      font-size: 0.9rem;
+      color: var(--sub);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .step-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .step-list li {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 0 10px;
+      font-size: 0.88rem;
+      color: var(--sub);
+      line-height: 1.55;
+    }
+
+    .step-list li .num {
+      color: #388bfd;
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding-top: 1px;
+    }
+
+    .step-list li strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .step-list li a {
+      color: #388bfd;
+      text-decoration: none;
+    }
+
+    .step-list li a:hover {
+      text-decoration: underline;
+    }
+
+    /* Code / prompt block */
+    .prompt-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .prompt-block p.prompt-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--sub2);
+      margin-bottom: 8px;
+    }
+
+    .prompt-block p.prompt-text {
+      font-size: 0.86rem;
+      color: #a8c4e8;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    /* Badge: required / optional */
+    .step-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: 8px;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+
+    .badge-required {
+      background: rgba(56,139,253,0.12);
+      color: #388bfd;
+      border: 1px solid rgba(56,139,253,0.25);
+    }
+
+    .badge-recommended {
+      background: rgba(63,185,80,0.1);
+      color: #3fb950;
+      border: 1px solid rgba(63,185,80,0.2);
+    }
+
+    .badge-preview {
+      background: rgba(227,179,65,0.1);
+      color: #e3b341;
+      border: 1px solid rgba(227,179,65,0.2);
+    }
+
+    /* Prerequisites */
+    .prereq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .prereq-list li {
+      font-size: 0.88rem;
+      color: var(--sub);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prereq-list li::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #388bfd;
+      flex-shrink: 0;
+    }
+
+    /* Example questions */
+    .examples {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-top: 48px;
+    }
+
+    .examples h3 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--sub2);
+      margin-bottom: 14px;
+    }
+
+    .examples ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .examples li {
+      font-size: 0.9rem;
+      color: var(--sub);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .examples li::before {
+      content: '"';
+      color: #388bfd;
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1.3;
+      flex-shrink: 0;
+    }
+
+    /* Back link */
+    .guide-back {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       color: #388bfd;
       text-decoration: none;
-      padding: 8px 16px;
-      border: 1px solid #2d4a7a;
-      border-radius: var(--radius-sm);
-      transition: background var(--transition), border-color var(--transition);
+      margin-bottom: 32px;
     }
 
-    .coming-soon-back:hover {
-      background: rgba(56, 139, 253, 0.1);
-      border-color: #388bfd;
+    .guide-back:hover { text-decoration: underline; }
+
+    /* Frontier note */
+    .frontier-note {
+      background: rgba(227,179,65,0.06);
+      border: 1px solid rgba(227,179,65,0.2);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+
+    .frontier-note p {
+      font-size: 0.86rem;
+      color: #c9a84c;
+      line-height: 1.6;
+    }
+
+    .frontier-note strong {
+      color: #e3b341;
     }
   </style>
 </head>
@@ -72,16 +349,114 @@
     </div>
   </header>
 
-  <div class="coming-soon-wrap">
-    <span class="coming-soon-icon">🤖</span>
-    <h2>Guide Coming Soon</h2>
-    <p>
-      We're putting together a step-by-step guide for connecting SupportTools to Microsoft 365 Copilot
-      via the GitHub Graph Connector — so your team can ask questions about these scripts right from Teams or the Copilot app.
-    </p>
-    <a class="coming-soon-back" href="/">
-      &larr; Back to tools
-    </a>
+  <div class="guide-wrap">
+
+    <a class="guide-back" href="/">&larr; Back to tools</a>
+
+    <div class="guide-hero">
+      <h2>Connect SupportTools to Microsoft 365 Copilot</h2>
+      <p>Set up a dedicated Copilot skill so your team can ask natural language questions about these scripts directly from Teams or the M365 Copilot app — no more searching the website.</p>
+    </div>
+
+    <div class="guide-outcome">
+      <h3>What you're building</h3>
+      <ul>
+        <li>A GitHub Graph Connector that indexes this repo into Microsoft 365</li>
+        <li>A Declarative Agent (Copilot skill) that techs can open in Teams</li>
+        <li>Techs ask a question, the agent searches the repo and returns the right script</li>
+      </ul>
+    </div>
+
+    <div class="guide-steps">
+
+      <!-- Prerequisites -->
+      <div class="guide-step">
+        <div class="step-number">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm7-3.25v2.992l2.028.812a.75.75 0 0 1-.557 1.392l-2.5-1A.751.751 0 0 1 7 8.25v-3.5a.75.75 0 0 1 1.5 0Z"/></svg>
+        </div>
+        <div class="step-body">
+          <p class="step-label">Before you start</p>
+          <h3>Prerequisites</h3>
+          <ul class="prereq-list">
+            <li>Microsoft 365 Copilot licence (per-user) assigned to the techs</li>
+            <li>M365 Global Admin or Search Admin access to set up connectors</li>
+            <li>GitHub account with read access to <strong>lachlanalston/SupportTools</strong></li>
+            <li>Access to <a href="https://copilotstudio.microsoft.com" target="_blank" rel="noopener">Microsoft Copilot Studio</a> to build the agent</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="guide-step">
+        <div class="step-number">1</div>
+        <div class="step-body">
+          <p class="step-label">Step 1 <span class="step-badge badge-required">Required</span></p>
+          <h3>Set up the GitHub Graph Connector</h3>
+          <p>The connector indexes this repo into Microsoft 365's semantic search. It's the data source the Copilot skill will query.</p>
+          <ol class="step-list">
+            <li><span class="num">1.</span><span>Sign in to the <a href="https://admin.microsoft.com" target="_blank" rel="noopener">Microsoft 365 Admin Center</a></span></li>
+            <li><span class="num">2.</span><span>Go to <strong>Settings → Search &amp; intelligence → Data sources</strong></span></li>
+            <li><span class="num">3.</span><span>Select <strong>GitHub</strong> from the connector list</span></li>
+            <li><span class="num">4.</span><span>Authenticate with a GitHub account that has read access to this repo</span></li>
+            <li><span class="num">5.</span><span>Set the repository to <strong>lachlanalston/SupportTools</strong></span></li>
+            <li><span class="num">6.</span><span>Set the crawl schedule to <strong>Daily</strong></span></li>
+            <li><span class="num">7.</span><span>Save — the initial index takes around 15–30 minutes</span></li>
+          </ol>
+          <p>Once indexed, the repo content is available to any Copilot experience in Microsoft 365.</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="guide-step">
+        <div class="step-number">2</div>
+        <div class="step-body">
+          <p class="step-label">Step 2 <span class="step-badge badge-recommended">Recommended</span></p>
+          <h3>Build the Declarative Agent in Copilot Studio</h3>
+          <p>A Declarative Agent gives techs a dedicated named assistant — focused only on SupportTools content. Without it, techs rely on general Copilot to surface the repo from among all M365 content, which is inconsistent.</p>
+          <ol class="step-list">
+            <li><span class="num">1.</span><span>Open <a href="https://copilotstudio.microsoft.com" target="_blank" rel="noopener">Microsoft Copilot Studio</a></span></li>
+            <li><span class="num">2.</span><span>Create a new <strong>Declarative Agent</strong></span></li>
+            <li><span class="num">3.</span><span>Set the agent name — e.g. <strong>Support Tools</strong></span></li>
+            <li><span class="num">4.</span><span>Paste the system instructions below into the agent prompt</span></li>
+            <li><span class="num">5.</span><span>Add the GitHub connector (from Step 1) as the <strong>knowledge source</strong></span></li>
+            <li><span class="num">6.</span><span>Publish to Microsoft 365 and deploy to Teams</span></li>
+            <li><span class="num">7.</span><span>Pin the agent in Teams so techs can find it in one click</span></li>
+          </ol>
+          <div class="prompt-block">
+            <p class="prompt-label">Agent system instructions — copy and paste</p>
+            <p class="prompt-text">You are a support tools assistant for our MSP helpdesk team. When a technician describes a problem or asks a question, identify the best script from the SupportTools library and explain how to use it. Always include the script name, what it checks, and any relevant flags. If multiple scripts are relevant, list them in order of usefulness. Keep answers concise enough to paste into a ticket note.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Frontier -->
+      <div class="guide-step">
+        <div class="step-number">3</div>
+        <div class="step-body">
+          <p class="step-label">Step 3 <span class="step-badge badge-preview">Microsoft Frontier</span></p>
+          <h3>Enhanced agent features</h3>
+          <p>If your organisation has access to Microsoft Frontier, additional agent capabilities are available in preview — including richer grounding, multi-step reasoning, and tighter integration with Azure AI Foundry. The setup follows the same steps above, but unlocks advanced behaviours in Copilot Studio when building the agent.</p>
+          <div class="frontier-note">
+            <p><strong>Microsoft Frontier</strong> is an early access programme for organisations trialling the next generation of M365 Copilot features. Check with your Microsoft account team or admin to confirm your organisation's access level.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Example questions -->
+    <div class="examples">
+      <h3>Example questions once connected</h3>
+      <ul>
+        <li>User says their Mac is slow — what should I run?</li>
+        <li>What script clears a stuck print queue on Windows?</li>
+        <li>How do I check if BitLocker is actually enabled?</li>
+        <li>What do I run when a device isn't showing in Intune?</li>
+        <li>How do I export event logs to send to a vendor?</li>
+        <li>User's network drives keep disconnecting — which script helps?</li>
+      </ul>
+    </div>
+
   </div>
 
 </body>
