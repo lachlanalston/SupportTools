@@ -1,5 +1,17 @@
 'use strict';
 
+// ─── Copilot Banner Dismiss ───────────────────────────────────────
+(function () {
+  const BANNER_KEY = 'copilot-banner-dismissed';
+  const banner = document.querySelector('.copilot-banner');
+  const btn = document.getElementById('copilot-banner-dismiss');
+  if (banner && localStorage.getItem(BANNER_KEY)) banner.hidden = true;
+  if (btn) btn.addEventListener('click', () => {
+    banner.hidden = true;
+    localStorage.setItem(BANNER_KEY, '1');
+  });
+})();
+
 // ─── Constants ────────────────────────────────────────────────────
 const RAW_BASE = 'https://raw.githubusercontent.com/lachlanalston/SupportTools/main';
 
