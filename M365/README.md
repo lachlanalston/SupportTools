@@ -1,28 +1,17 @@
-# M365
+# Microsoft 365
 
-PowerShell scripts for Microsoft 365 administration via the Microsoft Graph API. All scripts use OAuth client credentials flow (app registration, not delegated auth).
+PowerShell scripts for Microsoft 365 administration via the Microsoft Graph API. All scripts use OAuth client credentials flow.
 
 ## Scripts
 
 | Script | When to use |
 |--------|-------------|
-| `getCalPerms.ps1` | Audit who has access to a user's calendar — delegate, editor, reader, or free/busy. |
-| `getUserGUID.ps1` | Look up a user's Entra ID Object ID by UPN. Needed for Graph API calls and Intune targeting. |
-| `listUsers.ps1` | List all accounts in a tenant — displayName and UPN. |
-| `TenantDataExport.ps1` | Export users, Exchange mailboxes, OneDrive, SharePoint, licenses, and CA policies to Excel. Template — configure before running. |
+| `getCalPerms` | who has access to this calendar |
+| `getUserGUID` | need the object ID for a user |
+| `listUsers` | get a list of all users in the tenant |
+| `TenantDataExport` | export M365 tenant overview |
 
 ## Prerequisites
 
-All scripts require an **Azure AD app registration** with appropriate Graph API permissions:
+All scripts require an Azure AD app registration with appropriate Microsoft Graph API permissions. See each script's `.NOTES` block for details.
 
-| Script | Required Permission |
-|--------|---------------------|
-| `getCalPerms.ps1` | `Calendars.Read` |
-| `getUserGUID.ps1` | `User.Read.All` |
-| `listUsers.ps1` | `User.Read.All` |
-| `TenantDataExport.ps1` | Multiple — see script comments |
-
-`TenantDataExport.ps1` also requires the `ImportExcel` module:
-```powershell
-Install-Module ImportExcel -Scope CurrentUser
-```

@@ -1,0 +1,42 @@
+name: generate-docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/data/scripts.json'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate docs
+        run: python3 tools/generate-docs.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add COPILOT.md \
+                  Windows/Diagnostics/README.md \
+                  Windows/Security/README.md \
+                  Windows/Network/README.md \
+                  Windows/Updates/README.md \
+                  Windows/Users/README.md \
+                  MacOS/README.md \
+                  M365/README.md \
+                  Apps/README.md
+          git diff --cached --quiet && echo "No changes." || \
+            git commit -m "chore: auto-regenerate docs from scripts.json [skip ci]" && \
+            git push
