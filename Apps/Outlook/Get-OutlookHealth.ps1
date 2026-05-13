@@ -117,7 +117,8 @@ try {
 # Internet connectivity (ping Microsoft)
 $internetOk = $false
 try {
-    $internetOk = Test-Connection -ComputerName 'www.microsoft.com' -Count 1 -Quiet -ErrorAction Stop
+    $connectTarget = 'www.microsoft.com'
+    $internetOk = Test-Connection -ComputerName $connectTarget -Count 1 -Quiet -ErrorAction Stop
 } catch { }
 
 # ─────────────────────────────────────────────────────────────
