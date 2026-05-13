@@ -175,6 +175,23 @@ $htmlRows
 "@
         $relPath = Join-Path $exportDir 'ReliabilityHistory.html'
         [System.IO.File]::WriteAllText($relPath, $relHtml, [System.Text.Encoding]::UTF8)
+
+        # XML export — structured format for Eventful Reliability Analyzer
+        $xmlRecords = ($relRecords | ForEach-Object {
+            try   { $dt = [Management.ManagementDateTimeConverter]::ToDateTime($_.TimeGenerated).ToString('yyyy-MM-dd HH:mm:ss') }
+            catch { $dt = $_.TimeGenerated }
+            $src  = $_.SourceName  -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' -replace '"','&quot;'
+            $prod = $_.ProductName -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' -replace '"','&quot;'
+            $msg  = ($_.Message    -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' -replace '"','&quot;') -replace '\r?\n',' '
+            $user = if ($_.User)    { $_.User    -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' } else { '' }
+            $eid  = if ($_.EventIdentifier) { $_.EventIdentifier } else { '' }
+            "  <Record>`n    <TimeGenerated>$dt</TimeGenerated>`n    <SourceName>$src</SourceName>`n    <ProductName>$prod</ProductName>`n    <Message>$msg</Message>`n    <EventIdentifier>$eid</EventIdentifier>`n    <User>$user</User>`n  </Record>"
+        }) -join "`n"
+
+        $relXml = "<?xml version=`"1.0`" encoding=`"UTF-8`"?>`n<ReliabilityRecords computer=`"$($env:COMPUTERNAME)`" generated=`"$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`" count=`"$reliabilityCount`">`n$xmlRecords`n</ReliabilityRecords>"
+        $xmlPath = Join-Path $exportDir 'ReliabilityHistory.xml'
+        [System.IO.File]::WriteAllText($xmlPath, $relXml, [System.Text.Encoding]::UTF8)
+
         $reliabilityOk = $true
     } catch {
         $reliabilityError = $_.Exception.Message
@@ -289,7 +306,7 @@ foreach ($log in $logs) {
 Write-Host ''
 
 if ($reliabilityOk) {
-    Write-KV 'Reliability' "$reliabilityCount event(s) — ReliabilityHistory.html"
+    Write-KV 'Reliability' "$reliabilityCount event(s) — ReliabilityHistory.html + .xml"
 } elseif ($dirOk) {
     Write-KV 'Reliability' 'UNAVAILABLE' 'Yellow'
 }
