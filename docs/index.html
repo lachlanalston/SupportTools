@@ -43,7 +43,43 @@
     </div>
   </div>
 
+  <div class="stats-bar">
+    <div class="stats-bar-inner">
+      <span class="stat"><span id="stat-scripts">—</span> scripts</span>
+      <span class="stat-sep">·</span>
+      <span class="stat"><span id="stat-commands">—</span> commands</span>
+      <span class="stat-sep">·</span>
+      <span class="stat"><span id="stat-shortcuts">—</span> shortcuts</span>
+      <span class="stat-sep">·</span>
+      <span class="stat"><span id="stat-total">—</span> total resources</span>
+    </div>
+  </div>
+
   <main>
+
+    <div class="platform-cards">
+      <button class="platform-card" data-platform="windows" onclick="jumpToPlatform('windows')">
+        <span class="platform-card-pip" style="background:var(--windows)"></span>
+        <span class="platform-card-name">Windows</span>
+        <span class="platform-card-count" id="pcount-windows">— scripts</span>
+      </button>
+      <button class="platform-card" data-platform="macos" onclick="jumpToPlatform('macos')">
+        <span class="platform-card-pip" style="background:var(--macos)"></span>
+        <span class="platform-card-name">macOS</span>
+        <span class="platform-card-count" id="pcount-macos">— scripts</span>
+      </button>
+      <button class="platform-card" data-platform="m365" onclick="jumpToPlatform('m365')">
+        <span class="platform-card-pip" style="background:var(--m365)"></span>
+        <span class="platform-card-name">M365</span>
+        <span class="platform-card-count" id="pcount-m365">— scripts</span>
+      </button>
+      <button class="platform-card" data-platform="api" onclick="jumpToPlatform('api')">
+        <span class="platform-card-pip" style="background:var(--api)"></span>
+        <span class="platform-card-name">3CX / API</span>
+        <span class="platform-card-count" id="pcount-api">— scripts</span>
+      </button>
+    </div>
+
     <div class="search-bar-wrap">
       <div class="search-icon">
         <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
@@ -183,6 +219,19 @@
       <div class="modal-body" id="modal-body"></div>
     </div>
   </div>
+
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-copy">Built for MSP helpdesks</span>
+      <div class="footer-links">
+        <a href="https://github.com/lachlanalston/SupportTools" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+        <a href="/copilot.html">M365 Copilot Guide</a>
+      </div>
+    </div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
   <script src="app.js"></script>
