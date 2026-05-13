@@ -1,3 +1,71 @@
+/* ─── Copilot Banner ────────────────────────────────────────────── */
+.copilot-banner {
+  background: linear-gradient(90deg, #1a2332 0%, #162032 100%);
+  border-bottom: 1px solid #2d4a7a;
+}
+
+.copilot-banner-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.copilot-banner-icon {
+  color: #388bfd;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.copilot-banner-text {
+  font-size: 0.84rem;
+  color: #a8c4e8;
+  flex: 1;
+  min-width: 200px;
+}
+
+.copilot-banner-text strong {
+  color: #c9d9f0;
+}
+
+.copilot-banner-link {
+  font-size: 0.82rem;
+  color: #388bfd;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border: 1px solid #2d4a7a;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.copilot-banner-link:hover {
+  background: rgba(56, 139, 253, 0.1);
+  border-color: #388bfd;
+}
+
+.copilot-banner-dismiss {
+  background: none;
+  border: none;
+  color: #4d6a8a;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  transition: color var(--transition);
+}
+
+.copilot-banner-dismiss:hover {
+  color: #8b949e;
+}
+
+.copilot-banner[hidden] { display: none; }
+
 /* ─── Reset & Base ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

@@ -1,3 +1,25 @@
+<#
+.SYNOPSIS
+    Template script to export M365 tenant data to an Excel workbook.
+
+.DESCRIPTION
+    Exports data from multiple M365 services — Users, Exchange mailboxes, OneDrive,
+    SharePoint sites, licenses, and Conditional Access policies — into separate sheets
+    of a single Excel workbook. Each section is a stub function ready to be configured.
+
+    This is a template. Review and fill in each Export-* function before running.
+
+.EXAMPLE
+    .\TenantDataExport.ps1
+    # Outputs M365DataExport.xlsx in the current directory.
+
+.NOTES
+    Author:   Lachlan Alston
+    Requires: ImportExcel module (Install-Module ImportExcel -Scope CurrentUser)
+              Microsoft Graph or ExchangeOnlineManagement modules as needed.
+    Template: Configure each function before use — stubs are intentionally empty.
+#>
+
 # M365 Data Export Script Template
 # This script retrieves information from M365 services (Users, Exchange, OneDrive, SharePoint, Licenses)
 # and exports each dataset to separate sheets in an Excel workbook.

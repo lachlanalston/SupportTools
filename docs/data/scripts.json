@@ -5,6 +5,14 @@
     "platform": "windows",
     "category": "Updates",
     "description": "Checks for pending Windows updates using the Windows Update COM API. Flags mandatory updates as CRIT and optional updates as WARN.",
+    "symptoms": [
+      "Windows not installing updates",
+      "device missing patches",
+      "Patch Tuesday check",
+      "update compliance report",
+      "how do I check if Windows is up to date",
+      "pending updates not installing"
+    ],
     "tags": [
       "updates",
       "windows-update",
@@ -21,7 +29,15 @@
     "file": "Windows/Updates/Get-UpdateHistory.ps1",
     "platform": "windows",
     "category": "Updates",
-    "description": "Reports Windows Update install history \u2014 last successful install date, recent failures with HResult codes, and a list of the 10 most recent entries.",
+    "description": "Reports Windows Update install history — last successful install date, recent failures with HResult codes, and a list of the 10 most recent entries.",
+    "symptoms": [
+      "when did last update install",
+      "update keeps failing",
+      "what updates were installed recently",
+      "HResult error from Windows Update",
+      "update failure history",
+      "check if a specific patch was installed"
+    ],
     "tags": [
       "updates",
       "windows-update",
@@ -40,6 +56,16 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Comprehensive MSP diagnostic tool. Checks CPU, memory, disk, network, services, and uptime. Paste into a remote terminal session.",
+    "symptoms": [
+      "PC running slow",
+      "general endpoint triage",
+      "first script to run on a new ticket",
+      "computer performance issues",
+      "endpoint health check",
+      "device not responding properly",
+      "user says computer is slow",
+      "broad diagnostic before escalating"
+    ],
     "tags": [
       "diagnostic",
       "health",
@@ -59,7 +85,15 @@
     "file": "Windows/Diagnostics/Get-EventLogExport.ps1",
     "platform": "windows",
     "category": "Diagnostics",
-    "description": "Exports System, Application, Security, and Setup event logs (last 48h) to a ZIP of .evtx files. Output goes to C:\\Temp.",
+    "description": "Exports System, Application, Security, and Setup event logs (last 48h) to a ZIP of rendered XML. Output goes to C:\\Temp.",
+    "symptoms": [
+      "need to send logs to a vendor",
+      "escalation requires event logs",
+      "gather evidence for a ticket",
+      "attach Windows logs to support case",
+      "export event viewer logs",
+      "collect logs before reimaging"
+    ],
     "tags": [
       "event-log",
       "export",
@@ -80,6 +114,15 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Reports all notable changes on a Windows endpoint in the last 72 hours including updates, installs, driver changes, reboots, crashes, and logons.",
+    "symptoms": [
+      "something changed and now it's broken",
+      "user says it stopped working recently",
+      "what happened on this PC yesterday",
+      "after a crash what changed",
+      "software installed without permission",
+      "PC rebooted unexpectedly",
+      "recent driver changes causing issues"
+    ],
     "tags": [
       "diagnostic",
       "changes",
@@ -99,6 +142,15 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Reports OS edition, feature update version, build, architecture, hardware manufacturer and model, active user, install date, and uptime. Warns if uptime exceeds 14 days.",
+    "symptoms": [
+      "what OS version is this PC running",
+      "what hardware is this device",
+      "need system info for a ticket",
+      "check Windows build number",
+      "device uptime too long",
+      "what model is this computer",
+      "asset info for a support case"
+    ],
     "tags": [
       "system",
       "info",
@@ -119,6 +171,15 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks GPU driver version and date for all installed video controllers. Warns if any driver is older than 365 days. Works for NVIDIA, AMD, Intel, and any vendor.",
+    "symptoms": [
+      "screen flickering",
+      "black screen on second monitor",
+      "display not working properly",
+      "graphics glitch or artifact",
+      "GPU driver outdated",
+      "monitor keeps disconnecting",
+      "video driver issues"
+    ],
     "tags": [
       "driver",
       "graphics",
@@ -138,6 +199,14 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks Windows 11 upgrade readiness: TPM 2.0, Secure Boot, CPU generation, RAM (4 GB min), and disk space (64 GB min). Reports CRIT for hard blockers.",
+    "symptoms": [
+      "can this PC upgrade to Windows 11",
+      "TPM 2.0 check",
+      "is this hardware compatible with Windows 11",
+      "Windows 11 upgrade blocked",
+      "check Secure Boot for Windows 11",
+      "PC not eligible for Windows 11"
+    ],
     "tags": [
       "windows11",
       "compatibility",
@@ -157,6 +226,15 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks print spooler health, stuck jobs, and offline printer states. Run with -Fix to stop the spooler, clear job files, and restart.",
+    "symptoms": [
+      "printer not printing",
+      "print job stuck in queue",
+      "printer showing offline",
+      "print spooler crashing",
+      "can't print anything",
+      "print queue jammed",
+      "printer keeps going offline"
+    ],
     "tags": [
       "print",
       "printer",
@@ -171,7 +249,7 @@
       {
         "flag": "-Fix",
         "type": "fix",
-        "when": "Jobs are stuck in the queue and not clearing automatically \u2014 stops the spooler, wipes job files, and restarts it."
+        "when": "Jobs are stuck in the queue and not clearing automatically — stops the spooler, wipes job files, and restarts it."
       }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-PrintHealth.ps1",
@@ -182,7 +260,16 @@
     "file": "Windows/Diagnostics/Get-DiskHealth.ps1",
     "platform": "windows",
     "category": "Diagnostics",
-    "description": "Checks free space on all fixed drives (CRIT \u22645%, WARN \u226415%), temp folder bloat, and Recycle Bin size. Run with -Fix to clear temp files and empty the Recycle Bin.",
+    "description": "Checks free space on all fixed drives (CRIT ≤5%, WARN ≤15%), temp folder bloat, and Recycle Bin size. Run with -Fix to clear temp files and empty the Recycle Bin.",
+    "symptoms": [
+      "low disk space warning",
+      "C drive is full",
+      "PC running slow due to disk",
+      "not enough space to install software",
+      "disk cleanup needed",
+      "temp folder too large",
+      "Recycle Bin taking up space"
+    ],
     "tags": [
       "disk",
       "storage",
@@ -208,6 +295,15 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks Chrome, Edge, and Firefox cache sizes across all user profiles. Warns if any browser cache exceeds 500 MB. Run with -Fix to clear all caches.",
+    "symptoms": [
+      "browser running slow",
+      "Chrome using too much disk space",
+      "Edge cache too large",
+      "browser cache bloated",
+      "websites loading slowly",
+      "browser performance issues",
+      "clear browser cache remotely"
+    ],
     "tags": [
       "browser",
       "cache",
@@ -222,7 +318,7 @@
       {
         "flag": "-Fix",
         "type": "fix",
-        "when": "Browser cache is bloated and causing slowness or storage pressure \u2014 clears all detected caches across every user profile on the device."
+        "when": "Browser cache is bloated and causing slowness or storage pressure — clears all detected caches across every user profile on the device."
       }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Diagnostics/Get-BrowserCacheHealth.ps1",
@@ -234,6 +330,15 @@
     "platform": "windows",
     "category": "Network",
     "description": "Reports mapped network drives and their connectivity state. Warns on disconnected drives. Run with -Fix to remove all mapped drives.",
+    "symptoms": [
+      "network drives not connecting",
+      "mapped drives showing red X",
+      "drive disappears after login",
+      "user can't access shared folders",
+      "network drive disconnected",
+      "mapped drive not available",
+      "UNC path not accessible"
+    ],
     "tags": [
       "network",
       "drives",
@@ -259,6 +364,15 @@
     "platform": "windows",
     "category": "Network",
     "description": "Checks Windows Time service health, NTP source, stratum, last sync time, and time offset. Run with -Fix to re-register w32time and sync to the fastest reachable AU/global NTP server.",
+    "symptoms": [
+      "clock showing wrong time",
+      "time out of sync on Windows",
+      "Kerberos authentication errors",
+      "login failing due to time skew",
+      "w32tm not working",
+      "NTP sync failing",
+      "time drift causing issues"
+    ],
     "tags": [
       "time",
       "ntp",
@@ -272,7 +386,7 @@
       {
         "flag": "-Fix",
         "type": "fix",
-        "when": "Time is drifting or the w32time service is broken \u2014 re-registers the service, sets a reliable NTP source, and forces an immediate sync."
+        "when": "Time is drifting or the w32time service is broken — re-registers the service, sets a reliable NTP source, and forces an immediate sync."
       }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Network/Get-TimeSyncHealth.ps1",
@@ -284,6 +398,15 @@
     "platform": "windows",
     "category": "Security",
     "description": "Checks Windows security baseline: Secure Boot, TPM presence and readiness, Fast Startup state, and Windows Firewall profile status. Flags CRIT/WARN for any failures.",
+    "symptoms": [
+      "security audit for an endpoint",
+      "Secure Boot not enabled",
+      "TPM not detected",
+      "Windows Firewall disabled",
+      "compliance check failed",
+      "device failing security policy",
+      "check device security posture"
+    ],
     "tags": [
       "secure-boot",
       "tpm",
@@ -303,6 +426,17 @@
     "platform": "windows",
     "category": "Security",
     "description": "Checks device join health across Entra ID, domain, and hybrid environments. Reports join type, PRT status and age, device certificate expiry, MDM enrolment and last sync, domain secure channel, DC reachability, machine account password age, and Kerberos ticket availability.",
+    "symptoms": [
+      "device not showing in Intune",
+      "conditional access blocking sign-in",
+      "PRT expired or missing",
+      "Azure AD join broken",
+      "device certificate expired",
+      "MDM not syncing",
+      "Kerberos failing",
+      "hybrid join not working",
+      "user getting access denied after domain join"
+    ],
     "tags": [
       "entra-id",
       "azure-ad",
@@ -327,6 +461,15 @@
     "platform": "windows",
     "category": "Security",
     "description": "Checks BitLocker encryption status and TPM health on the C: drive. Reports protection status, encryption method, disk mode, key protectors, PCR validation profile, TPM state, Secure Boot, and UEFI vs Legacy BIOS. Flags issues relevant to Intune compliance.",
+    "symptoms": [
+      "BitLocker showing as not enabled",
+      "drive not encrypted",
+      "N-central reports BitLocker off after ImmyBot",
+      "Intune compliance failing for encryption",
+      "BitLocker suspended",
+      "TPM not ready for BitLocker",
+      "encryption status unclear"
+    ],
     "tags": [
       "bitlocker",
       "tpm",
@@ -356,6 +499,15 @@
     "platform": "windows",
     "category": "Users",
     "description": "Reports all local user accounts, enabled state, admin membership, password expiry, and last logon. Run with -Fix -Username <name> to create/enable a local admin account with non-expiring password.",
+    "symptoms": [
+      "user locked out of local account",
+      "need a local admin account",
+      "break-glass account needed",
+      "local account disabled",
+      "password expired on local account",
+      "who has local admin on this device",
+      "create emergency local login"
+    ],
     "tags": [
       "admin",
       "local-user",
@@ -370,7 +522,7 @@
       {
         "flag": "-Fix -Username <name>",
         "type": "fix",
-        "when": "You need to create or re-enable a local admin account \u2014 typically for emergency access or a break-glass account when normal login paths are unavailable."
+        "when": "You need to create or re-enable a local admin account — typically for emergency access or a break-glass account when normal login paths are unavailable."
       }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Users/Get-LocalUserHealth.ps1",
@@ -382,6 +534,15 @@
     "platform": "windows",
     "category": "Outlook",
     "description": "Checks Outlook process state, install path, DNS resolution for outlook.office365.com, and internet connectivity. Flags missing install and DNS/connectivity failures.",
+    "symptoms": [
+      "Outlook not opening",
+      "Outlook can't connect to server",
+      "email not working in Outlook",
+      "Outlook keeps crashing",
+      "can't send or receive email",
+      "Outlook not finding mail server",
+      "DNS resolution failing for Outlook"
+    ],
     "tags": [
       "outlook",
       "email",
@@ -401,6 +562,15 @@
     "platform": "windows",
     "category": "Netskope",
     "description": "Checks Netskope client installation state, version, agent service status, and certificate presence. Run with -Remove to fully uninstall Netskope including service, MSI, folders, certs, and roaming data.",
+    "symptoms": [
+      "Netskope blocking websites",
+      "Netskope agent not running",
+      "need to remove Netskope",
+      "Netskope causing connectivity issues",
+      "VPN proxy interfering with traffic",
+      "Netskope service crashed",
+      "completely uninstall Netskope"
+    ],
     "tags": [
       "netskope",
       "agent",
@@ -420,6 +590,15 @@
     "platform": "windows",
     "category": "Diagnostics",
     "description": "Checks battery health, capacity %, cycle count, charge state, and adapter info. Parses powercfg /batteryreport for capacity trend and flat-discharge history. Handles multi-battery devices and desktop/VM gracefully.",
+    "symptoms": [
+      "laptop battery draining too fast",
+      "laptop not charging",
+      "battery health check",
+      "how many charge cycles on this battery",
+      "battery capacity degraded",
+      "laptop dies quickly",
+      "does this battery need replacing"
+    ],
     "tags": [
       "battery",
       "health",
@@ -440,6 +619,14 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks CUPS daemon state, printer states (idle/stopped/error), stuck print jobs, default printer, and print sharing. Run with --fix to cancel all queued jobs, re-enable stopped printers, and restart the CUPS daemon.",
+    "symptoms": [
+      "Mac printer not working",
+      "print job stuck on Mac",
+      "CUPS daemon not running",
+      "printer showing stopped on Mac",
+      "can't print from Mac",
+      "Mac print queue jammed"
+    ],
     "tags": [
       "printer",
       "cups",
@@ -454,7 +641,7 @@
       {
         "flag": "--fix",
         "type": "fix",
-        "when": "Jobs are stuck in the queue and not clearing \u2014 cancels all queued jobs, re-enables stopped printers, and restarts the CUPS daemon."
+        "when": "Jobs are stuck in the queue and not clearing — cancels all queued jobs, re-enables stopped printers, and restarts the CUPS daemon."
       }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-printer-health.sh",
@@ -466,6 +653,15 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks the macOS security baseline: SIP, Gatekeeper, Firewall, FileVault, Secure Boot (T2 and Apple Silicon), XProtect and MRT versions, and remote access state (SSH, Screen Sharing). Flags anything that deviates from a hardened managed endpoint.",
+    "symptoms": [
+      "Mac security audit",
+      "SIP disabled on Mac",
+      "Gatekeeper turned off",
+      "macOS firewall not enabled",
+      "Mac failing compliance check",
+      "check Mac security posture",
+      "SSH unexpectedly enabled on Mac"
+    ],
     "tags": [
       "sip",
       "gatekeeper",
@@ -490,6 +686,14 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks pending macOS updates by name, whether a restart is required, last successful install date, and recent update history. Flags the restart-required + long-uptime combination as CRIT. softwareupdate runs in the background to keep total time under 30s.",
+    "symptoms": [
+      "Mac not installing updates",
+      "pending macOS update",
+      "Mac needs a restart for updates",
+      "softwareupdate check",
+      "macOS version out of date",
+      "how long since last update on Mac"
+    ],
     "tags": [
       "updates",
       "softwareupdate",
@@ -509,6 +713,14 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks battery health, condition label (Normal / Replace Soon / Replace Now / Service Battery), capacity %, cycle count, temperature, charge state, adapter info, and recent low-battery events from the power log. Handles desktop Macs gracefully.",
+    "symptoms": [
+      "MacBook battery draining fast",
+      "Mac says replace battery",
+      "MacBook not charging",
+      "battery health check Mac",
+      "how many cycles on MacBook battery",
+      "Mac battery condition warning"
+    ],
     "tags": [
       "battery",
       "health",
@@ -529,6 +741,15 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks APFS container free space, swap usage, SMART health and sector counts, Time Machine backup age, and live I/O load. Flags the high-swap + low-disk combination that causes most macOS performance complaints. Run with --deep to also verify the APFS container for filesystem corruption (adds 20-60s).",
+    "symptoms": [
+      "Mac running slow",
+      "Mac out of disk space",
+      "APFS volume full",
+      "Mac using too much swap",
+      "Time Machine backup old",
+      "SMART disk warning on Mac",
+      "Mac performance degraded due to disk"
+    ],
     "tags": [
       "disk",
       "storage",
@@ -544,7 +765,7 @@
       {
         "flag": "--deep",
         "type": "mode",
-        "when": "User reports data corruption, unexpected crashes, or disk errors in Console \u2014 runs diskutil verifyContainer to check for APFS filesystem corruption (adds 20\u201360s)."
+        "when": "User reports data corruption, unexpected crashes, or disk errors in Console — runs diskutil verifyContainer to check for APFS filesystem corruption (adds 20–60s)."
       }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-disk-health.sh",
@@ -556,6 +777,15 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks FileVault encryption status, recovery key type (personal or institutional), MDM escrow profile presence, and Secure Token state for the logged-in user. Flags missing keys, deferred encryption, and escrow not configured.",
+    "symptoms": [
+      "FileVault not enabled on Mac",
+      "Mac encryption status",
+      "FileVault recovery key missing",
+      "MDM escrow not configured",
+      "Mac failing encryption compliance",
+      "Secure Token missing for user",
+      "FileVault deferred and not activating"
+    ],
     "tags": [
       "filevault",
       "encryption",
@@ -576,6 +806,15 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks MDM enrolment health across Intune, Kandji, and Jamf. Reports enrolment status, provider detection, supervision state, bootstrap token escrow (Apple Silicon), and provider-specific agent health. Flags Jamf presence as a phase-out advisory.",
+    "symptoms": [
+      "Mac not showing in Intune",
+      "MDM enrolment broken on Mac",
+      "Kandji not enrolling Mac",
+      "Jamf agent not running",
+      "Mac not supervised",
+      "bootstrap token not escrowed",
+      "Company Portal issues on Mac"
+    ],
     "tags": [
       "mdm",
       "intune",
@@ -597,7 +836,15 @@
     "file": "MacOS/get-EndpointHealth.sh",
     "platform": "macos",
     "category": "MacOS",
-    "description": "Broad endpoint health check for macOS. Runs all checks in parallel \u2014 disk space, CPU load, RAM availability, pending updates, SMART disk health, AV/EDR presence, critical system services, and battery capacity. Outputs findings and detail blocks sized for ticket screenshots.",
+    "description": "Broad endpoint health check for macOS. Runs all checks in parallel — disk space, CPU load, RAM availability, pending updates, SMART disk health, AV/EDR presence, critical system services, and battery capacity. Outputs findings and detail blocks sized for ticket screenshots.",
+    "symptoms": [
+      "Mac running slow",
+      "general Mac triage",
+      "first script to run on a Mac ticket",
+      "Mac endpoint health check",
+      "broad Mac diagnostic",
+      "user says Mac is slow or broken"
+    ],
     "tags": [
       "diagnostic",
       "health",
@@ -622,7 +869,15 @@
     "file": "MacOS/get-recent-changes.sh",
     "platform": "macos",
     "category": "MacOS",
-    "description": "Reports all notable changes on a macOS endpoint in the last 72 hours \u2014 software installs, reboots, kernel panics, application crashes, new LaunchDaemons/Agents, driver changes, and user logons. Outputs a FINDINGS block, a categorised change timeline, and a plain-text ticket note.",
+    "description": "Reports all notable changes on a macOS endpoint in the last 72 hours — software installs, reboots, kernel panics, application crashes, new LaunchDaemons/Agents, driver changes, and user logons. Outputs a FINDINGS block, a categorised change timeline, and a plain-text ticket note.",
+    "symptoms": [
+      "something changed on Mac and now it's broken",
+      "Mac started crashing recently",
+      "software installed on Mac without permission",
+      "kernel panic after recent change",
+      "what happened on this Mac yesterday",
+      "Mac rebooted unexpectedly"
+    ],
     "tags": [
       "diagnostic",
       "changes",
@@ -645,6 +900,14 @@
     "platform": "macos",
     "category": "MacOS",
     "description": "Checks macOS hostname consistency across ComputerName, HostName, and LocalHostName. Flags .local suffix drift caused by Bluetooth or AirDrop activity, unset HostName, and mismatches between values. Run with --fix to strip .local suffixes automatically.",
+    "symptoms": [
+      "Mac hostname keeps changing",
+      "AirDrop name wrong",
+      "Mac showing wrong name on network",
+      "Bonjour name drifted",
+      "hostname mismatch on Mac",
+      "Mac name changed after AirDrop use"
+    ],
     "tags": [
       "hostname",
       "bonjour",
@@ -660,7 +923,7 @@
       {
         "flag": "--fix",
         "type": "fix",
-        "when": "HostName or LocalHostName has drifted with a .local suffix \u2014 strips the suffix so all three hostname values are consistent."
+        "when": "HostName or LocalHostName has drifted with a .local suffix — strips the suffix so all three hostname values are consistent."
       }
     ],
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/MacOS/get-hostname-health.sh",
@@ -672,6 +935,14 @@
     "platform": "m365",
     "category": "M365",
     "description": "Retrieves calendar permissions for a mailbox via the Microsoft Graph API using client credentials.",
+    "symptoms": [
+      "who has access to this calendar",
+      "calendar permission report",
+      "check who can see a user's calendar",
+      "delegate access on calendar",
+      "calendar sharing audit",
+      "user can't see another user's calendar"
+    ],
     "tags": [
       "calendar",
       "permissions",
@@ -689,6 +960,13 @@
     "platform": "m365",
     "category": "M365",
     "description": "Looks up a user's Object ID / GUID from Microsoft Graph by UPN.",
+    "symptoms": [
+      "need the object ID for a user",
+      "find user GUID in Entra ID",
+      "Azure AD user ID lookup",
+      "what is the GUID for this user",
+      "user object ID for Graph API call"
+    ],
     "tags": [
       "user",
       "guid",
@@ -707,6 +985,13 @@
     "platform": "m365",
     "category": "M365",
     "description": "Lists all users in a tenant via the Microsoft Graph API using OAuth client credentials flow.",
+    "symptoms": [
+      "get a list of all users in the tenant",
+      "who is in Microsoft 365",
+      "export user list from Entra ID",
+      "audit all accounts in a tenant",
+      "list every M365 user"
+    ],
     "tags": [
       "users",
       "list",
@@ -725,6 +1010,14 @@
     "platform": "m365",
     "category": "M365",
     "description": "Template script to export M365 tenant data (users, Exchange, OneDrive, SharePoint, licenses) to an Excel workbook.",
+    "symptoms": [
+      "export M365 tenant overview",
+      "tenant audit report to Excel",
+      "need a spreadsheet of all M365 data",
+      "license report for a tenant",
+      "SharePoint and OneDrive export",
+      "Exchange mailbox audit export"
+    ],
     "tags": [
       "export",
       "excel",
@@ -736,7 +1029,7 @@
     ],
     "wip": false,
     "requires_config": true,
-    "config_note": "Template script \u2014 review and configure before running. Requires ImportExcel module.",
+    "config_note": "Template script — review and configure before running. Requires ImportExcel module.",
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/M365/TenantDataExport.ps1",
     "verified": false
   },
@@ -746,6 +1039,13 @@
     "platform": "api",
     "category": "API",
     "description": "Tests connectivity to the 3CX Configuration API using the /xapi/v1/Defs endpoint with Bearer token auth.",
+    "symptoms": [
+      "3CX API not responding",
+      "test 3CX API connection",
+      "3CX xapi connectivity check",
+      "verify 3CX API credentials work",
+      "troubleshoot 3CX API access"
+    ],
     "tags": [
       "3cx",
       "api",
@@ -766,6 +1066,12 @@
     "platform": "api",
     "category": "API",
     "description": "Authenticates to a 3CX PBX via OAuth client credentials and retrieves the current PBX version.",
+    "symptoms": [
+      "what version is 3CX running",
+      "check 3CX PBX version",
+      "3CX version number lookup",
+      "verify 3CX firmware version before upgrade"
+    ],
     "tags": [
       "3cx",
       "version",
