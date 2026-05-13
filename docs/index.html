@@ -43,41 +43,17 @@
     </div>
   </div>
 
-  <div class="stats-bar">
-    <div class="stats-bar-inner">
-      <span class="stat"><span id="stat-scripts">—</span> scripts</span>
-      <span class="stat-sep">·</span>
-      <span class="stat"><span id="stat-commands">—</span> commands</span>
-      <span class="stat-sep">·</span>
-      <span class="stat"><span id="stat-shortcuts">—</span> shortcuts</span>
-      <span class="stat-sep">·</span>
-      <span class="stat"><span id="stat-total">—</span> total resources</span>
-    </div>
-  </div>
-
   <main>
 
-    <div class="platform-cards">
-      <button class="platform-card" data-platform="windows" onclick="jumpToPlatform('windows')">
-        <span class="platform-card-pip" style="background:var(--windows)"></span>
-        <span class="platform-card-name">Windows</span>
-        <span class="platform-card-count" id="pcount-windows">— scripts</span>
-      </button>
-      <button class="platform-card" data-platform="macos" onclick="jumpToPlatform('macos')">
-        <span class="platform-card-pip" style="background:var(--macos)"></span>
-        <span class="platform-card-name">macOS</span>
-        <span class="platform-card-count" id="pcount-macos">— scripts</span>
-      </button>
-      <button class="platform-card" data-platform="m365" onclick="jumpToPlatform('m365')">
-        <span class="platform-card-pip" style="background:var(--m365)"></span>
-        <span class="platform-card-name">M365</span>
-        <span class="platform-card-count" id="pcount-m365">— scripts</span>
-      </button>
-      <button class="platform-card" data-platform="api" onclick="jumpToPlatform('api')">
-        <span class="platform-card-pip" style="background:var(--api)"></span>
-        <span class="platform-card-name">3CX / API</span>
-        <span class="platform-card-count" id="pcount-api">— scripts</span>
-      </button>
+    <div class="hero">
+      <h2 class="hero-headline">Scripts and quick references for MSP helpdesk teams.</h2>
+      <p class="hero-sub">Paste-ready diagnostics, commands, shortcuts, and references. No setup, no dependencies.</p>
+      <div class="hero-stats">
+        <span class="hero-stat"><span id="stat-scripts">—</span> scripts</span>
+        <span class="hero-stat"><span id="stat-commands">—</span> commands</span>
+        <span class="hero-stat"><span id="stat-shortcuts">—</span> shortcuts</span>
+        <span class="hero-stat"><span id="stat-total">—</span> total resources</span>
+      </div>
     </div>
 
     <div class="search-bar-wrap">

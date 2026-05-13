@@ -217,19 +217,6 @@ function updateStats() {
   if (el('stat-commands'))  el('stat-commands').textContent  = totalCommands;
   if (el('stat-shortcuts')) el('stat-shortcuts').textContent = totalShortcuts;
   if (el('stat-total'))     el('stat-total').textContent     = total;
-
-  ['windows', 'macos', 'm365', 'api'].forEach(p => {
-    const count = scripts.filter(s => s.platform === p).length;
-    const el2 = document.getElementById(`pcount-${p}`);
-    if (el2) el2.textContent = `${count} script${count !== 1 ? 's' : ''}`;
-  });
-}
-
-function jumpToPlatform(platform) {
-  document.querySelector('.tab[data-tab="scripts"]').click();
-  const chip = document.querySelector(`#script-filters .filter-chip[data-filter="${platform}"]`);
-  if (chip) chip.click();
-  document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function getFiltered(data, fuse, query) {
