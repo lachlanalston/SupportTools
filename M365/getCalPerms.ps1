@@ -1,3 +1,21 @@
+<#
+.SYNOPSIS
+    Retrieves calendar permissions for a mailbox via the Microsoft Graph API.
+
+.DESCRIPTION
+    Authenticates using OAuth client credentials flow, then queries all calendars
+    for the specified mailbox and lists each permission entry with role descriptions.
+    Use to audit who has delegate or read access to a user's calendar.
+
+.EXAMPLE
+    .\getCalPerms.ps1
+    # Prompts for Tenant ID, Client ID, Client Secret, and target mailbox.
+
+.NOTES
+    Author:  Lachlan Alston
+    Requires: Microsoft Graph API app registration with Calendars.Read permission.
+#>
+
 # Define variables
 $tenantId = Read-Host "Enter Tenant ID"
 $clientId = Read-Host "Enter Client ID"

@@ -1,3 +1,21 @@
+<#
+.SYNOPSIS
+    Lists all users in a Microsoft 365 tenant via the Graph API.
+
+.DESCRIPTION
+    Authenticates using OAuth client credentials flow, then retrieves all user
+    accounts from the tenant and outputs displayName and userPrincipalName.
+    Use for tenant audits, account discovery, or verifying user provisioning.
+
+.EXAMPLE
+    .\listUsers.ps1
+    # Prompts for Tenant ID, Client ID, and Client Secret.
+
+.NOTES
+    Author:  Lachlan Alston
+    Requires: Microsoft Graph API app registration with User.Read.All permission.
+#>
+
 # Define variables
 $tenantId = Read-Host "Enter Tenant ID"
 $clientId = Read-Host "Enter Client ID"
