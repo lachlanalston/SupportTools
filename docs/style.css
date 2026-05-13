@@ -75,7 +75,7 @@
 .stats-bar-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 9px 24px;
+  padding: 7px 24px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -100,69 +100,63 @@
 
 /* ─── Platform Cards ─────────────────────────────────────────────── */
 .platform-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 24px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .platform-card {
+  flex: 1;
+  min-width: 130px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px 16px;
+  padding: 10px 14px;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   text-align: left;
-  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+  transition: background var(--transition), border-color var(--transition);
   position: relative;
   overflow: hidden;
 }
 
-.platform-card::after {
+.platform-card::before {
   content: '';
   position: absolute;
-  bottom: 0;
   left: 0;
-  right: 0;
-  height: 2px;
-  opacity: 0;
-  transition: opacity var(--transition);
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius) 0 0 var(--radius);
 }
 
-.platform-card[data-platform="windows"]::after { background: var(--windows); }
-.platform-card[data-platform="macos"]::after   { background: var(--macos); }
-.platform-card[data-platform="m365"]::after    { background: var(--m365); }
-.platform-card[data-platform="api"]::after     { background: var(--api); }
+.platform-card[data-platform="windows"]::before { background: var(--windows); }
+.platform-card[data-platform="macos"]::before   { background: var(--macos); }
+.platform-card[data-platform="m365"]::before    { background: var(--m365); }
+.platform-card[data-platform="api"]::before     { background: var(--api); }
 
 .platform-card:hover {
   background: var(--card-hover);
-  border-color: #388bfd44;
-  transform: translateY(-2px);
+  border-color: var(--sub2);
 }
 
-.platform-card:hover::after { opacity: 1; }
-
-.platform-card-pip {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.platform-card-pip { display: none; }
 
 .platform-card-name {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--text);
-  line-height: 1;
+  flex: 1;
 }
 
 .platform-card-count {
   font-size: 0.75rem;
   color: var(--sub2);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* ─── Footer ─────────────────────────────────────────────────────── */
@@ -311,7 +305,7 @@ header {
 main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 28px 24px 60px;
+  padding: 18px 24px 60px;
 }
 
 /* ─── Search ───────────────────────────────────────────────────── */
