@@ -206,17 +206,14 @@ function render() {
 }
 
 function updateStats() {
-  const totalShortcuts = document.querySelectorAll('#shortcuts-grid .card').length;
-  const totalCommands  = document.querySelectorAll('#commands-grid .card').length;
   const totalScripts   = scripts.length;
+  const totalCommands  = commands.filter(c => c.type === 'command').length;
+  const totalShortcuts = commands.filter(c => c.type === 'shortcut').length;
   const total = totalScripts + totalCommands + totalShortcuts +
                 bookmarks.length + rfcs.length + dns.length;
 
-  const el = id => document.getElementById(id);
-  if (el('stat-scripts'))   el('stat-scripts').textContent   = totalScripts;
-  if (el('stat-commands'))  el('stat-commands').textContent  = totalCommands;
-  if (el('stat-shortcuts')) el('stat-shortcuts').textContent = totalShortcuts;
-  if (el('stat-total'))     el('stat-total').textContent     = total;
+  const el = document.getElementById('header-stats');
+  if (el) el.textContent = `${totalScripts} scripts · ${totalCommands} commands · ${totalShortcuts} shortcuts · ${total} total`;
 }
 
 function getFiltered(data, fuse, query) {
