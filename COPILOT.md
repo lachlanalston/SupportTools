@@ -208,6 +208,25 @@ Checks BitLocker encryption status and TPM health on the C: drive. Reports prote
 |------|-------------|
 | `-Fix` | N-central / N-able reports BitLocker as not enabled after ImmyBot maintenance |
 
+### `AutoHeal-BitLockerDetection`
+N-central AutoHeal script for the BitLocker / Drive Encryption monitoring check. When N-central reports BitLocker as disabled despite the drive being encrypted, restarts BDESVC and forces a manage-bde status poll to flush the stale state, so N-central clears on its next cycle. Deliberately does not restart the Windows Agent, which is the process running the script. Exits 0 when protection is confirmed On, 1 when it is genuinely still Off.
+
+**Use when:**
+- N-central BitLocker check alerting after ImmyBot maintenance
+- BitLocker reported disabled but drive is encrypted
+- drive encryption monitor will not clear
+- stale BitLocker state on a monitored endpoint
+
+### `Fix-BitLockerDetection`
+Clears a false "BitLocker not enabled" detection from N-able. Enumerates volumes through Win32_EncryptableVolume WMI, the same source N-central queries, so it is safe to run as SYSTEM before user login. Resumes protection on any volume that is encrypted but suspended, restarts BDESVC, forces a manage-bde poll on fixed drives, then restarts the N-central agent so it re-reads the updated state.
+
+**Use when:**
+- N-able reports BitLocker not enabled after ImmyBot maintenance
+- BitLocker protection suspended
+- agent cached the pre-maintenance encryption state
+- BitLocker false positive alert
+- encrypted drive showing as unencrypted in RMM
+
 
 ## Scenario Index — Windows — Network
 
