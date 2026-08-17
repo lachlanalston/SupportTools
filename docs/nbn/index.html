@@ -5,37 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="NBN Field Guide: a field-by-field reading reference for techs. Every field of every NBN test, in the order the portal shows them.">
 <title>NBN Field Guide · LRFA Tools</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230d1117'/><text x='4' y='23' font-family='monospace' font-size='16' font-weight='700' fill='%23388bfd'>%3E_</text></svg>" />
+<link rel="stylesheet" href="/style.css" />
 <style>
   :root {
     color-scheme: dark;
-    --bg: #0d1117; --surface: #161b22; --card: #1c2128; --card-hover: #212830;
-    --border: #30363d; --border-sub: #21262d;
-    --text: #e6edf3; --sub: #8b949e; --sub2: #6e7681; --acc: #388bfd;
+    --acc: #388bfd;
     --mono: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.55;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   a { color: var(--acc); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
-  header.site { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; position: sticky; top: 0; z-index: 5; }
-  .brand { display: flex; align-items: center; gap: 10px; }
-  .brand-icon { font-family: var(--mono); background: var(--card); border: 1px solid var(--border); border-radius: 6px; color: var(--acc); padding: 3px 7px; font-size: 14px; font-weight: 600; }
-  .brand h1 { font-size: 16px; margin: 0; font-weight: 600; }
-  .gh { color: var(--sub); font-size: 13px; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; }
-  .gh:hover { color: var(--text); text-decoration: none; }
-  nav.tabs { display: flex; gap: 2px; padding: 10px 20px 0; border-bottom: 1px solid var(--border); overflow-x: auto; background: var(--bg); }
-  .tab { color: var(--sub); font-size: 13.5px; padding: 8px 12px 10px; border-bottom: 2px solid transparent; white-space: nowrap; }
-  .tab:hover { color: var(--text); text-decoration: none; }
-  .tab.on { color: var(--text); border-bottom-color: var(--acc); font-weight: 600; }
+  /* Site chrome comes from /style.css; only the bits it has no reason to know about live here. */
+  /* 1152px = the homepage's 1200px main column less its 24px side padding, so the
+     tab row lands on exactly the same x position as it does on the front page. */
+  .tabs { max-width: 1152px; margin: 0 auto 20px; }
+  .tabs .tab { text-decoration: none; white-space: nowrap; }
+  .tabs .tab:hover { text-decoration: none; }
 
   .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 64px; }
   .intro { padding: 18px 0 4px; }
   .intro h2 { font-size: 19px; margin: 0 0 6px; }
   .intro p { color: var(--sub); font-size: 14px; margin: 0; max-width: 68ch; }
 
-  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 0 4px; position: sticky; top: 49px; background: var(--bg); z-index: 4; border-bottom: 1px solid var(--border-sub); padding-bottom: 12px; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 0 4px; position: sticky; top: 62px; background: var(--bg); z-index: 4; border-bottom: 1px solid var(--border-sub); padding-bottom: 12px; }
   #q { flex: 1; min-width: 200px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13.5px; padding: 8px 12px; }
   #q:focus { outline: none; border-color: var(--acc); }
   .hint { color: var(--sub2); font-size: 12px; white-space: nowrap; }
@@ -47,8 +41,8 @@
   section.test { margin-top: 30px; }
   .thead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .thead h3 { font-family: var(--mono); font-size: 16px; margin: 0; }
-  .badge { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; color: var(--text); background: var(--card-hover); border: 1px solid var(--border); border-radius: 5px; padding: 1px 8px; }
-  .badge.si { border-color: #9e6a03; color: #d29922; background: transparent; }
+  .tbadge { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; color: var(--text); background: var(--card-hover); border: 1px solid var(--border); border-radius: 5px; padding: 1px 8px; }
+  .tbadge.si { border-color: #9e6a03; color: #d29922; background: transparent; }
   .tsub { color: var(--sub2); font-size: 13px; margin: 4px 0 0; max-width: 70ch; }
   .tnote { color: var(--sub2); font-size: 12.5px; margin: 10px 0 0; max-width: 70ch; font-style: italic; }
 
@@ -80,7 +74,6 @@
   .docs h4 span { text-transform: none; letter-spacing: 0; font-weight: 400; }
   .docs ul { list-style: none; margin: 0; padding: 0; font-size: 12.5px; color: var(--sub2); }
   .docs li { padding: 2px 0; }
-  footer.site { border-top: 1px solid var(--border); color: var(--sub2); font-size: 12px; padding: 12px 20px; display: flex; justify-content: space-between; margin-top: 20px; }
   .empty { color: var(--sub2); font-size: 13px; padding: 14px 4px; }
   [hidden] { display: none !important; }
 
@@ -89,7 +82,7 @@
     .fname .fx { display: inline; margin-left: 6px; }
   }
   @media print {
-    header.site, nav.tabs, .controls, .deeper, footer.site { display: none; }
+    header, nav.tabs, .controls, .deeper, footer { display: none; }
     body { background: #fff; color: #111; }
     .fields, .after details { border-color: #bbb; background: #fff; }
     .field { border-color: #ddd; }
@@ -101,18 +94,29 @@
 </style>
 </head>
 <body>
-<header class="site">
-  <div class="brand"><span class="brand-icon">&gt;_</span><h1>LRFA Tools</h1></div>
-  <a class="gh" href="https://github.com/lachlanalston/SupportTools">GitHub</a>
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">&gt;_</span>
+      <div>
+        <h1>LRFA Tools</h1>
+      </div>
+    </div>
+    <a class="github-link" href="https://github.com/lachlanalston/SupportTools" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" fill="currentColor" width="18" height="18"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
 </header>
-<nav class="tabs">
-  <a class="tab" href="/">Scripts</a>
-  <a class="tab" href="/">Commands</a>
-  <a class="tab" href="/">Shortcuts</a>
-  <a class="tab" href="/">DNS</a>
-  <a class="tab" href="/">Bookmarks</a>
-  <a class="tab" href="/">RFCs</a>
-  <a class="tab on" href="/nbn/">NBN</a>
+
+<nav class="tabs" role="tablist">
+  <a class="tab" href="/#scripts">Scripts</a>
+  <a class="tab" href="/#commands">Commands</a>
+  <a class="tab" href="/#shortcuts">Shortcuts</a>
+  <a class="tab" href="/#dns">DNS</a>
+  <a class="tab" href="/#bookmarks">Bookmarks</a>
+  <a class="tab" href="/#rfcs">RFCs</a>
+  <a class="tab active" href="/nbn/">NBN</a>
 </nav>
 <div class="wrap">
 
@@ -135,7 +139,7 @@
   </div>
 
   <section class="test" data-tech="fttn">
-    <div class="thead"><h3>Line State</h3><span class="badge">FTTN / FTTB</span><span class="badge si">service impacting</span></div>
+    <div class="thead"><h3>Line State</h3><span class="tbadge">FTTN / FTTB</span><span class="tbadge si">service impacting</span></div>
     <p class="tsub">A snapshot of the node port as the DSLAM sees your line. The modem must be in sync or the numbers mean nothing. Read top to bottom; the result is a story, not a scorecard.</p>
     <div class="fields">
 
@@ -246,7 +250,7 @@
   </section>
 
   <section class="test" data-tech="fttn">
-    <div class="thead"><h3>Stability Profile</h3><span class="badge">FTTN / FTTB</span><span class="badge si">service impacting</span></div>
+    <div class="thead"><h3>Stability Profile</h3><span class="tbadge">FTTN / FTTB</span><span class="tbadge si">service impacting</span></div>
     <p class="tsub">Not a measurement: an intervention. Applies a more conservative profile (higher target margin, interleaving, retransmission) that trades speed for holding sync.</p>
     <div class="fields">
       <div class="field" data-k="stability profile apply 48 hours speed drop interleaving">
@@ -267,7 +271,7 @@
   </section>
 
   <section class="test" data-tech="all">
-    <div class="thead"><h3>Loopback</h3><span class="badge">ALL TECH</span><span class="badge si">service impacting</span></div>
+    <div class="thead"><h3>Loopback</h3><span class="tbadge">ALL TECH</span><span class="tbadge si">service impacting</span></div>
     <p class="tsub">Sends a small burst of data from the network side to the premises equipment and back.</p>
     <div class="fields">
       <div class="field" data-k="loopback result passed failed completed">
@@ -288,7 +292,7 @@
   </section>
 
   <section class="test" data-tech="all">
-    <div class="thead"><h3>Connection tests</h3><span class="badge">ALL TECH</span></div>
+    <div class="thead"><h3>Connection tests</h3><span class="tbadge">ALL TECH</span></div>
     <p class="tsub">The blunt instruments. Each one answers a smaller question than techs usually credit it with.</p>
     <div class="fields">
       <div class="field" data-k="check connection online status provider not connected">
@@ -316,7 +320,7 @@
   </section>
 
   <section class="test" data-tech="hfc">
-    <div class="thead"><h3>NTD Status</h3><span class="badge">HFC</span></div>
+    <div class="thead"><h3>NTD Status</h3><span class="tbadge">HFC</span></div>
     <p class="tsub">Operational check on the coax connection box. On HFC you can't see RF levels or segment noise; the flap counter is your window.</p>
     <div class="fields">
       <div class="field" data-k="ntd status hfc fail power">
@@ -344,7 +348,7 @@
   </section>
 
   <section class="test" data-tech="fttc">
-    <div class="thead"><h3>DPU / NCD Status</h3><span class="badge">FTTC</span></div>
+    <div class="thead"><h3>DPU / NCD Status</h3><span class="tbadge">FTTC</span></div>
     <p class="tsub">One fact explains most FTTC results: the pit unit (DPU) is reverse powered by the NCD inside the premises, over the copper pair.</p>
     <div class="fields">
       <div class="field" data-k="dpu status offline pit power reverse fttc">
@@ -386,7 +390,7 @@
   </section>
 
   <section class="test" data-tech="fttp">
-    <div class="thead"><h3>UNI-D Status</h3><span class="badge">FTTP</span></div>
+    <div class="thead"><h3>UNI-D Status</h3><span class="tbadge">FTTP</span></div>
     <p class="tsub">Full fibre has no line quality to argue about from the portal; optical levels are nbn-side. What you can read is the data port.</p>
     <div class="fields">
       <div class="field" data-k="uni-d mac address port provisioned fttp ntd">
@@ -400,7 +404,7 @@
   </section>
 
   <section class="test" data-tech="fw">
-    <div class="thead"><h3>Fixed Wireless</h3><span class="badge">FW</span></div>
+    <div class="thead"><h3>Fixed Wireless</h3><span class="tbadge">FW</span></div>
     <p class="tsub">No line state equivalent exists; you read patterns instead of ports.</p>
     <div class="fields">
       <div class="field" data-k="fixed wireless lights power status odu">
@@ -457,7 +461,18 @@
     </ul>
   </div>
 </div>
-<footer class="site"><span>Built for MSP helpdesks</span><span><a class="gh" href="/">Back to LRFA Tools</a></span></footer>
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">Built for MSP helpdesks</span>
+    <div class="footer-links">
+      <a href="https://github.com/lachlanalston/SupportTools" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="/copilot.html">M365 Copilot Guide</a>
+    </div>
+  </div>
+</footer>
 <script>
 (function () {
   "use strict";
