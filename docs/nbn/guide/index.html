@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A field guide for techs and power users: how to read NBN diagnostic tests in Australia. Line state, loopback, NTD status, DPU status, flap counts, and an interactive FTTN line state interpreter.">
+<title>NBN Test Decoder: read your NBN diagnostics like they should have explained them</title>
+<style>
+  :root {
+    color-scheme: dark;
+    /* surfaces and ink (dark set) */
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #212120;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --hairline: #2c2c2a;
+    --baseline: #383835;
+    --ring: rgba(255,255,255,0.10);
+    /* accent (categorical slot 1, dark step) */
+    --accent: #3987e5;
+    --accent-deep: #1c5cab;
+    --accent-track: #184f95;
+    /* status palette (fixed, icon + label always accompany) */
+    --good: #0ca30c;
+    --warning: #fab219;
+    --serious: #ec835a;
+    --critical: #d03b3b;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  ::selection { background: var(--accent-deep); color: var(--ink); }
+
+  /* layout: fixed sidebar on wide screens */
+  .shell { display: grid; grid-template-columns: 250px minmax(0,1fr); max-width: 1200px; margin: 0 auto; }
+  nav.toc {
+    position: sticky; top: 0; align-self: start;
+    height: 100vh; overflow-y: auto;
+    padding: 28px 20px 40px 24px;
+    border-right: 1px solid var(--hairline);
+    font-size: 13.5px;
+  }
+  nav.toc .brand { font-family: var(--mono); font-size: 15px; color: var(--ink); text-decoration: none; display: block; margin-bottom: 4px; }
+  nav.toc .brand span { color: var(--accent); }
+  nav.toc .vers { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 18px; }
+  nav.toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 8px; border-radius: 6px; }
+  nav.toc a:hover { background: var(--surface-2); color: var(--ink); }
+  nav.toc .grp { margin: 14px 0 4px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  main { padding: 34px 40px 80px; min-width: 0; }
+
+  h1, h2, h3, h4 { color: var(--ink); font-weight: 650; line-height: 1.25; }
+  h1 { font-size: 30px; margin: 8px 0 10px; }
+  h2 { font-size: 22px; margin: 0 0 14px; padding-top: 26px; }
+  h3 { font-size: 17px; margin: 26px 0 8px; }
+  h4 { font-size: 15px; margin: 20px 0 6px; }
+  section { border-top: 1px solid var(--hairline); margin-top: 34px; }
+  section:first-of-type { border-top: 0; margin-top: 0; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  a { color: var(--accent); }
+  strong { color: var(--ink); font-weight: 600; }
+  code, .m { font-family: var(--mono); font-size: 0.92em; background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 5px; padding: 1px 5px; color: var(--ink); }
+  .lead { font-size: 17.5px; color: var(--ink-2); max-width: 72ch; }
+  .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+
+  /* callouts */
+  .note, .spec {
+    border: 1px solid var(--hairline); border-left: 3px solid var(--accent);
+    background: var(--surface); border-radius: 8px;
+    padding: 12px 16px; margin: 16px 0; max-width: 78ch; font-size: 14.5px;
+  }
+  .spec { border-left-color: var(--warning); }
+
+  /* tables */
+  .tblwrap { overflow-x: auto; margin: 14px 0 20px; border: 1px solid var(--hairline); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--surface); }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-top: 1px solid var(--hairline); }
+  thead th { border-top: 0; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--surface-2); }
+  td:first-child { color: var(--ink); white-space: nowrap; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* status chips: color never alone, always glyph + word */
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--hairline); background: var(--surface-2); color: var(--ink); white-space: nowrap; }
+  .chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); box-shadow: 0 0 0 2px var(--surface); }
+  .chip.good::before { background: var(--good); }
+  .chip.warn::before { background: var(--warning); }
+  .chip.serious::before { background: var(--serious); }
+  .chip.crit::before { background: var(--critical); }
+
+  /* tech badges */
+  .tech { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; color: var(--ink); background: var(--accent-deep); border-radius: 5px; padding: 1px 7px; margin-right: 4px; }
+
+  /* interpreter */
+  .tool { background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px; padding: 20px 22px; margin: 18px 0; }
+  .tool h3 { margin-top: 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px 16px; margin: 14px 0; }
+  .field label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .field input, .field select {
+    width: 100%; background: var(--page); color: var(--ink);
+    border: 1px solid var(--baseline); border-radius: 7px;
+    font-family: var(--mono); font-size: 14px; padding: 7px 9px;
+  }
+  .field input:focus, .field select:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btn { font-family: var(--mono); font-size: 13.5px; font-weight: 600; color: var(--page); background: var(--accent); border: 0; border-radius: 8px; padding: 9px 18px; cursor: pointer; }
+  .btn:hover { background: #5598e7; }
+  .btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--baseline); font-weight: 500; }
+  .btn.ghost:hover { color: var(--ink); border-color: var(--muted); }
+
+  /* verdict rows */
+  .verdict { border-top: 1px solid var(--hairline); padding: 12px 0; display: grid; grid-template-columns: 132px minmax(0,1fr); gap: 4px 14px; }
+  .verdict .vh { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+  .verdict .vb p { margin: 6px 0 0; font-size: 14.5px; }
+  .overall { border: 1px solid var(--hairline); border-radius: 10px; background: var(--surface-2); padding: 14px 16px; margin-top: 16px; }
+  .overall p { margin: 8px 0 0; }
+
+  /* meters: fill carries severity; track is a deeper step of the accent ramp */
+  .meter { margin-top: 8px; max-width: 560px; }
+  .meter .mlab { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-bottom: 3px; }
+  .meter .track { position: relative; height: 10px; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--hairline); overflow: visible; }
+  .meter .fill { position: absolute; inset: 0 auto 0 0; border-radius: 5px 4px 4px 5px; }
+  .meter .tick { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink-2); }
+  .meter .ticklab { position: absolute; top: -20px; transform: translateX(-50%); font-family: var(--mono); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+
+  pre.say { font-family: var(--mono); font-size: 13px; line-height: 1.55; background: var(--page); border: 1px solid var(--baseline); border-radius: 8px; padding: 12px 14px; white-space: pre-wrap; color: var(--ink-2); margin: 10px 0 0; }
+
+  footer { border-top: 1px solid var(--hairline); margin-top: 48px; padding-top: 18px; font-size: 13px; color: var(--muted); }
+  footer p { max-width: 90ch; }
+
+  details { border: 1px solid var(--hairline); border-radius: 8px; background: var(--surface); padding: 0; margin: 10px 0; max-width: 78ch; }
+  details summary { cursor: pointer; padding: 10px 14px; color: var(--ink); font-weight: 550; }
+  details[open] summary { border-bottom: 1px solid var(--hairline); }
+  details .din { padding: 10px 14px; font-size: 14.5px; }
+
+  dl.gloss { max-width: 78ch; }
+  dl.gloss dt { font-family: var(--mono); color: var(--ink); margin-top: 14px; }
+  dl.gloss dd { margin: 2px 0 0 0; font-size: 14.5px; }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    nav.toc { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--hairline); padding-bottom: 16px; }
+    nav.toc .links { display: none; }
+    main { padding: 22px 18px 60px; }
+    h1 { font-size: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="toc" aria-label="Contents">
+  <a href="/" style="display:block;font-family:var(--mono);font-size:11px;color:var(--muted);text-decoration:none;margin-bottom:10px">&larr; tools.lrfa.dev</a>
+  <a class="brand" href="#top">nbn<span>test</span>decoder</a>
+  <div class="vers">v1.0 · Aug 2026</div>
+  <div class="links">
+    <div class="grp">Start</div>
+    <a href="#how">How tests get run</a>
+    <a href="#triage">60 second triage</a>
+    <a href="#interpreter">Line state interpreter</a>
+    <div class="grp">By technology</div>
+    <a href="#fttn">FTTN / FTTB</a>
+    <a href="#fttc">FTTC</a>
+    <a href="#hfc">HFC</a>
+    <a href="#fttp">FTTP</a>
+    <a href="#fw">Fixed Wireless</a>
+    <a href="#sky">Sky Muster</a>
+    <div class="grp">Cross-cutting</div>
+    <a href="#loopback">The loopback test</a>
+    <a href="#spec">What "in spec" means</a>
+    <a href="#escalate">Escalating properly</a>
+    <a href="#glossary">Glossary</a>
+    <a href="#sources">Sources</a>
+  </div>
+</nav>
+<main id="top">
+
+<section>
+  <div class="kicker">For techs and power users</div>
+  <h1>Read your NBN tests like they should have explained them</h1>
+  <p class="lead">Every RSP can run diagnostics against your NBN service: line state, loopback, NTD status, flap counts. The results come back full of numbers, and when you ask support what they mean you get "it's within spec". This site decodes every field, gives you the thresholds that matter, and tells you when a result is normal, marginal, or worth a fight.</p>
+  <p><span class="tech">FTTN</span><span class="tech">FTTB</span><span class="tech">FTTC</span><span class="tech">HFC</span><span class="tech">FTTP</span><span class="tech">FW</span><span class="tech">SAT</span></p>
+</section>
+
+<section id="how">
+  <h2>How these tests get run in the first place</h2>
+  <p>All of these diagnostics live in nbn's wholesale systems. Your RSP calls them through its own portal and shows you some or all of the output. Aussie Broadband exposes most of them for self-service in MyAussie (and in Carbon for business/wholesale customers); other RSPs run the same tests when you ask support, whether or not they show you the raw results. The tests are the same underneath regardless of who your RSP is, because nbn owns the access network.</p>
+  <p>Two things follow from that. First, this guide applies whatever provider you use. Second, when a support agent reads you a result over the phone, you can ask for the specific fields by name. They exist, even if the agent's screen summarises them away.</p>
+  <div class="note">Most tests here are <strong>service impacting</strong>: they can briefly interrupt or resync the connection while they run. Run them outside anything latency-critical, and expect a minute or two of disruption on the intrusive ones.</div>
+</section>
+
+<section id="triage">
+  <h2>The 60 second triage, any technology</h2>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Step</th><th>Question</th><th>If no</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Does the RSP see the service up at all (check connection / port status / NTD status)?</td><td>It is a connectivity fault: premises equipment, power, wiring or the nbn segment. Speed analysis is irrelevant until this passes.</td></tr>
+      <tr><td>2</td><td>Does a loopback pass?</td><td>Data is not flowing both ways. Power cycle the nbn equipment and CPE, rerun, then escalate. See <a href="#loopback">the loopback test</a>.</td></tr>
+      <tr><td>3</td><td>Is the service stable (no dropout pattern, STABLE flag, low flap count)?</td><td>Chase stability first, speed second. nbn's own threshold: <strong>4 or more unexpected dropouts in 24 hours is a Performance Incident</strong> they are expected to investigate.</td></tr>
+      <tr><td>4</td><td>Do the line metrics support the plan tier (sync at cap, attainable above tier, margins healthy)?</td><td>Either the line cannot do the tier (a commercial problem, see <a href="#spec">what "in spec" means</a>) or it has degraded (a fault, bring baselines).</td></tr>
+      <tr><td>5</td><td>All of the above clean but the user reports slow?</td><td>The access network is exonerated. Look at Wi-Fi, the router, in-premises cabling, the measuring device, VPNs, or upstream congestion. Test wired, at the first socket or the NTD.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="interpreter">
+  <h2>Line State Interpreter <span class="tech">FTTN</span><span class="tech">FTTB</span></h2>
+  <p>Paste in the numbers from a Line State test and get a per-field verdict using the thresholds documented on this page. Everything runs in your browser; nothing is sent anywhere.</p>
+  <div class="tool">
+    <div class="grid">
+      <div class="field">
+        <label for="tier">Plan tier</label>
+        <select id="tier">
+          <option value="100,40" selected>100/40</option>
+          <option value="50,20">50/20</option>
+          <option value="25,10">25/10</option>
+          <option value="25,5">25/5</option>
+          <option value="12,1">12/1</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="field" id="customTier" style="display:none">
+        <label for="tierD">Custom tier down / up (Mbps)</label>
+        <div class="duo">
+          <input type="number" id="tierD" placeholder="down" min="1" step="any">
+          <input type="number" id="tierU" placeholder="up" min="1" step="any">
+        </div>
+      </div>
+      <div class="field">
+        <label for="attD">Attainable rate (Mbps)</label>
+        <div class="duo">
+          <input type="number" id="attD" placeholder="down" min="0" step="any">
+          <input type="number" id="attU" placeholder="up" min="0" step="any">
+        </div>
+      </div>
+      <div class="field">
+        <label for="syncD">Current sync rate (Mbps)</label>
+        <div class="duo">
+          <input type="number" id="syncD" placeholder="down" min="0" step="any">
+          <input type="number" id="syncU" placeholder="up" min="0" step="any">
+        </div>
+      </div>
+      <div class="field">
+        <label for="marD">Noise margin (dB)</label>
+        <div class="duo">
+          <input type="number" id="marD" placeholder="down" step="any">
+          <input type="number" id="marU" placeholder="up" step="any">
+        </div>
+      </div>
+      <div class="field">
+        <label for="target">Profile target margin</label>
+        <select id="target">
+          <option value="6" selected>Standard 6dB</option>
+          <option value="9">Stability 9dB</option>
+          <option value="12">Stability 12dB</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="coex">Co-existence</label>
+        <select id="coex">
+          <option value="yes" selected>Yes (in profile string)</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="stab">Service stability</label>
+        <select id="stab">
+          <option value="stable" selected>STABLE</option>
+          <option value="unstable">UNSTABLE / other</option>
+          <option value="unknown">Not shown</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="drops">Dropouts in 24 h (optional)</label>
+        <input type="number" id="drops" placeholder="e.g. 0" min="0" step="1">
+      </div>
+    </div>
+    <p style="margin:4px 0 0">
+      <button class="btn" id="analyse" type="button">Analyse</button>
+      <button class="btn ghost" id="example" type="button">Load example</button>
+      <button class="btn ghost" id="reset" type="button">Reset</button>
+    </p>
+    <div id="results" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="fttn">
+  <h2><span class="tech">FTTN</span><span class="tech">FTTB</span> The Line State test, field by field</h2>
+  <p>FTTN/FTTB is VDSL2 over copper from a street node (or building MDF), so it is the one technology where the physical line has rich, continuously measured state. The Line State test is a snapshot of the DSLAM port as the node sees it. The modem must be in sync for the results to mean anything.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Field</th><th>What it is</th><th>How to read it</th></tr></thead>
+    <tbody>
+      <tr><td>Operational Status</td><td>Whether the node port has DSL sync with the modem</td><td><span class="chip good">UP REQUIRED</span> Down with the modem powered points at premises wiring, the modem, or a port/jumpering fault, not speed.</td></tr>
+      <tr><td>Service Stability</td><td>nbn's classification from resyncs and errors over the recent window</td><td>STABLE is the pass. Anything else is actionable: apply a stability profile, wait 48 hours, retest, escalate if unchanged.</td></tr>
+      <tr><td>MAC Address</td><td>The modem the port currently sees</td><td>Confirms the right premises is on the right pair. Useful in jumpering disputes and to prove a swapped modem connected.</td></tr>
+      <tr><td>DSL Mode</td><td>Modulation in use</td><td>VDSL2 is correct. ADSL fallback means the CPE is misconfigured or negotiating badly.</td></tr>
+      <tr><td>Estimated Distance to Node</td><td>Derived from loop attenuation, not a measured cable run</td><td>Indicative, but the best single predictor of what the line can do. See the distance table below.</td></tr>
+      <tr><td>Physical Profile</td><td>Three facts in one string: tier, DLM state, spectrum state. Example: <code>100/40 Standard 6dB (Co-Existence)</code></td><td><code>Standard 6dB</code> is the clean-history default. A Stability variant or 9dB/12dB target means the line has a dropout history and DLM or a tech intervened. <code>(Co-Existence)</code> describes the area, not a fault.</td></tr>
+      <tr><td>Attainable Rate</td><td>What the line could sync at right now given length, noise and profile</td><td>Compare to the tier. Comfortably above: the copper supports the plan with headroom. Below the tier: the line physically cannot deliver the plan.</td></tr>
+      <tr><td>Current Sync Rate</td><td>The rate the port and modem actually negotiated</td><td>nbn caps sync roughly 10% above the tier (100/40 caps near 110/44, 50/20 near 55/22) so overheads still leave full speed at layer 3. Sync at the cap means the plan is fully available on the copper.</td></tr>
+      <tr><td>Loop Attenuation</td><td>Signal loss across the copper, in dB. Scales with distance</td><td>Lower is better. Single digits to low tens on short FTTN loops. Generic DSL bands: under 20 outstanding, 20 to 30 excellent, 30 to 45 workable, beyond that expect low tiers only.</td></tr>
+      <tr><td>Noise Margin (SNR)</td><td>Headroom between received signal quality and the minimum needed to hold sync</td><td>The target is the profile number (6dB standard). Far above target with sync at cap: coasting, excellent. At or under 6dB and falling: dropout risk. Big day/night swings: noise ingress (REIN, crosstalk).</td></tr>
+      <tr><td>Attenuation Average</td><td>Aggregate counter</td><td>Frequently returns NaN or N/A because the DSLAM does not report it. A portal quirk, not a fault. Same for mislabelled units like "Mbps" on attenuation or "dBdB".</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Distance rules of thumb</h3>
+  <p>Community calibration rather than published nbn constants, and co-existence drags every band down:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Copper distance</th><th>Realistic attainable</th><th>Comment</th></tr></thead>
+    <tbody>
+      <tr><td>Under 200 m</td><td>100+ Mbps down</td><td>100/40 territory. At 50 m, expect huge margins and a capped sync.</td></tr>
+      <tr><td>200 to 400 m</td><td>60 to 100 Mbps</td><td>100 tier possible but marginal at the far end.</td></tr>
+      <tr><td>400 to 700 m</td><td>25 to 60 Mbps</td><td>50 tier gets marginal, 25 comfortable.</td></tr>
+      <tr><td>Beyond 700 m</td><td>Often under 25 Mbps</td><td>These are the lines the ACCC remedies exist for.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>DLM and the profile string</h3>
+  <p>nbn runs Dynamic Line Management on FTTN/B. A line that drops or errors too much gets moved toward stability: higher target noise margin (6 to 9 to 12 dB), interleaving and/or retransmission (G.INP). Each step trades speed (and a few ms of latency, for interleaving) for holding sync. Reading <code>Standard 6dB</code> is therefore itself diagnostic: nobody, human or DLM, has needed to intervene. A stability profile applied by the RSP does the same thing on request, and the standard workflow expects it: apply, hold 48 hours, rerun Line State, escalate only if still unstable.</p>
+
+  <h3>Co-existence, and why it matters less than it sounds</h3>
+  <p><code>(Co-Existence)</code> means legacy services (ADSL2+ from the exchange, special services) still share copper in the area, so the node runs restricted spectrum and downstream power back-off to avoid interfering with them. It lowers attainable rates, mostly on longer loops, and it ends only when nbn is satisfied the legacy services are gone. Plenty of areas never formally exit. On a 50 m loop the effect is negligible; on a 600 m loop it can be the difference between holding a 50 tier and not.</p>
+
+  <div class="spec"><strong>Dropout arithmetic.</strong> nbn's operative threshold (introduced for HFC in Feb 2022, aligning with the existing FTTN metric): <strong>4 or more unexpected dropouts in a 24 hour period is a Performance Incident</strong>, expected to produce a ticket and, if needed, a truck roll. Historically nbn called an average of ~2.4 resyncs/day "stable" and up to 5/day merely "risky", so if support waves away a service dropping several times daily, the PI threshold is the number to quote.</div>
+</section>
+
+<section id="fttc">
+  <h2><span class="tech">FTTC</span> DPU and NCD tests</h2>
+  <p>FTTC runs fibre to a Distribution Point Unit (DPU) in the pit outside, then VDSL2 over a short copper lead-in to the NCD (the nbn box inside). The twist: <strong>the DPU is reverse powered by the NCD</strong> over the copper pair. No powered NCD, no live DPU. That one fact explains most FTTC diagnostics.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Test</th><th>What it does</th><th>How to read it</th></tr></thead>
+    <tbody>
+      <tr><td>DPU Status</td><td>Checks the pit equipment is online</td><td>Offline usually means it is not being powered: NCD off, faulty, or the copper pair between them is broken. Check the NCD's lights and power before anything else.</td></tr>
+      <tr><td>DPU Port Status</td><td>Verifies power delivery from the NCD and shows the connected data rate</td><td>The lead-in is short, so the sync rate should sit near the maximum for the tier, comfortably above it. A low rate on a short lead-in points at the copper pair or a joint, and is escalation-worthy.</td></tr>
+      <tr><td>DPU Port Reset</td><td>Resets the pit-side port</td><td>Use for offline status or a low data rate, then retest. Service impacting.</td></tr>
+      <tr><td>NCD UNI-D Status</td><td>Checks the Ethernet port your router plugs into</td><td>Operationally up but no data: do an NCD Port Reset. Down: check cabling and the router end.</td></tr>
+      <tr><td>NCD Reset / Port Reset</td><td>Forced reboot / port lock-unlock cycle</td><td>The standard first moves for dataflow issues before escalating. Service impacting.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">FTTC has little tuning surface: the copper run is tens of metres. Persistent dropouts are usually the DPU losing power (NCD power environment, faulty NCD) or a degraded lead-in pair, both nbn-side fixes once you have evidence resets do not hold.</div>
+</section>
+
+<section id="hfc">
+  <h2><span class="tech">HFC</span> NTD status and flap counts</h2>
+  <p>HFC is the cable network: a shared coax segment into a cable modem style NTD. You get less visibility than copper DSL, and the key health signal is the <strong>flap count</strong>: how often the NTD's connection has interrupted and re-registered.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Test</th><th>What it does</th><th>How to read it</th></tr></thead>
+    <tbody>
+      <tr><td>NTD Status</td><td>Operational check on the nbn connection box</td><td>Fail: confirm power, then reset. Persistent fail with power is an nbn fault.</td></tr>
+      <tr><td>Flap count</td><td>Connection interruption counter reported with status</td><td>Take a reading, wait 24 hours, take another. A commonly used escalation heuristic: <strong>5 or more new flaps between tests a day apart</strong> is evidence of instability worth a fault. It also lines up with nbn's 4+ dropouts in 24h Performance Incident threshold.</td></tr>
+      <tr><td>NTD Reset</td><td>Forces the box to reboot and re-register</td><td>First move for errors; if status still reports problems after reset plus 10 minutes, escalate.</td></tr>
+      <tr><td>Loopback</td><td>Bidirectional data path check</td><td>See <a href="#loopback">the loopback test</a>.</td></tr>
+    </tbody>
+  </table></div>
+  <p>What you cannot see: RF signal levels, noise on the coax segment, and neighbourhood congestion. Those live with nbn field techs. Your leverage is the dropout/flap evidence trail: timestamps, counts 24 hours apart, and the PI threshold. In-premises, check the coax fly lead and wall plate, and remove any old pay TV splitters, which are a classic silent killer of HFC signal.</p>
+</section>
+
+<section id="fttp">
+  <h2><span class="tech">FTTP</span> UNI-D and port tests</h2>
+  <p>Full fibre. There is no line quality to argue about in the copper sense: light either arrives within tolerance or it does not, and optical levels are visible to nbn rather than through RSP portals. What you can test is the service path and the data port.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Test</th><th>What it does</th><th>How to read it</th></tr></thead>
+    <tbody>
+      <tr><td>UNI-D Status</td><td>Checks the specific Ethernet port on the NTD your service is provisioned on</td><td>Shows a MAC address when it can see your router. No MAC across two different routers: the port or provisioning is the problem, escalate. Remember there are four UNI-D ports and only the provisioned one works.</td></tr>
+      <tr><td>Port Reset</td><td>Lock/unlock cycle on the UNI-D</td><td>First move for "port up but no data". Retest after two minutes.</td></tr>
+      <tr><td>Loopback</td><td>Bidirectional data path check</td><td>See <a href="#loopback">the loopback test</a>.</td></tr>
+    </tbody>
+  </table></div>
+  <p>On FTTP, if the UNI-D shows your MAC, loopback passes, and speeds are still low, the copper-era instincts do not apply: it is almost never the access line. Look at CPE throughput limits (old routers that cannot route the tier), Wi-Fi, PPPoE vs IPoE config, CGNAT/VPN overlays, or RSP/upstream congestion, and speedtest wired from the NTD directly.</p>
+</section>
+
+<section id="fw">
+  <h2><span class="tech">FW</span> Fixed Wireless: different physics</h2>
+  <p>Fixed Wireless is LTE-derived radio from a tower to an outdoor antenna (ODU). There is no line state equivalent in RSP portals; health is about radio conditions and cell load, and much of the diagnosis is pattern based.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Signal</th><th>What to check</th><th>How to read it</th></tr></thead>
+    <tbody>
+      <tr><td>Connection box lights</td><td>Power and Status LEDs on the indoor unit</td><td>Green is normal. Amber/red power or red status indicates a fault state for the provider. No lights: power path.</td></tr>
+      <tr><td>Time-of-day pattern</td><td>Speedtests morning, afternoon, evening over several days</td><td>Good all day except evenings: cell congestion, a capacity problem to raise with the RSP, not a fault in your equipment. Bad at all hours: signal path problem.</td></tr>
+      <tr><td>Environment</td><td>Line of sight to the tower</td><td>Grown vegetation, new buildings, antenna knocked out of alignment, damaged cabling (wind, branches, rodents). Seasonal foliage and some summer weather measurably degrade cells.</td></tr>
+      <tr><td>Weather correlation</td><td>Note whether drops track storms/heat</td><td>Consistent weather correlation is useful evidence for an nbn investigation of the radio path.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Escalation on FW is evidence-driven: a diary of speeds by time of day, plus any physical observations about the antenna and line of sight, gets a signal investigation moving far faster than "it's slow".</p>
+</section>
+
+<section id="sky">
+  <h2><span class="tech">SAT</span> Sky Muster satellite, briefly</h2>
+  <p>Geostationary satellite: the physics set expectations. Round-trip latency of roughly 600 ms is normal and no test will improve it; interactive workloads (VoIP, VPNs, remote desktop) behave accordingly. Heavy rain at your site or the ground station fades the signal (rain fade), so weather-correlated slowdowns are expected behaviour rather than faults. Persistent hard faults come down to dish alignment, cabling, or the modem, which is an nbn service call. Portal diagnostics are limited to connectivity checks, so the triage table at the top is most of what you can do remotely.</p>
+</section>
+
+<section id="loopback">
+  <h2>The loopback test, on every technology</h2>
+  <p>The loopback sends a small amount of test data from the RSP/nbn side to your premises equipment and back, in both directions. On FTTN/B it exercises the layer 2 path across the POI, the node, the copper and the modem (which must be in sync); on the other technologies it loops via the NTD/NCD.</p>
+  <p><strong>Passed means exactly one thing:</strong> at test time, data flowed both ways. It says nothing about speed, noise, or whether the service drops every evening. Intermittent faults routinely pass loopbacks, so a pass does not close a dropout investigation.</p>
+  <p><strong>Failed while the port shows up and in sync</strong> is a meaningful contradiction: power cycle the nbn equipment and CPE, rerun, and escalate if it still fails. Expect the test to briefly interrupt traffic; a run typically takes a minute or two from created to completed.</p>
+</section>
+
+<section id="spec">
+  <h2>What "meets the NBN spec" actually means</h2>
+  <p>This is the part support teams wave at without explaining. The floors nbn commits to are much lower than the plan tier, which is why "it's within spec" and "your 100/40 service does 40" can both be true statements about the same line.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Commitment</th><th>Figure</th><th>Context</th></tr></thead>
+    <tbody>
+      <tr><td>FTTN during co-existence</td><td>12/1 Mbps</td><td>The committed peak information rate objective while legacy services share the copper. nbn has disputed the word "cap" but stands by the figure as the commitment.</td></tr>
+      <tr><td>FTTB during co-existence</td><td>25/5 Mbps</td><td>Building copper is short, so the floor is higher.</td></tr>
+      <tr><td>After co-existence</td><td>25/5 Mbps objective</td><td>Aligning with the statutory requirement of 25 Mbps peak downstream.</td></tr>
+      <tr><td>Dropouts, FTTN and HFC</td><td>4+ unexpected in 24 h</td><td>Performance Incident: nbn is expected to investigate, ticket, and if needed roll a truck.</td></tr>
+    </tbody>
+  </table></div>
+  <p>So when a tech says a poor line "meets spec", they usually mean it clears 12/1 or 25/5, not that it can do the plan you pay for. Arguing the plan tier with nbn is mostly futile. <strong>The plan-tier remedy sits with your RSP instead:</strong> under the ACCC's broadband speed claims guidance, RSPs must check a line's maximum attainable speed after activation, tell the customer if it cannot reach the plan tier, and offer a remedy (move to a lower tier with a refund, or exit without penalty). The Telstra and Optus undertakings, which compensated tens of thousands of FTTN customers, are the precedent to cite.</p>
+  <p>When nbn will act on a fault: the service is unstable past the PI threshold and a stability profile has not fixed it; the attainable rate has degraded materially against the line's own history; the line is below the floors above; or there is physical-layer evidence such as a collapsing noise margin or errors. Note the recurring theme: <strong>history wins arguments</strong>. A single bad snapshot is dismissible; the same line measurably worse than its own baseline is not.</p>
+</section>
+
+<section id="escalate">
+  <h2>Escalating properly</h2>
+  <p>Support triage rewards specifics. The difference between "the internet is slow" and a ticket that moves is quoting the fields on this page back with numbers and dates.</p>
+  <h4>Phrases that work</h4>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Situation</th><th>What to say</th></tr></thead>
+    <tbody>
+      <tr><td>Instability (FTTN)</td><td>"Line State shows UNSTABLE with N resyncs. Please apply a stability profile; I will retest in 48 hours and want an nbn instability fault raised if it has not returned to STABLE."</td></tr>
+      <tr><td>Dropouts (any tech)</td><td>"I have logged N dropouts in 24 hours with timestamps, which exceeds nbn's Performance Incident threshold of 4. Please raise it with nbn as a PI."</td></tr>
+      <tr><td>Line cannot do the tier</td><td>"Attainable is X/Y on a 100/40 service. The line cannot support the tier, so please run the speed review process: I want the ACCC remedy options, and an nbn investigation only if this is a degradation from previous attainable figures."</td></tr>
+      <tr><td>Degradation</td><td>"Attainable was A/B on [date] (attached) and is now C/D on the same profile. That is a physical degradation, please lodge it with nbn."</td></tr>
+      <tr><td>Clean line, slow experience</td><td>Do not burn an nbn ticket. Note the capped sync and healthy margins, then work the premises: wired test at the first socket or NTD, CPE throughput, Wi-Fi, VPN overlays.</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Build a baseline habit</h4>
+  <p>Snapshot test results when the service is healthy (at activation, after any nbn work) and every time a fault is suspected. Screenshots with dates. Degradation against a baseline is the single most persuasive artefact you can hand an RSP, because it converts "customer says it is slow" into "the access line measurably changed". For suspected noise or interference on copper, capture one business-hours test and one evening test and compare margins.</p>
+</section>
+
+<section id="glossary">
+  <h2>Glossary</h2>
+  <dl class="gloss">
+    <dt>Attainable rate</dt><dd>The maximum rate the line could sync at right now, given its length, noise environment and profile. The line's potential, as opposed to what it is doing.</dd>
+    <dt>Sync rate (line rate)</dt><dd>The rate the DSLAM port and modem actually negotiated. Capped by nbn a little above the tier so overheads still leave the full plan speed at layer 3.</dd>
+    <dt>Noise margin / SNR margin</dt><dd>Headroom, in dB, between the received signal quality and the minimum needed to hold the current sync. The profile sets a target (6dB standard); the DSLAM trades speed to hold it.</dd>
+    <dt>Loop attenuation</dt><dd>Signal loss across the copper loop in dB. Grows with distance and frequency; the basis for the estimated distance figure.</dd>
+    <dt>DLM</dt><dd>Dynamic Line Management. nbn automation that watches errors/resyncs and moves misbehaving lines to more conservative profiles (higher target margin, interleaving, G.INP).</dd>
+    <dt>G.INP</dt><dd>Physical-layer retransmission. Corrects errored DSL frames without the latency cost of deep interleaving.</dd>
+    <dt>Interleaving</dt><dd>Spreads data across time so error bursts are correctable. Costs a few ms of latency; a sign the line needed help.</dd>
+    <dt>Co-existence / DPBO</dt><dd>Spectrum restrictions (downstream power back-off) while legacy ADSL/special services share the copper. Lowers attainable rates, mostly on long loops.</dd>
+    <dt>Performance Incident (PI)</dt><dd>nbn's threshold for dropout investigation: 4 or more unexpected dropouts on a service in 24 hours.</dd>
+    <dt>DPU</dt><dd>Distribution Point Unit. The FTTC kerb device in the pit, reverse powered from the premises NCD.</dd>
+    <dt>NCD / NTD</dt><dd>Network Connection Device (FTTC) / Network Termination Device (FTTP, HFC). The nbn box in the premises.</dd>
+    <dt>UNI-D</dt><dd>The user Ethernet data port on an NTD/NCD. FTTP NTDs have four; only the provisioned one is live.</dd>
+    <dt>POI</dt><dd>Point of Interconnect. Where RSP networks meet the nbn access network; the far end of what these tests exercise.</dd>
+    <dt>TC4</dt><dd>Traffic class 4: best-effort data, i.e. normal broadband. What all of this applies to.</dd>
+    <dt>REIN</dt><dd>Repetitive Electrical Impulse Noise. Interference (pumps, lights, dodgy power supplies) that eats noise margin, often on a schedule.</dd>
+  </dl>
+</section>
+
+<section id="sources">
+  <h2>Sources and further reading</h2>
+  <p style="font-size:14.5px">
+    <a href="https://www.aussiebroadband.com.au/help-centre/internet/service-test-options-available-in-myaussie/">Aussie Broadband: service test options in MyAussie</a> (test behaviours, stability profile workflow, escalation criteria) ·
+    <a href="https://kb.hostednetwork.com.au/support/services/connectivity/nbn-tc4/troubleshooting/nbn-self-diagnostic-tool">Hosted Network KB: nbn self-diagnostic tools</a> (line state, loopback, NTD/NCD/DPU/UNI-D tests) ·
+    <a href="https://www.itnews.com.au/news/nbn-co-quantifies-how-many-hfc-dropouts-in-a-day-is-too-many-577508">iTnews: nbn quantifies HFC dropout threshold</a> (4+ in 24 h Performance Incident) ·
+    <a href="https://lists.ausnog.net/pipermail/ausnog/2017-March/038400.html">AusNOG: NBN VDSL speeds and line sync</a> (sync caps above tier) ·
+    <a href="https://blog.jxeeno.com/nbn-fttn-limited-to-121-mbps-during-transition/">jxeeno: FTTN 12/1 during co-existence</a> and <a href="https://blog.jxeeno.com/incorrect-documentation-fttn-speeds-will-not-be-121-during-transition/">the follow-up clarification</a> (co-existence commitments, DPBO) ·
+    <a href="https://mailman.anu.edu.au/pipermail/link/2016-March/035630.html">Link list: nbn dropout acceptability, 2016</a> (2.4/day "stable", 5/day "risky") ·
+    <a href="https://faq.draytek.com.au/2008/03/14/what-do-the-snr-and-loop-att-values-indicate/">DrayTek: SNR and loop attenuation bands</a> (generic DSL interpretation) ·
+    <a href="https://www.nbnco.com.au/content/dam/nbn/documents/support/fixed-wireless/nbn-fixed-wireless-troubleshooting-guide.pdf.coredownload.pdf">nbn: fixed wireless troubleshooting guide</a> (LEDs, environment, congestion) ·
+    <a href="https://www.accc.gov.au/media-release/telstra-offers-to-compensate-42000-customers-for-slow-nbn-speeds">ACCC: Telstra speed compensation</a> (attainable-below-tier remedy precedent) ·
+    Whirlpool threads worth reading logged in: <a href="https://forums.whirlpool.net.au/archive/9xkxmk23">Line State on MyAussie</a>, <a href="https://forums.whirlpool.net.au/archive/3pxjwwn0">what is a loopback test</a>, <a href="https://forums.whirlpool.net.au/archive/2479157">post your FTTN/VDSL2 stats</a>
+  </p>
+  <p style="font-size:14.5px">Confidence notes: sync caps (~10% above tier) and the distance table are well-worn community and operator calibration rather than published nbn constants, and nbn has never published DLM thresholds. Treat them as calibration, not gospel. The co-existence 12/1 commitment comes from WBA-era documentation; nbn has quibbled the word "cap" while standing by the figure as the committed objective.</p>
+</section>
+
+<footer>
+  <p><strong>Disclaimer.</strong> This is an independent community resource. It is not affiliated with, endorsed by, or connected to nbn co ltd or any RSP. "nbn" is a trade mark of nbn co ltd; product names belong to their owners. Information is general in nature, reflects publicly available documentation and community experience as at August 2026, and thresholds may change. Verify anything contractual against your RSP's terms and current nbn/ACCC documentation.</p>
+  <p>Built by a tech who got tired of "it's within spec". Corrections and additions welcome.</p>
+</footer>
+</main>
+</div>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var RANK = { good: 0, warn: 1, serious: 2, crit: 3 };
+  var CHIPLAB = { good: "GOOD", warn: "MARGINAL", serious: "PROBLEM", crit: "CRITICAL" };
+  var COLOR = { good: "var(--good)", warn: "var(--warning)", serious: "var(--serious)", crit: "var(--critical)" };
+
+  $("tier").addEventListener("change", function () {
+    $("customTier").style.display = this.value === "custom" ? "" : "none";
+  });
+
+  function num(id) {
+    var v = parseFloat($(id).value);
+    return isFinite(v) ? v : null;
+  }
+  function fmt(n) {
+    if (n === null || !isFinite(n)) return "?";
+    return (Math.round(n * 10) / 10).toString();
+  }
+  function chip(level) {
+    return '<span class="chip ' + (level === "warn" ? "warn" : level) + '">' + CHIPLAB[level] + "</span>";
+  }
+  function worse(a, b) { return RANK[b] > RANK[a] ? b : a; }
+
+  function meter(opts) {
+    // opts: value, max, level, label, ticks: [{at, lab}]
+    var pct = Math.max(0, Math.min(100, (opts.value / opts.max) * 100));
+    var t = "";
+    (opts.ticks || []).forEach(function (tk) {
+      var tp = Math.max(0, Math.min(100, (tk.at / opts.max) * 100));
+      t += '<div class="tick" style="left:' + tp + '%"></div>';
+      if (tk.lab) t += '<div class="ticklab" style="left:' + tp + '%">' + tk.lab + "</div>";
+    });
+    return '<div class="meter"><div class="mlab"><span>' + opts.label + "</span><span>" + fmt(opts.value) + "</span></div>" +
+      '<div class="track" style="margin-top:' + ((opts.ticks && opts.ticks.length) ? "20px" : "0") + '">' +
+      '<div class="fill" style="width:' + pct + "%;background:" + COLOR[opts.level] + '"></div>' + t + "</div></div>";
+  }
+
+  function row(head, level, body) {
+    return '<div class="verdict"><div class="vh">' + head + '</div><div class="vb">' +
+      (level ? chip(level) + " " : "") + body + "</div></div>";
+  }
+
+  function dirVerdictAttainable(att, tier, cap) {
+    if (att === null) return null;
+    if (att >= cap) return { level: "good", text: "supports the tier with headroom (" + fmt((att / tier) * 100) + "% of tier)" };
+    if (att >= tier) return { level: "warn", text: "supports the tier but with little headroom; watch for degradation" };
+    return { level: "crit", text: "cannot deliver the tier (max ~" + fmt(att) + " Mbps): this is the ACCC speed review case" };
+  }
+  function dirVerdictSync(sync, att, tier, cap) {
+    if (sync === null) return null;
+    if (sync >= cap * 0.97) return { level: "good", text: "at the provisioning cap: the full tier is available on the line" };
+    if (sync >= tier) return { level: "good", text: "above the tier; overheads may shave the very top off speed tests" };
+    if (sync >= tier * 0.9) return { level: "warn", text: "slightly under the tier" + (att !== null && att >= cap ? "; attainable is higher, so try a port reset to resync" : "") };
+    return { level: "serious", text: "well under the tier" + (att !== null && att >= tier ? "; attainable is higher, so the port may have synced during a noise event: port reset and retest" : "") };
+  }
+  function dirVerdictMargin(m, target) {
+    if (m === null) return null;
+    if (m < 3) return { level: "crit", text: "critically low: sync loss is likely imminent or frequent" };
+    if (m < 6) return { level: "serious", text: "below the 6dB floor: dropout risk, look for noise ingress (compare a night test)" };
+    if (m < target - 2) return { level: "warn", text: "well below the " + target + "dB profile target: the line is not holding the margin the profile asks for, expect further DLM intervention" };
+    if (m >= target + 5) return { level: "good", text: "well above the " + target + "dB target: lots of headroom" };
+    return { level: "good", text: "at or near the " + target + "dB target: the line is syncing about as fast as conditions allow" };
+  }
+
+  function analyse() {
+    var tSel = $("tier").value, tierD, tierU;
+    if (tSel === "custom") { tierD = num("tierD"); tierU = num("tierU"); }
+    else { var p = tSel.split(","); tierD = parseFloat(p[0]); tierU = parseFloat(p[1]); }
+    if (!tierD || !tierU) { $("results").innerHTML = '<div class="overall"><p>Enter the plan tier first.</p></div>'; return; }
+
+    var capD = tierD * 1.1, capU = tierU * 1.1;
+    var attD = num("attD"), attU = num("attU");
+    var syncD = num("syncD"), syncU = num("syncU");
+    var marD = num("marD"), marU = num("marU");
+    var target = parseFloat($("target").value);
+    var coex = $("coex").value === "yes";
+    var stab = $("stab").value;
+    var drops = num("drops");
+
+    var overall = "good", rows = "", notes = [], say = [];
+
+    // Attainable
+    var aD = dirVerdictAttainable(attD, tierD, capD), aU = dirVerdictAttainable(attU, tierU, capU);
+    if (aD || aU) {
+      var aLevel = worse(aD ? aD.level : "good", aU ? aU.level : "good");
+      overall = worse(overall, aLevel);
+      var aBody = "";
+      if (aD) aBody += "<p>Down " + fmt(attD) + " vs tier " + fmt(tierD) + ": " + aD.text + ".</p>";
+      if (aU) aBody += "<p>Up " + fmt(attU) + " vs tier " + fmt(tierU) + ": " + aU.text + ".</p>";
+      if (attD !== null) aBody += meter({ value: attD, max: Math.max(attD, capD) * 1.15, level: aD.level, label: "attainable down", ticks: [{ at: tierD, lab: "tier " + fmt(tierD) }] });
+      rows += row("Attainable", aLevel, aBody);
+      if ((aD && aD.level === "crit") || (aU && aU.level === "crit")) {
+        say.push("Attainable is " + fmt(attD) + "/" + fmt(attU) + " on a " + fmt(tierD) + "/" + fmt(tierU) + " service. The line cannot support the tier, so please run the speed review process: I want the ACCC remedy options (tier move with refund), and an nbn investigation if this is a degradation from previous attainable figures.");
+        if (coex) notes.push("Co-existence is restricting spectrum on this line; on long loops it materially lowers attainable rates, which strengthens the case for a tier review rather than a fault ticket.");
+      }
+    } else {
+      rows += row("Attainable", null, '<p style="color:var(--muted)">No values entered.</p>');
+    }
+
+    // Sync
+    var sD = dirVerdictSync(syncD, attD, tierD, capD), sU = dirVerdictSync(syncU, attU, tierU, capU);
+    if (sD || sU) {
+      var sLevel = worse(sD ? sD.level : "good", sU ? sU.level : "good");
+      overall = worse(overall, sLevel);
+      var sBody = "";
+      if (sD) sBody += "<p>Down " + fmt(syncD) + " (cap ~" + fmt(capD) + "): " + sD.text + ".</p>";
+      if (sU) sBody += "<p>Up " + fmt(syncU) + " (cap ~" + fmt(capU) + "): " + sU.text + ".</p>";
+      if (syncD !== null) sBody += meter({ value: syncD, max: Math.max(syncD, capD) * 1.15, level: sD.level, label: "sync down", ticks: [{ at: tierD, lab: "" }, { at: capD, lab: "cap ~" + fmt(capD) }] });
+      rows += row("Sync rate", sLevel, sBody);
+    } else {
+      rows += row("Sync rate", null, '<p style="color:var(--muted)">No values entered.</p>');
+    }
+
+    // Margin
+    var mD = dirVerdictMargin(marD, target), mU = dirVerdictMargin(marU, target);
+    if (mD || mU) {
+      var mLevel = worse(mD ? mD.level : "good", mU ? mU.level : "good");
+      overall = worse(overall, mLevel);
+      var mBody = "";
+      if (mD) mBody += "<p>Down " + fmt(marD) + " dB: " + mD.text + ".</p>";
+      if (mU) mBody += "<p>Up " + fmt(marU) + " dB: " + mU.text + ".</p>";
+      if (marD !== null) mBody += meter({ value: marD, max: Math.max(30, marD + 5), level: mD.level, label: "noise margin down (dB)", ticks: [{ at: target, lab: "target " + target }] });
+      rows += row("Noise margin", mLevel, mBody);
+      if (mLevel === "serious" || mLevel === "crit") {
+        say.push("Noise margin is down to " + fmt(marD) + "/" + fmt(marU) + " dB against a " + target + " dB target. Please check the line for noise/errors and log a fault if the DSLAM error counters support it.");
+      }
+    } else {
+      rows += row("Noise margin", null, '<p style="color:var(--muted)">No values entered.</p>');
+    }
+
+    // Profile
+    if (target > 6) {
+      overall = worse(overall, "warn");
+      rows += row("Profile", "warn", "<p>A " + target + "dB stability target means DLM or a tech has intervened: this line has a dropout history even if today's snapshot looks clean. Ask when and why the profile was applied, and whether it can step back to Standard 6dB.</p>");
+    } else {
+      rows += row("Profile", "good", "<p>Standard 6dB: clean history, no DLM intervention has been needed.</p>");
+    }
+
+    // Stability
+    if (stab === "unstable") {
+      overall = worse(overall, "serious");
+      rows += row("Stability", "serious", "<p>UNSTABLE: apply a stability profile, hold 48 hours, rerun Line State, and escalate to an nbn instability fault if it has not returned to STABLE.</p>");
+      say.push("Line State shows the service as UNSTABLE. Please apply a stability profile; I will retest in 48 hours and want an nbn instability fault raised if it has not returned to STABLE.");
+    } else if (stab === "stable") {
+      rows += row("Stability", "good", "<p>STABLE over the recent window.</p>");
+    }
+    if (drops !== null && drops >= 4) {
+      overall = worse(overall, "crit");
+      rows += row("Dropouts", "crit", "<p>" + drops + " dropouts in 24 hours meets nbn's Performance Incident threshold (4+). This obliges investigation: quote the threshold and supply timestamps.</p>");
+      say.push("I have logged " + drops + " dropouts in 24 hours with timestamps, which exceeds nbn's Performance Incident threshold of 4 unexpected dropouts per day. Please raise a PI with nbn.");
+    } else if (drops !== null && drops > 0) {
+      rows += row("Dropouts", "warn", "<p>" + drops + " in 24 hours is under the PI threshold (4). Keep a log; if it trends up, you have the evidence ready.</p>");
+    }
+
+    // Overall
+    var headline, advice;
+    if (overall === "good") {
+      headline = "Healthy line";
+      advice = "Nothing here needs an nbn ticket. If the user still reports slow speeds, the access line is exonerated: test wired at the modem, then look at CPE throughput, Wi-Fi, in-premises cabling, VPN overlays or congestion.";
+    } else if (overall === "warn") {
+      headline = "Serviceable, with things to watch";
+      advice = "No fault case yet. Snapshot these values as a baseline, note the watch items above, and retest if symptoms appear.";
+    } else if (overall === "serious") {
+      headline = "Actionable problems";
+      advice = "There is a real case here. Work the items marked PROBLEM: stability profile first for instability, port reset for a sync/attainable mismatch, then escalate with the phrasing below.";
+    } else {
+      headline = "Fault or remedy territory";
+      advice = "At least one metric is in fault or remedy territory. Use the phrasing below, attach screenshots, and do not accept \"it's within spec\" without asking which spec: the plan tier obligations sit with the RSP under the ACCC guidance, the PI dropout threshold sits with nbn.";
+    }
+    var out = rows + '<div class="overall">' + chip(overall) + " <strong>" + headline + "</strong><p>" + advice + "</p>";
+    notes.forEach(function (n) { out += "<p>" + n + "</p>"; });
+    if (say.length) {
+      out += "<p><strong>What to say to your RSP:</strong></p><pre class=\"say\" id=\"sayText\">" + say.join("\n\n") + "</pre>" +
+        '<p style="margin-top:10px"><button class="btn ghost" id="copySay" type="button">Copy</button></p>';
+    }
+    out += "</div>";
+    $("results").innerHTML = out;
+    var cp = $("copySay");
+    if (cp) cp.addEventListener("click", function () {
+      var txt = $("sayText").textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () { cp.textContent = "Copied"; });
+      } else {
+        var r = document.createRange(); r.selectNodeContents($("sayText"));
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        document.execCommand("copy"); sel.removeAllRanges(); cp.textContent = "Copied";
+      }
+    });
+  }
+
+  $("analyse").addEventListener("click", analyse);
+  $("example").addEventListener("click", function () {
+    $("tier").value = "100,40"; $("customTier").style.display = "none";
+    $("attD").value = 144.0; $("attU").value = 50.4;
+    $("syncD").value = 107.7; $("syncU").value = 44.2;
+    $("marD").value = 17.5; $("marU").value = 21.1;
+    $("target").value = "6"; $("coex").value = "yes"; $("stab").value = "stable"; $("drops").value = 0;
+    analyse();
+  });
+  $("reset").addEventListener("click", function () {
+    ["attD","attU","syncD","syncU","marD","marU","drops","tierD","tierU"].forEach(function (id) { $(id).value = ""; });
+    $("tier").value = "100,40"; $("customTier").style.display = "none";
+    $("target").value = "6"; $("coex").value = "yes"; $("stab").value = "stable";
+    $("results").innerHTML = "";
+  });
+})();
+</script>
+</body>
+</html>

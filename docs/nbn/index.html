@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NBN Field Guide: a field-by-field reading reference for techs. Every field of every NBN test, in the order the portal shows them.">
+<title>NBN Field Guide · LRFA Tools</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0d1117; --surface: #161b22; --card: #1c2128; --card-hover: #212830;
+    --border: #30363d; --border-sub: #21262d;
+    --text: #e6edf3; --sub: #8b949e; --sub2: #6e7681; --acc: #388bfd;
+    --mono: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.55;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  a { color: var(--acc); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header.site { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; position: sticky; top: 0; z-index: 5; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-icon { font-family: var(--mono); background: var(--card); border: 1px solid var(--border); border-radius: 6px; color: var(--acc); padding: 3px 7px; font-size: 14px; font-weight: 600; }
+  .brand h1 { font-size: 16px; margin: 0; font-weight: 600; }
+  .gh { color: var(--sub); font-size: 13px; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; }
+  .gh:hover { color: var(--text); text-decoration: none; }
+  nav.tabs { display: flex; gap: 2px; padding: 10px 20px 0; border-bottom: 1px solid var(--border); overflow-x: auto; background: var(--bg); }
+  .tab { color: var(--sub); font-size: 13.5px; padding: 8px 12px 10px; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tab:hover { color: var(--text); text-decoration: none; }
+  .tab.on { color: var(--text); border-bottom-color: var(--acc); font-weight: 600; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 64px; }
+  .intro { padding: 18px 0 4px; }
+  .intro h2 { font-size: 19px; margin: 0 0 6px; }
+  .intro p { color: var(--sub); font-size: 14px; margin: 0; max-width: 68ch; }
+
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 0 4px; position: sticky; top: 49px; background: var(--bg); z-index: 4; border-bottom: 1px solid var(--border-sub); padding-bottom: 12px; }
+  #q { flex: 1; min-width: 200px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13.5px; padding: 8px 12px; }
+  #q:focus { outline: none; border-color: var(--acc); }
+  .hint { color: var(--sub2); font-size: 12px; white-space: nowrap; }
+  .hint kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; font-family: var(--mono); font-size: 11px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 12px; color: var(--sub); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 3px 12px; cursor: pointer; user-select: none; }
+  .chip.on { background: var(--card-hover); border-color: var(--acc); color: var(--text); }
+
+  section.test { margin-top: 30px; }
+  .thead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .thead h3 { font-family: var(--mono); font-size: 16px; margin: 0; }
+  .badge { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; color: var(--text); background: var(--card-hover); border: 1px solid var(--border); border-radius: 5px; padding: 1px 8px; }
+  .badge.si { border-color: #9e6a03; color: #d29922; background: transparent; }
+  .tsub { color: var(--sub2); font-size: 13px; margin: 4px 0 0; max-width: 70ch; }
+  .tnote { color: var(--sub2); font-size: 12.5px; margin: 10px 0 0; max-width: 70ch; font-style: italic; }
+
+  .fields { margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
+  .field { display: grid; grid-template-columns: 205px minmax(0, 1fr); gap: 4px 18px; padding: 13px 16px; border-top: 1px solid var(--border-sub); }
+  .field:first-child { border-top: 0; }
+  .fname { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); padding-top: 1px; }
+  .fname .fx { display: block; font-weight: 400; font-size: 11px; color: var(--sub2); margin-top: 3px; }
+  .fname .sit { display: block; font-weight: 400; font-size: 10.5px; letter-spacing: 0.04em; color: #d29922; margin-top: 3px; }
+  .fbody .what { color: var(--sub); font-size: 13px; margin: 0 0 6px; }
+  .fbody .read { color: var(--text); font-size: 13.5px; margin: 0; }
+  .fbody details { margin-top: 8px; }
+  .fbody summary { cursor: pointer; color: var(--sub2); font-size: 12px; user-select: none; }
+  .fbody summary:hover { color: var(--sub); }
+  .fbody details p { color: var(--sub); font-size: 12.5px; margin: 7px 0 0; max-width: 64ch; }
+  mark { background: transparent; color: var(--text); font-weight: 600; }
+
+  .after { margin-top: 34px; border-top: 1px solid var(--border); padding-top: 16px; }
+  .after h3 { font-size: 15px; margin: 0 0 4px; }
+  .after > p { color: var(--sub2); font-size: 13px; margin: 0 0 10px; }
+  .after details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0; margin-top: 8px; }
+  .after summary { cursor: pointer; padding: 10px 14px; font-size: 13.5px; font-weight: 600; }
+  .after .din { padding: 2px 14px 12px; }
+  .after .din p { font-size: 13px; color: var(--sub); margin: 8px 0 0; max-width: 72ch; }
+  .after .din .q { font-family: var(--mono); font-size: 12px; color: var(--sub); background: var(--bg); border: 1px solid var(--border-sub); border-radius: 6px; padding: 8px 11px; margin-top: 8px; }
+
+  .docs { border-top: 1px solid var(--border); margin-top: 30px; padding-top: 14px; }
+  .docs h4 { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sub2); margin: 0 0 8px; font-weight: 600; }
+  .docs h4 span { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .docs ul { list-style: none; margin: 0; padding: 0; font-size: 12.5px; color: var(--sub2); }
+  .docs li { padding: 2px 0; }
+  footer.site { border-top: 1px solid var(--border); color: var(--sub2); font-size: 12px; padding: 12px 20px; display: flex; justify-content: space-between; margin-top: 20px; }
+  .empty { color: var(--sub2); font-size: 13px; padding: 14px 4px; }
+  [hidden] { display: none !important; }
+
+  @media (max-width: 640px) {
+    .field { grid-template-columns: 1fr; }
+    .fname .fx { display: inline; margin-left: 6px; }
+  }
+  @media print {
+    header.site, nav.tabs, .controls, .deeper, footer.site { display: none; }
+    body { background: #fff; color: #111; }
+    .fields, .after details { border-color: #bbb; background: #fff; }
+    .field { border-color: #ddd; }
+    .fname, .fbody .read, .thead h3 { color: #111; }
+    .fbody .what, .fbody details p, .tsub { color: #444; }
+    .fbody details { display: block; }
+    .fbody details[open] summary { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="brand"><span class="brand-icon">&gt;_</span><h1>LRFA Tools</h1></div>
+  <a class="gh" href="https://github.com/lachlanalston/SupportTools">GitHub</a>
+</header>
+<nav class="tabs">
+  <a class="tab" href="/">Scripts</a>
+  <a class="tab" href="/">Commands</a>
+  <a class="tab" href="/">Shortcuts</a>
+  <a class="tab" href="/">DNS</a>
+  <a class="tab" href="/">Bookmarks</a>
+  <a class="tab" href="/">RFCs</a>
+  <a class="tab on" href="/nbn/">NBN</a>
+</nav>
+<div class="wrap">
+
+  <div class="intro">
+    <h2>NBN Field Guide</h2>
+    <p>Every field of every test, in the order the portal shows them.</p>
+  </div>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Find a field: margin, flaps, attainable…">
+    <span class="hint">Press <kbd>/</kbd> to focus</span>
+    <div class="chips" id="techchips">
+      <span class="chip on" data-tech="all">All</span>
+      <span class="chip" data-tech="fttn">FTTN/B</span>
+      <span class="chip" data-tech="fttc">FTTC</span>
+      <span class="chip" data-tech="hfc">HFC</span>
+      <span class="chip" data-tech="fttp">FTTP</span>
+      <span class="chip" data-tech="fw">Fixed Wireless</span>
+    </div>
+  </div>
+
+  <section class="test" data-tech="fttn">
+    <div class="thead"><h3>Line State</h3><span class="badge">FTTN / FTTB</span><span class="badge si">service impacting</span></div>
+    <p class="tsub">A snapshot of the node port as the DSLAM sees your line. The modem must be in sync or the numbers mean nothing. Read top to bottom; the result is a story, not a scorecard.</p>
+    <div class="fields">
+
+      <div class="field" data-k="operational status up down sync port">
+        <div class="fname">Operational Status</div>
+        <div class="fbody">
+          <p class="what">Whether the node port currently has DSL sync with the modem.</p>
+          <p class="read">Up before anything else matters. Down with the modem powered points at premises wiring, the modem itself, or the port; it is a no-sync problem, never a speed problem.</p>
+        </div>
+      </div>
+
+      <div class="field" data-k="service stability stable unstable dropouts resync performance incident">
+        <div class="fname">Service Stability</div>
+        <div class="fbody">
+          <p class="what">nbn's classification of the line from resyncs and errors over the recent window.</p>
+          <p class="read">STABLE is the pass. Anything else, count dropouts yourself: <mark>4 or more unexpected drops in 24 hours is a Performance Incident</mark> nbn is expected to investigate. Under that, it's copper being copper.</p>
+          <details><summary>why</summary><p>nbn's own historical numbers called ~2.4 resyncs a day "stable" and up to 5 "risky". The PI threshold (introduced 2022) is the operative line: it obliges a ticket and, if needed, a truck roll. Timestamps are what make the count count.</p></details>
+        </div>
+      </div>
+
+      <div class="field" data-k="mac address modem premises jumper">
+        <div class="fname">MAC Address</div>
+        <div class="fbody">
+          <p class="what">The modem the port currently sees.</p>
+          <p class="read">Is it the modem you expect? A familiar MAC proves the right premises is on the right pair; a strange one after works in the area means a jumpering mix-up at the node.</p>
+        </div>
+      </div>
+
+      <div class="field" data-k="dsl mode vdsl2 adsl modulation">
+        <div class="fname">DSL Mode</div>
+        <div class="fbody">
+          <p class="what">The modulation the port and modem negotiated.</p>
+          <p class="read">VDSL2, always, on FTTN/B. Anything else (an ADSL fallback) means the CPE is misconfigured or negotiating badly, and every other number will be wrong until that's fixed.</p>
+        </div>
+      </div>
+
+      <div class="field" data-k="estimated distance node metres attenuation loop length">
+        <div class="fname">Estimated Distance to Node</div>
+        <div class="fbody">
+          <p class="what">nbn's estimate of copper length, derived from attenuation. Indicative, not a measured run.</p>
+          <p class="read">As the line's ceiling. Under ~200 m: 100 Mbps tier territory. 200 to 400 m: 60 to 100 Mbps. 400 to 700 m: 25 to 60 Mbps. Past 700 m: often can't hold 25 Mbps. Everything else in the result should make sense in light of this number.</p>
+          <details><summary>why</summary><p>Attenuation grows with distance and frequency, and VDSL2 leans on high frequencies, so distance dominates what the line can carry. The bands are community calibration, and co-existence drags each one down. If the estimate wildly disagrees with where the node visibly is, suspect the copper path (joints, bridged taps), not the map.</p></details>
+        </div>
+      </div>
+
+      <div class="field" data-k="physical profile standard stability 6db 9db 12db co-existence dlm interleaving">
+        <div class="fname">Physical Profile <span class="fx">e.g. 100/40 Standard 6dB (Co-Existence)</span></div>
+        <div class="fbody">
+          <p class="what">Three facts packed into one string: the speed tier, the DLM state, the spectrum state.</p>
+          <p class="read">Left to right: the tier you're checking against; then <mark>Standard 6dB means a clean history</mark>, while Stability, 9dB or 12dB means the line has been dropping and DLM or a tech intervened; then (Co-Existence) describes the area, not a fault.</p>
+          <details><summary>why</summary><p>DLM watches errors and resyncs, and moves misbehaving lines toward higher target margins, interleaving and retransmission, each step trading speed for staying up. So the profile string is the line's disciplinary record. Co-existence means legacy ADSL/special services still share the copper, so the node runs restricted spectrum; it mostly costs long lines, barely matters on short ones, and some areas never exit it.</p></details>
+        </div>
+      </div>
+
+      <div class="field" data-k="attainable rate maximum could tier speed mbps">
+        <div class="fname">Attainable Rate</div>
+        <div class="fbody">
+          <p class="what">What the line could sync at right now, given its length, noise and profile. The line's potential.</p>
+          <p class="read">Against the tier. Comfortably above it: the copper supports the plan with room to spare. Just above: thin, watch it. <mark>Below the tier: the line physically cannot deliver the plan</mark>, and that's a tier/refund conversation with the RSP, not an nbn fault.</p>
+          <details><summary>why</summary><p>Under ACCC speed-claims guidance, RSPs must check attainable after activation and offer remedies (lower tier with refund, or exit) when a line can't reach the plan. nbn itself only commits to floors far below the tiers: 12/1 Mbps on FTTN during co-existence, 25/5 Mbps after. That's why "it's within spec" and "your 100/40 does 40" can both be true. The exception that IS a fault: attainable degrading against the line's own history, so screenshot baselines while things are healthy.</p></details>
+        </div>
+      </div>
+
+      <div class="field" data-k="attenuation average nan n/a quirk units dbdb mbps">
+        <div class="fname">Attenuation Average <span class="fx">often NaN or N/A</span></div>
+        <div class="fbody">
+          <p class="what">An aggregate counter the DSLAM frequently doesn't report.</p>
+          <p class="read">Skip it. NaN, N/A, and unit glitches like "dBdB" or attenuation in "Mbps" are portal quirks, not line problems. Loop Attenuation and the distance estimate carry the same information reliably.</p>
+        </div>
+      </div>
+
+      <div class="field" data-k="current sync rate cap tier overhead speed mbps 110 44">
+        <div class="fname">Current Sync Rate</div>
+        <div class="fbody">
+          <p class="what">The rate the port and modem actually negotiated. What the line is doing, as opposed to what it could do.</p>
+          <p class="read">Against the cap, not the tier: <mark>nbn caps sync roughly 10% above the tier</mark> (100/40 syncs near 110/44 Mbps, 50/20 near 55/22 Mbps) to cover overheads. At the cap: the full plan is available on the copper, and slowness lives in the premises. Well below both the cap and the attainable: the port likely synced during a noise event; a port reset re-rolls the dice.</p>
+          <details><summary>why</summary><p>DSL framing and Ethernet overheads eat a slice of the raw sync, so nbn provisions the extra ~10% to make the tier deliverable at layer 3. The gap between a big attainable and a capped sync isn't lost speed; it's the DSLAM deliberately holding the line at the provisioned rate, and the spare capacity shows up in the noise margin instead.</p></details>
+        </div>
+      </div>
+
+      <div class="field" data-k="loop attenuation db signal loss distance">
+        <div class="fname">Loop Attenuation</div>
+        <div class="fbody">
+          <p class="what">Signal loss across the copper loop, in dB. Distance in disguise.</p>
+          <p class="read">Lower is better, and short loops read in single-digit dB. Under 20 dB is excellent territory; in the 40 dB range you're in low-tier country; past 60 dB the line is barely viable. If attenuation looks high for the known distance, the copper path itself (corroded joints, bridged taps) is suspect.</p>
+        </div>
+      </div>
+
+      <div class="field" data-k="noise margin snr signal target 6db headroom dropouts night">
+        <div class="fname">Noise Margin <span class="fx">also SNR margin</span></div>
+        <div class="fbody">
+          <p class="what">The safety buffer between the received signal and the noise floor, in dB.</p>
+          <p class="read">Against the profile's target, never in isolation. Near target: the line is working at its limit. Far above: headroom, usually because sync is capped. <mark>Under 6 dB and sinking: the line is fighting</mark>; expect drops, and compare a business-hours read to an evening one, because a margin that sags at night is noise ingress, not distance.</p>
+          <details><summary>why</summary><p>The DSLAM tunes sync to hold the target margin, so margin and sync are two ends of one trade. A capped line banks its surplus as margin (17+ dB on a short loop is normal and excellent). REIN from pumps, lights and dodgy power supplies runs on a schedule, which is why the day/night comparison is diagnostic.</p></details>
+        </div>
+      </div>
+
+      <div class="field" data-k="dropout history graph 24 hour 10 day stability chart clusters night">
+        <div class="fname">Dropout history <span class="fx">24 h and 10 day graphs</span></div>
+        <div class="fbody">
+          <p class="what">Stability graphs that accompany the snapshot, showing resyncs over time.</p>
+          <p class="read">Read the shape, not the count. Evening clusters: noise on a schedule (REIN from pumps, lights, dodgy power supplies). Random scatter: an intermittent physical fault, often a joint. A step change after rain: water in the pit or the pair. Weeks of quiet with one bad day reads completely differently from daily drops, even at the same total.</p>
+        </div>
+      </div>
+
+    </div>
+    <p class="tnote">Read the result as one story: distance sets the ceiling (attainable), the profile caps the ask (sync), the spare becomes the buffer (margin), and the history shows in the profile string. When one field breaks that story, that field is your lead.</p>
+  </section>
+
+  <section class="test" data-tech="fttn">
+    <div class="thead"><h3>Stability Profile</h3><span class="badge">FTTN / FTTB</span><span class="badge si">service impacting</span></div>
+    <p class="tsub">Not a measurement: an intervention. Applies a more conservative profile (higher target margin, interleaving, retransmission) that trades speed for holding sync.</p>
+    <div class="fields">
+      <div class="field" data-k="stability profile apply 48 hours speed drop interleaving">
+        <div class="fname">Applying it</div>
+        <div class="fbody">
+          <p class="what">The line resyncs onto the new profile; sync rates usually come down.</p>
+          <p class="read">Expect the speed drop and say so before applying, or the stability fix comes back as a speed complaint. Then leave it alone: the result is read over <mark>48 hours</mark>, not on the next Line State.</p>
+        </div>
+      </div>
+      <div class="field" data-k="stability profile after 48 hours retest escalate unstable step back">
+        <div class="fname">After 48 hours</div>
+        <div class="fbody">
+          <p class="what">Rerun Line State and read Service Stability with the profile in place.</p>
+          <p class="read">STABLE now: the line needed the margin; decide whether the speed trade is worth keeping or ask whether it can step back. Still not STABLE: you've done the step nbn expects first, so escalate to an instability fault with the before/after in hand.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="test" data-tech="all">
+    <div class="thead"><h3>Loopback</h3><span class="badge">ALL TECH</span><span class="badge si">service impacting</span></div>
+    <p class="tsub">Sends a small burst of data from the network side to the premises equipment and back.</p>
+    <div class="fields">
+      <div class="field" data-k="loopback result passed failed completed">
+        <div class="fname">Result <span class="fx">Passed / Failed</span></div>
+        <div class="fbody">
+          <p class="what">Whether data made the round trip at test time.</p>
+          <p class="read">Passed proves exactly one thing: the path worked <mark>at that moment</mark>. It says nothing about speed, noise, or the drops that happen every evening, so it never closes a dropout investigation. Failed while the line shows in sync is the interesting contradiction: power cycle both ends, rerun, then escalate.</p>
+        </div>
+      </div>
+      <div class="field" data-k="loopback created completed time duration">
+        <div class="fname">Created / Completed</div>
+        <div class="fbody">
+          <p class="what">Timestamps for the run.</p>
+          <p class="read">A minute or two apart is normal, and the service can blip while it runs. A test stuck incomplete usually means the far end never answered; treat like a fail.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="test" data-tech="all">
+    <div class="thead"><h3>Connection tests</h3><span class="badge">ALL TECH</span></div>
+    <p class="tsub">The blunt instruments. Each one answers a smaller question than techs usually credit it with.</p>
+    <div class="fields">
+      <div class="field" data-k="check connection online status provider not connected">
+        <div class="fname">Check Connection</div>
+        <div class="fbody">
+          <p class="what">Whether the service looks online from the provider's side. No impact to the service.</p>
+          <p class="read">Connected answers only "is the session up right now". Not Connected: power cycle the nbn equipment (30 seconds off), retest, and escalate if it still shows Not Connected, especially if a loopback fails too. Run this before anything heavier; it's the zeroth question.</p>
+        </div>
+      </div>
+      <div class="field" data-k="kick connection clear session modem swap reconnect 10 minutes">
+        <div class="fname">Kick Connection <span class="sit">service impacting</span></div>
+        <div class="fbody">
+          <p class="what">Not a test: clears the current session so the CPE can reconnect fresh. Disconnects immediately; reconnection can take up to 10 minutes.</p>
+          <p class="read">Use it around modem swaps and stuck sessions. Read the aftermath, not the kick: a new modem that hasn't come up 10 minutes after a kick is an escalation (auth or port), not a retry.</p>
+        </div>
+      </div>
+      <div class="field" data-k="port reset uni-d node lock unlock rejected sync low speed">
+        <div class="fname">Port Reset <span class="fx">FTTP · FTTC · FTTN/B</span> <span class="sit">service impacting</span></div>
+        <div class="fbody">
+          <p class="what">Locks and unlocks the UNI-D or node port to force a clean reconnection.</p>
+          <p class="read">The move for "port up but no data" and for a sync sitting oddly below attainable. Read two things: a status of <mark>Rejected</mark> after the test is itself escalation-worthy, and a problem that clears then returns points at the premises side, because the port keeps getting re-broken from your end of the wire.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="test" data-tech="hfc">
+    <div class="thead"><h3>NTD Status</h3><span class="badge">HFC</span></div>
+    <p class="tsub">Operational check on the coax connection box. On HFC you can't see RF levels or segment noise; the flap counter is your window.</p>
+    <div class="fields">
+      <div class="field" data-k="ntd status hfc fail power">
+        <div class="fname">Status</div>
+        <div class="fbody">
+          <p class="what">Whether the NTD is online and registered.</p>
+          <p class="read">Fail with power present, after a reset and ten minutes, is nbn's problem. While you wait, check the premises coax: fly lead, wall plate, and especially old pay TV splitters, the classic silent killer of HFC signal.</p>
+        </div>
+      </div>
+      <div class="field" data-k="flap count flaps hfc dropouts 24 hours">
+        <div class="fname">Flap Count</div>
+        <div class="fbody">
+          <p class="what">How often the NTD's connection has interrupted and re-registered.</p>
+          <p class="read">Never as one number; always as a delta. Take a reading, wait 24 hours, read again. <mark>Five or more new flaps a day apart</mark> is instability evidence worth a fault, and it lines up with the 4-in-24h Performance Incident threshold.</p>
+        </div>
+      </div>
+      <div class="field" data-k="ntd reset reboot hfc re-register 10 minutes">
+        <div class="fname">NTD Reset <span class="sit">service impacting</span></div>
+        <div class="fbody">
+          <p class="what">Forces the box to reboot and re-register on the network.</p>
+          <p class="read">The first move for errors from the status test. Read it after ten minutes, not immediately: still reporting problems after a reset plus the wait is nbn's fault to chase, not another reset.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="test" data-tech="fttc">
+    <div class="thead"><h3>DPU / NCD Status</h3><span class="badge">FTTC</span></div>
+    <p class="tsub">One fact explains most FTTC results: the pit unit (DPU) is reverse powered by the NCD inside the premises, over the copper pair.</p>
+    <div class="fields">
+      <div class="field" data-k="dpu status offline pit power reverse fttc">
+        <div class="fname">DPU Status</div>
+        <div class="fbody">
+          <p class="what">Whether the kerb equipment is online.</p>
+          <p class="read">Offline means power path first: the NCD is off, faulty, or the pair between them is broken. It does not mean "the internet is down"; it means the pit has no electricity.</p>
+        </div>
+      </div>
+      <div class="field" data-k="dpu port status data rate sync lead-in fttc">
+        <div class="fname">DPU Port Status <span class="fx">shows data rate</span></div>
+        <div class="fbody">
+          <p class="what">Power delivery from the NCD, plus the sync rate on the short lead-in.</p>
+          <p class="read">The copper run is tens of metres, so the rate should sit near the tier's maximum. A low rate on a lead-in this short is genuinely abnormal: escalation-worthy after a port reset, because it points at the pair or a joint.</p>
+        </div>
+      </div>
+      <div class="field" data-k="ncd status flaps fttc dropouts delta 24 hours">
+        <div class="fname">NCD Status + flaps</div>
+        <div class="fbody">
+          <p class="what">The same status-and-flap-counter reading as HFC's NTD, on the FTTC connection box.</p>
+          <p class="read">Read flaps as a delta, a day apart, same as HFC: five or more new ones is instability evidence. On FTTC also cross-check the DPU: flapping here with a healthy DPU points inside the premises; flapping with DPU power complaints points at the pair.</p>
+        </div>
+      </div>
+      <div class="field" data-k="ncd uni-d port reset fttc dataflow">
+        <div class="fname">NCD UNI-D Status</div>
+        <div class="fbody">
+          <p class="what">The Ethernet port your router plugs into.</p>
+          <p class="read">Up but no data flowing: port reset, then retest. Down: the cable and the router end before anything nbn-side.</p>
+        </div>
+      </div>
+      <div class="field" data-k="dpu port reset fttc low rate offline">
+        <div class="fname">DPU Port Reset <span class="sit">service impacting</span></div>
+        <div class="fbody">
+          <p class="what">Resets the pit-side port feeding the premises.</p>
+          <p class="read">Use after an offline status or a low data rate, then reread DPU Port Status. Rate restored to near max: transient, note and move on. Still low on copper this short: escalate; that's a pair or joint problem nbn owns.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="test" data-tech="fttp">
+    <div class="thead"><h3>UNI-D Status</h3><span class="badge">FTTP</span></div>
+    <p class="tsub">Full fibre has no line quality to argue about from the portal; optical levels are nbn-side. What you can read is the data port.</p>
+    <div class="fields">
+      <div class="field" data-k="uni-d mac address port provisioned fttp ntd">
+        <div class="fname">MAC Address</div>
+        <div class="fbody">
+          <p class="what">The router the provisioned port can see.</p>
+          <p class="read">A MAC showing means the NTD sees your router; from there, slowness is almost never the access line, so look at CPE throughput, Wi-Fi and config. No MAC across two different routers means the port or the provisioning, and remember only one of the four UNI-D ports is live.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="test" data-tech="fw">
+    <div class="thead"><h3>Fixed Wireless</h3><span class="badge">FW</span></div>
+    <p class="tsub">No line state equivalent exists; you read patterns instead of ports.</p>
+    <div class="fields">
+      <div class="field" data-k="fixed wireless lights power status odu">
+        <div class="fname">Connection box lights</div>
+        <div class="fbody">
+          <p class="what">The indoor unit's power and status LEDs.</p>
+          <p class="read">Green is normal. Amber or red power, or red status, is a fault state for the provider. No lights is the power path.</p>
+        </div>
+      </div>
+      <div class="field" data-k="fixed wireless speed pattern congestion evening weather line of sight">
+        <div class="fname">The speed pattern</div>
+        <div class="fbody">
+          <p class="what">Speeds sampled morning, afternoon and evening across a few days. The pattern is the diagnostic.</p>
+          <p class="read">Fine all day, poor in the evening: cell congestion, a capacity complaint, not an equipment fault. Poor at all hours: signal path, so think grown trees, new buildings, a knocked antenna, damaged cable. Tracks the weather: radio path evidence worth handing to nbn.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="after">
+    <h3>After the read</h3>
+    <p>Once you've done the read yourself, these are the sentences that make it count.</p>
+    <details>
+      <summary>What to say to the RSP, by finding</summary>
+      <div class="din">
+        <p><mark>Read: unstable.</mark></p>
+        <div class="q">"Line State shows the service as UNSTABLE with [N] resyncs. Please apply a stability profile; I will retest in 48 hours and want an nbn instability fault raised if it has not returned to STABLE."</div>
+        <p><mark>Read: dropouts past the PI threshold.</mark></p>
+        <div class="q">"I have logged [N] dropouts in 24 hours with timestamps, which exceeds nbn's Performance Incident threshold of 4 unexpected dropouts per day. Please raise it with nbn as a Performance Incident."</div>
+        <p><mark>Read: attainable below the tier.</mark></p>
+        <div class="q">"Attainable is [X/Y] on a [tier] service. The line cannot support the tier, so please run the speed review process: I want the ACCC remedy options (tier move with refund), and an nbn investigation only if this is a degradation from previous attainable figures."</div>
+        <p><mark>Read: degraded against its own baseline.</mark></p>
+        <div class="q">"Attainable was [A/B] on [date] (screenshot attached) and is now [C/D] on the same profile. That is a physical degradation of the line, please lodge it with nbn."</div>
+        <p><mark>Read: healthy line, slow experience.</mark> Say nothing to nbn. The access line is exonerated; work the premises: wired test at the modem, CPE throughput, Wi-Fi, cabling, the measuring device.</p>
+      </div>
+    </details>
+    <details>
+      <summary>The habit that wins arguments: baselines</summary>
+      <div class="din">
+        <p>Snapshot results while services are healthy: at activation, after any nbn work, and at every suspected fault. A line measurably worse than its own baseline is the single most persuasive artifact you can hand an RSP; a single bad snapshot is dismissible. For suspected noise, capture one business-hours read and one evening read and compare margins.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="docs">
+    <h4>Official documents <span>· Aug 2026</span></h4>
+    <ul>
+      <li><a href="https://www.nbnco.com.au/rsps/supply-agreements/wba">WBA documents</a>: Operations Manual, Service Levels Schedule</li>
+      <li><a href="https://www.nbnco.com.au/content/dam/nbn/documents/sell/wba/2025/sfaa-wba-nbn-ethernet-product-technical-specification-20250914.pdf.coredownload.pdf">nbn Ethernet Product Technical Specification</a>: profiles, co-existence</li>
+      <li><a href="https://www.accc.gov.au/system/files/NBN%20Co%20Network%20Design%20Rules.pdf">Network Design Rules</a>: co-existence engineering</li>
+      <li><a href="https://www.accc.gov.au/by-industry/telecommunications-and-internet/broadband-speed-claims-industry-guidance">ACCC speed claims guidance</a>: tier remedies</li>
+      <li>Troubleshooting guides: <a href="https://www.nbnco.com.au/content/dam/nbnco2/documents/Connect-Kits/res/1930120-fttc-troubleshooting-10pp-online-fa.pdf.coredownload.pdf">FTTC</a> · <a href="https://www.nbnco.com.au/content/dam/nbnco/documents/nbn-fibre-user-guide.pdf.coredownload.pdf">FTTP</a> · <a href="https://www.nbnco.com.au/content/dam/nbnco2/documents/nbn-hfc-setup-guide.pdf.coredownload.pdf">HFC</a> · <a href="https://www.nbnco.com.au/content/dam/nbn/documents/support/fixed-wireless/nbn-fixed-wireless-troubleshooting-guide.pdf.coredownload.pdf">Fixed Wireless</a></li>
+    </ul>
+  </div>
+</div>
+<footer class="site"><span>Built for MSP helpdesks</span><span><a class="gh" href="/">Back to LRFA Tools</a></span></footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+  var all = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var activeTech = "all";
+
+  function apply() {
+    var q = $("#q").value.trim().toLowerCase();
+    all("section.test").forEach(function (sec) {
+      var secTech = sec.getAttribute("data-tech");
+      var techOk = activeTech === "all" || secTech === "all" || secTech === activeTech;
+      var shown = 0;
+      all(".field", sec);
+      Array.prototype.forEach.call(sec.querySelectorAll(".field"), function (f) {
+        var hayEl = f.querySelector(".fname");
+        var hay = ((f.getAttribute("data-k") || "") + " " + f.textContent).toLowerCase();
+        var ok = techOk && (!q || hay.indexOf(q) !== -1);
+        f.hidden = !ok;
+        if (ok) shown++;
+      });
+      sec.hidden = !(techOk && shown > 0);
+    });
+  }
+  $("#q").addEventListener("input", apply);
+  $("#techchips").addEventListener("click", function (e) {
+    var chip = e.target.closest(".chip");
+    if (!chip) return;
+    activeTech = chip.getAttribute("data-tech");
+    all("#techchips .chip").forEach(function (c) { c.classList.toggle("on", c === chip); });
+    apply();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "/" && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) {
+      e.preventDefault(); $("#q").focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
