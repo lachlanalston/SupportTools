@@ -1085,5 +1085,62 @@
     "config_note": "Set $pbxFqdn, $clientId, and $clientSecret before running.",
     "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/3CX/get3CXVersion.ps1",
     "verified": false
+  },
+  {
+    "name": "AutoHeal-BitLockerDetection",
+    "file": "Windows/Security/AutoHeal-BitLockerDetection.ps1",
+    "platform": "windows",
+    "category": "Security",
+    "description": "N-central AutoHeal script for the BitLocker / Drive Encryption monitoring check. When N-central reports BitLocker as disabled despite the drive being encrypted, restarts BDESVC and forces a manage-bde status poll to flush the stale state, so N-central clears on its next cycle. Deliberately does not restart the Windows Agent, which is the process running the script. Exits 0 when protection is confirmed On, 1 when it is genuinely still Off.",
+    "symptoms": [
+      "N-central BitLocker check alerting after ImmyBot maintenance",
+      "BitLocker reported disabled but drive is encrypted",
+      "drive encryption monitor will not clear",
+      "stale BitLocker state on a monitored endpoint"
+    ],
+    "tags": [
+      "bitlocker",
+      "autoheal",
+      "n-central",
+      "n-able",
+      "immybot",
+      "bdesvc",
+      "encryption",
+      "remediation",
+      "security",
+      "monitoring"
+    ],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/AutoHeal-BitLockerDetection.ps1",
+    "verified": false
+  },
+  {
+    "name": "Fix-BitLockerDetection",
+    "file": "Windows/Security/Fix-BitLockerDetection.ps1",
+    "platform": "windows",
+    "category": "Security",
+    "description": "Clears a false \"BitLocker not enabled\" detection from N-able. Enumerates volumes through Win32_EncryptableVolume WMI, the same source N-central queries, so it is safe to run as SYSTEM before user login. Resumes protection on any volume that is encrypted but suspended, restarts BDESVC, forces a manage-bde poll on fixed drives, then restarts the N-central agent so it re-reads the updated state.",
+    "symptoms": [
+      "N-able reports BitLocker not enabled after ImmyBot maintenance",
+      "BitLocker protection suspended",
+      "agent cached the pre-maintenance encryption state",
+      "BitLocker false positive alert",
+      "encrypted drive showing as unencrypted in RMM"
+    ],
+    "tags": [
+      "bitlocker",
+      "n-able",
+      "n-central",
+      "immybot",
+      "wmi",
+      "bdesvc",
+      "encryption",
+      "remediation",
+      "security",
+      "false-positive"
+    ],
+    "wip": false,
+    "github_url": "https://github.com/lachlanalston/SupportTools/blob/main/Windows/Security/Fix-BitLockerDetection.ps1",
+    "verified": false
   }
 ]

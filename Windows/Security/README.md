@@ -9,4 +9,6 @@ Scripts for checking and troubleshooting Windows security configuration, encrypt
 | `Get-SecurityBaseline` | security audit for an endpoint |
 | `Get-DeviceJoinHealth` | device not showing in Intune |
 | `Get-BitLockerHealth` | BitLocker showing as not enabled |
+| `AutoHeal-BitLockerDetection` | N-central BitLocker check alerting after ImmyBot maintenance |
+| `Fix-BitLockerDetection` | N-able reports BitLocker not enabled after ImmyBot maintenance |
 
