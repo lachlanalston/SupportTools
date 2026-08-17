@@ -1,0 +1,143 @@
+[
+  {
+    "name": "Dropout PI threshold",
+    "type": "threshold",
+    "tech": ["all"],
+    "headline": "4+ / 24h",
+    "description": "Four or more unexpected dropouts on a single service in 24 hours is a Performance Incident: nbn is expected to investigate, ticket, and if needed roll a truck. Introduced Feb 2022 for HFC, aligned with the existing FTTN metric. Quote it with timestamps when support waves off 'a few drops a day'.",
+    "tags": ["dropouts", "performance-incident", "escalation", "nbn"]
+  },
+  {
+    "name": "Sync caps by tier",
+    "type": "threshold",
+    "tech": ["fttn"],
+    "headline": "tier + ~10%",
+    "description": "nbn caps FTTN/B sync a little above the tier so overheads still leave full speed at layer 3: 100/40 caps near 110/44, 50/20 near 55/22, 25/10 near 27/11. Sync at the cap means the plan is fully available on the copper; a speed complaint on such a line is a premises/CPE problem, not a line problem.",
+    "tags": ["sync", "cap", "vdsl2", "speed"]
+  },
+  {
+    "name": "Noise margin floor",
+    "type": "threshold",
+    "tech": ["fttn"],
+    "headline": "6 dB",
+    "description": "The standard profile target. Margin far above target with sync at cap is headroom (excellent). At or under 6 dB and falling predicts dropouts before the stability flag catches up. Day vs night swings point at noise ingress (REIN, crosstalk). A 9/12 dB target in the profile string means DLM has already intervened.",
+    "tags": ["noise-margin", "snr", "dlm", "stability"]
+  },
+  {
+    "name": "Co-existence floors",
+    "type": "threshold",
+    "tech": ["fttn"],
+    "headline": "12/1 Mbps",
+    "description": "All nbn commits to on FTTN during co-existence (25/5 on FTTB; 25/5 objective after co-existence ends, aligning with the statutory 25 Mbps peak). This is the 'spec' inside 'it's within spec'. Plan-tier shortfalls are remedied through the RSP under ACCC speed-claims guidance (tier move with refund), not through an nbn fault.",
+    "tags": ["co-existence", "spec", "accc", "speed", "wba"]
+  },
+  {
+    "name": "HFC flap heuristic",
+    "type": "threshold",
+    "tech": ["hfc"],
+    "headline": "5+ flaps / 24h",
+    "description": "Take an NTD status reading, wait 24 hours, take another. Five or more new flaps between readings is instability evidence worth a fault, and it sits alongside the 4+/24h Performance Incident threshold. Check in-premises coax (fly lead, wall plate, old pay TV splitters) while the counter runs.",
+    "tags": ["flaps", "ntd", "dropouts", "coax"]
+  },
+  {
+    "name": "Line State",
+    "type": "test",
+    "tech": ["fttn"],
+    "service_impacting": true,
+    "description": "Snapshot of the DSLAM port as the node sees the line: sync, attainable, noise margins, attenuation, profile string, stability flag. The modem must be in sync for results to mean anything. The one test that argues with 'it's fine': attainable vs tier and margin vs target settle most speed disputes.",
+    "tags": ["line-state", "dslam", "vdsl2", "diagnostics"]
+  },
+  {
+    "name": "Loopback",
+    "type": "test",
+    "tech": ["all"],
+    "service_impacting": true,
+    "description": "Sends test data both directions between the RSP/nbn side and the premises equipment. Pass proves the layer 2 path worked at that moment, nothing more: it does not measure speed or catch intermittent faults, so it never closes a dropout investigation. Fail while the port shows in sync: power cycle both ends, rerun, escalate.",
+    "tags": ["loopback", "layer2", "connectivity"]
+  },
+  {
+    "name": "Stability Profile",
+    "type": "test",
+    "tech": ["fttn"],
+    "service_impacting": true,
+    "description": "Applies a more conservative DSL profile (higher target margin, interleaving/G.INP) trading speed for holding sync. The standard workflow nbn expects before an instability fault: apply, hold 48 hours, rerun Line State, escalate only if still not STABLE.",
+    "tags": ["stability", "dlm", "profile", "dropouts"]
+  },
+  {
+    "name": "NTD Status + flaps",
+    "type": "test",
+    "tech": ["hfc"],
+    "description": "Operational check on the HFC connection box, with the flap counter as the health signal. Fail: confirm power, reset, retest after 10 minutes, then escalate. RF levels and segment noise are nbn-side only; your leverage is the flap/dropout evidence trail.",
+    "tags": ["ntd", "hfc", "flaps"]
+  },
+  {
+    "name": "DPU / DPU Port Status",
+    "type": "test",
+    "tech": ["fttc"],
+    "description": "The FTTC pit unit is reverse powered by the NCD over the copper pair: DPU offline means check the NCD's power first, not the internet. DPU Port Status also shows the lead-in sync rate, which should sit near the tier maximum on such short copper; a low rate there is escalation-worthy.",
+    "tags": ["dpu", "ncd", "fttc", "reverse-power"]
+  },
+  {
+    "name": "UNI-D Status",
+    "type": "test",
+    "tech": ["fttp"],
+    "description": "Checks the provisioned Ethernet port on the FTTP NTD and shows the connected MAC. No MAC across two different routers: port or provisioning fault, escalate. Remember only the provisioned UNI-D of the four is live. If MAC shows and loopback passes, the access line is almost never the speed problem.",
+    "tags": ["uni-d", "fttp", "ntd", "mac"]
+  },
+  {
+    "name": "Instability escalation",
+    "type": "phrase",
+    "tech": ["fttn"],
+    "copy_text": "Line State shows the service as UNSTABLE with [N] resyncs. Please apply a stability profile; I will retest in 48 hours and want an nbn instability fault raised if it has not returned to STABLE.",
+    "description": "Use when the stability flag is anything other than STABLE. Sets up the 48 hour retest so the next call is an escalation, not a repeat.",
+    "tags": ["escalation", "stability", "phrase"]
+  },
+  {
+    "name": "PI dropout escalation",
+    "type": "phrase",
+    "tech": ["all"],
+    "copy_text": "I have logged [N] dropouts in 24 hours with timestamps, which exceeds nbn's Performance Incident threshold of 4 unexpected dropouts per day. Please raise it with nbn as a Performance Incident.",
+    "description": "Use when the dropout diary clears the PI threshold. The timestamps are the evidence; the threshold is the obligation.",
+    "tags": ["escalation", "dropouts", "performance-incident", "phrase"]
+  },
+  {
+    "name": "Speed review (ACCC)",
+    "type": "phrase",
+    "tech": ["fttn"],
+    "copy_text": "Attainable is [X/Y] on a [tier] service. The line cannot support the tier, so please run the speed review process: I want the ACCC remedy options (tier move with refund), and an nbn investigation only if this is a degradation from previous attainable figures.",
+    "description": "Use when attainable sits below the plan tier. This is a commercial remedy through the RSP, not an nbn fault, and asking for the right process is what makes it move.",
+    "tags": ["escalation", "accc", "speed", "attainable", "phrase"]
+  },
+  {
+    "name": "Degradation with baseline",
+    "type": "phrase",
+    "tech": ["fttn"],
+    "copy_text": "Attainable was [A/B] on [date] (screenshot attached) and is now [C/D] on the same profile. That is a physical degradation of the line, please lodge it with nbn.",
+    "description": "The strongest fault case there is. Only works if you snapshot baselines when services are healthy: at activation, after nbn work, and at every fault.",
+    "tags": ["escalation", "degradation", "baseline", "phrase"]
+  },
+  {
+    "name": "Line State Interpreter",
+    "type": "tool",
+    "tech": ["fttn"],
+    "url": "/nbn/#interpreter",
+    "description": "Punch in the numbers from a Line State test and get per-field verdicts, meters, and the escalation script pre-filled with your values. The full decoder guide (every field, every technology, spec section, glossary) lives on the same page.",
+    "tags": ["interpreter", "line-state", "tool", "nbn"]
+  },
+  {
+    "name": "NBN Test Decoder",
+    "type": "tool",
+    "tech": ["all"],
+    "url": "/nbn/",
+    "description": "The reference behind the cards: field-by-field line state guide, every technology's tests, what 'in spec' means, escalation playbook, glossary, sources.",
+    "tags": ["guide", "reference", "nbn", "tests"]
+  },
+  {
+    "name": "Tracely (classic)",
+    "type": "tool",
+    "tech": ["all"],
+    "url": "/tracely/",
+    "description": "The original guided troubleshooting flows, frozen as built. Kept for reference and honesty about where this section came from; the note generator and port reference are being extracted into standalone tools.",
+    "tags": ["tracely", "classic", "archive"]
+  }
+]
