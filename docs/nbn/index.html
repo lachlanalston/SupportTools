@@ -128,7 +128,7 @@
       type="search"
       id="q"
       class="search-input"
-      placeholder="Find a field: margin, flaps, attainable…"
+      placeholder="Find a check: line state, loopback, NTD status…"
       autocomplete="off"
       spellcheck="false"
     />
@@ -178,6 +178,8 @@
     <h2>NBN Field Guide</h2>
     <p>Every field of every test, in the order the portal shows them.</p>
   </div>
+
+  <p class="empty" id="empty" hidden>No check matches that. Search a check name like <strong>loopback</strong>, or anything inside one, like <strong>margin</strong>.</p>
 
   <section class="test" data-tech="fttn">
     <div class="thead"><h3>Line State</h3><span class="tbadge">FTTN / FTTB</span><span class="tbadge si">service impacting</span></div>
@@ -524,22 +526,27 @@
   var all = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
   var activeTech = "all";
 
+  // A check is the unit of a search result. The haystack covers everything inside
+  // the check — its name, its blurb, every field and the keywords on them — but a
+  // match shows the whole check, never a subset of its fields, because reading a
+  // field in isolation from the rest of its test is how people misread these.
+  var checks = all("section.test").map(function (sec) {
+    var keys = Array.prototype.map.call(sec.querySelectorAll(".field"), function (f) {
+      return f.getAttribute("data-k") || "";
+    }).join(" ");
+    return { el: sec, tech: sec.getAttribute("data-tech"), hay: (keys + " " + sec.textContent).toLowerCase() };
+  });
+
   function apply() {
     var q = $("#q").value.trim().toLowerCase();
-    all("section.test").forEach(function (sec) {
-      var secTech = sec.getAttribute("data-tech");
-      var techOk = activeTech === "all" || secTech === "all" || secTech === activeTech;
-      var shown = 0;
-      all(".field", sec);
-      Array.prototype.forEach.call(sec.querySelectorAll(".field"), function (f) {
-        var hayEl = f.querySelector(".fname");
-        var hay = ((f.getAttribute("data-k") || "") + " " + f.textContent).toLowerCase();
-        var ok = techOk && (!q || hay.indexOf(q) !== -1);
-        f.hidden = !ok;
-        if (ok) shown++;
-      });
-      sec.hidden = !(techOk && shown > 0);
+    var shown = 0;
+    checks.forEach(function (c) {
+      var techOk = activeTech === "all" || c.tech === "all" || c.tech === activeTech;
+      var ok = techOk && (!q || c.hay.indexOf(q) !== -1);
+      c.el.hidden = !ok;
+      if (ok) shown++;
     });
+    $("#empty").hidden = shown > 0;
   }
   $("#q").addEventListener("input", apply);
   $("#techchips").addEventListener("click", function (e) {
