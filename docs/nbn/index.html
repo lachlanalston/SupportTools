@@ -50,6 +50,8 @@
   .fbody summary:hover { color: var(--sub); }
   .fbody details p { color: var(--sub); font-size: 12.5px; margin: 7px 0 0; max-width: 64ch; }
   mark { background: transparent; color: var(--text); font-weight: 600; }
+  mark.hit { background: rgba(56, 139, 253, 0.22); border-radius: 3px; padding: 0 2px; }
+  .tmeta { font-family: var(--mono); font-size: 11px; color: var(--sub2); letter-spacing: 0.03em; margin-left: auto; }
 
   .after { margin-top: 34px; border-top: 1px solid var(--border); padding-top: 16px; }
   .after h3 { font-size: 15px; margin: 0 0 4px; }
@@ -530,21 +532,98 @@
   // the check — its name, its blurb, every field and the keywords on them — but a
   // match shows the whole check, never a subset of its fields, because reading a
   // field in isolation from the rest of its test is how people misread these.
+  // What tells you why a check matched is the highlight and the header note, not
+  // a shorter list of fields.
   var checks = all("section.test").map(function (sec) {
-    var keys = Array.prototype.map.call(sec.querySelectorAll(".field"), function (f) {
-      return f.getAttribute("data-k") || "";
-    }).join(" ");
-    return { el: sec, tech: sec.getAttribute("data-tech"), hay: (keys + " " + sec.textContent).toLowerCase() };
+    var fields = Array.prototype.slice.call(sec.querySelectorAll(".field"));
+    var keys = fields.map(function (f) { return f.getAttribute("data-k") || ""; }).join(" ");
+    var name = (sec.querySelector("h3").textContent + " " +
+      Array.prototype.map.call(sec.querySelectorAll(".tbadge"), function (b) { return b.textContent; }).join(" ")
+    ).toLowerCase();
+    // Read before the note element exists, so the note's own text never becomes
+    // part of what the next keystroke searches.
+    var hay = (keys + " " + sec.textContent).toLowerCase();
+
+    var note = document.createElement("span");
+    note.className = "tmeta";
+    note.hidden = true;
+    sec.querySelector(".thead").appendChild(note);
+
+    return {
+      el: sec,
+      tech: sec.getAttribute("data-tech"),
+      name: name,
+      hay: hay,
+      note: note,
+      fields: fields.map(function (f) {
+        return { hay: ((f.getAttribute("data-k") || "") + " " + f.textContent).toLowerCase() };
+      })
+    };
   });
+
+  // Walk text nodes rather than rewriting innerHTML: a query like "a" would
+  // otherwise shred the markup, and re-rendering would collapse every open "why".
+  // Search hits are <mark class="hit"> so that clearing them leaves the guide's
+  // own <mark> emphasis — the lines that carry its judgements — untouched.
+  function highlight(root, q) {
+    if (q.length < 2) return;  // one letter hits half the page; the noise buries the signal
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+    var nodes = [], node;
+    while ((node = walker.nextNode())) {
+      var parent = node.parentNode;
+      if (parent && parent.classList && parent.classList.contains("tmeta")) continue;
+      if (node.nodeValue.toLowerCase().indexOf(q) !== -1) nodes.push(node);
+    }
+    nodes.forEach(function (n) {
+      var text = n.nodeValue, lower = text.toLowerCase();
+      var frag = document.createDocumentFragment(), from = 0, at;
+      while ((at = lower.indexOf(q, from)) !== -1) {
+        if (at > from) frag.appendChild(document.createTextNode(text.slice(from, at)));
+        var m = document.createElement("mark");
+        m.className = "hit";
+        m.textContent = text.slice(at, at + q.length);
+        frag.appendChild(m);
+        from = at + q.length;
+      }
+      if (from < text.length) frag.appendChild(document.createTextNode(text.slice(from)));
+      n.parentNode.replaceChild(frag, n);
+    });
+  }
+
+  function clearHighlight(root) {
+    var marks = Array.prototype.slice.call(root.querySelectorAll("mark.hit"));
+    marks.forEach(function (m) { m.parentNode.replaceChild(document.createTextNode(m.textContent), m); });
+    if (marks.length) root.normalize();
+  }
 
   function apply() {
     var q = $("#q").value.trim().toLowerCase();
     var shown = 0;
     checks.forEach(function (c) {
+      clearHighlight(c.el);
       var techOk = activeTech === "all" || c.tech === "all" || c.tech === activeTech;
-      var ok = techOk && (!q || c.hay.indexOf(q) !== -1);
+
+      if (!q) {
+        c.el.hidden = !techOk;
+        c.note.hidden = true;
+        if (techOk) shown++;
+        return;
+      }
+
+      var nameHit = c.name.indexOf(q) !== -1;
+      var fieldHits = c.fields.filter(function (f) { return f.hay.indexOf(q) !== -1; }).length;
+      var ok = techOk && (nameHit || fieldHits > 0 || c.hay.indexOf(q) !== -1);
       c.el.hidden = !ok;
-      if (ok) shown++;
+      if (!ok) { c.note.hidden = true; return; }
+
+      shown++;
+      highlight(c.el, q);
+      // A check the query only mentions in passing is kept, but labelled, rather
+      // than promoted above the others: the guide's order is the portal's order.
+      c.note.textContent = fieldHits > 0
+        ? fieldHits + (fieldHits === 1 ? " field matches" : " fields match")
+        : nameHit ? "check name matches" : "also mentions";
+      c.note.hidden = false;
     });
     $("#empty").hidden = shown > 0;
   }
