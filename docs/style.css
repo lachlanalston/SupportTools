@@ -223,6 +223,47 @@ main {
   margin-bottom: 24px;
 }
 
+/* Matches under the search box that live on the NBN Field Guide rather than in a
+   tab panel here, with the query handed across. */
+.nbn-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: -12px 0 24px;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.nbn-hint:hover {
+  border-color: #388bfd;
+  background: var(--card);
+}
+
+.nbn-hint-count {
+  color: #58a6ff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.nbn-hint-names {
+  color: var(--sub);
+  flex: 1;
+  min-width: 140px;
+}
+
+.nbn-hint-go {
+  color: var(--sub2);
+  white-space: nowrap;
+}
+
+.nbn-hint[hidden] { display: none; }
+
 .search-icon {
   position: absolute;
   left: 14px;
