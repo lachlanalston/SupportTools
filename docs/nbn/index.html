@@ -17,26 +17,17 @@
   a { color: var(--acc); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
-  /* Site chrome comes from /style.css; only the bits it has no reason to know about live here. */
-  /* 1152px = the homepage's 1200px main column less its 24px side padding, so the
-     tab row lands on exactly the same x position as it does on the front page. */
-  .tabs { max-width: 1152px; margin: 0 auto 20px; }
+  /* The header, banner, search bar, tab row, filter chips and footer are the
+     front page's markup driven by /style.css, so the two pages share one chrome.
+     Only the guide's own body styling lives here. */
   .tabs .tab { text-decoration: none; white-space: nowrap; }
   .tabs .tab:hover { text-decoration: none; }
 
-  .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 64px; }
-  .intro { padding: 18px 0 4px; }
+  /* Flush left with the tab row and chips above it; capped for line length. */
+  .wrap { max-width: 900px; margin: 0; padding: 0; }
+  .intro { padding: 4px 0; }
   .intro h2 { font-size: 19px; margin: 0 0 6px; }
   .intro p { color: var(--sub); font-size: 14px; margin: 0; max-width: 68ch; }
-
-  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 0 4px; position: sticky; top: 62px; background: var(--bg); z-index: 4; border-bottom: 1px solid var(--border-sub); padding-bottom: 12px; }
-  #q { flex: 1; min-width: 200px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13.5px; padding: 8px 12px; }
-  #q:focus { outline: none; border-color: var(--acc); }
-  .hint { color: var(--sub2); font-size: 12px; white-space: nowrap; }
-  .hint kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; font-family: var(--mono); font-size: 11px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { font-size: 12px; color: var(--sub); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 3px 12px; cursor: pointer; user-select: none; }
-  .chip.on { background: var(--card-hover); border-color: var(--acc); color: var(--text); }
 
   section.test { margin-top: 30px; }
   .thead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -82,7 +73,7 @@
     .fname .fx { display: inline; margin-left: 6px; }
   }
   @media print {
-    header, nav.tabs, .controls, .deeper, footer { display: none; }
+    header, nav.tabs, .copilot-banner, .search-bar-wrap, .filters, .deeper, footer { display: none; }
     body { background: #fff; color: #111; }
     .fields, .after details { border-color: #bbb; background: #fff; }
     .field { border-color: #ddd; }
@@ -109,33 +100,83 @@
   </div>
 </header>
 
-<nav class="tabs" role="tablist">
-  <a class="tab" href="/#scripts">Scripts</a>
-  <a class="tab" href="/#commands">Commands</a>
-  <a class="tab" href="/#shortcuts">Shortcuts</a>
-  <a class="tab" href="/#dns">DNS</a>
-  <a class="tab" href="/#bookmarks">Bookmarks</a>
-  <a class="tab" href="/#rfcs">RFCs</a>
-  <a class="tab active" href="/nbn/">NBN</a>
-</nav>
+<div class="copilot-banner">
+  <div class="copilot-banner-inner">
+    <span class="copilot-banner-icon">
+      <svg viewBox="0 0 20 20" fill="none" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 2a1 1 0 0 1 .894.553l1.618 3.273 3.607.525a1 1 0 0 1 .554 1.706l-2.612 2.545.617 3.594a1 1 0 0 1-1.451 1.054L10 13.347l-3.227 1.697a1 1 0 0 1-1.451-1.054l.617-3.594L3.327 8.057a1 1 0 0 1 .554-1.706l3.607-.525L9.106 2.553A1 1 0 0 1 10 2Z" fill="currentColor"/>
+      </svg>
+    </span>
+    <span class="copilot-banner-text">
+      <strong>Use this with Microsoft 365 Copilot.</strong>
+      Connect this repo via the GitHub Graph Connector and ask questions about these scripts right from Teams or the Copilot app.
+    </span>
+    <a class="copilot-banner-link" href="/copilot.html">
+      Setup guide &rarr;
+    </a>
+    <button class="copilot-banner-dismiss" id="copilot-banner-dismiss" aria-label="Dismiss">&times;</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="search-bar-wrap">
+    <div class="search-icon">
+      <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+    </div>
+    <input
+      type="search"
+      id="q"
+      class="search-input"
+      placeholder="Find a field: margin, flaps, attainable…"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <span class="search-hint">Press <kbd>/</kbd> to focus</span>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <a class="tab" href="/#scripts">
+      Scripts
+      <span class="tab-count" id="count-scripts" hidden></span>
+    </a>
+    <a class="tab" href="/#commands">
+      Commands
+      <span class="tab-count" id="count-commands" hidden></span>
+    </a>
+    <a class="tab" href="/#shortcuts">
+      Shortcuts
+      <span class="tab-count" id="count-shortcuts" hidden></span>
+    </a>
+    <a class="tab" href="/#dns">
+      DNS
+      <span class="tab-count" id="count-dns" hidden></span>
+    </a>
+    <a class="tab" href="/#bookmarks">
+      Bookmarks
+      <span class="tab-count" id="count-bookmarks" hidden></span>
+    </a>
+    <a class="tab" href="/#rfcs">
+      RFCs
+      <span class="tab-count" id="count-rfcs" hidden></span>
+    </a>
+    <a class="tab active" href="/nbn/">NBN</a>
+  </nav>
+
+  <div class="filters" id="techchips">
+    <button class="filter-chip active" data-tech="all">All</button>
+    <button class="filter-chip" data-tech="fttn">FTTN/B</button>
+    <button class="filter-chip" data-tech="fttc">FTTC</button>
+    <button class="filter-chip" data-tech="hfc">HFC</button>
+    <button class="filter-chip" data-tech="fttp">FTTP</button>
+    <button class="filter-chip" data-tech="fw">Fixed Wireless</button>
+  </div>
+
 <div class="wrap">
 
   <div class="intro">
     <h2>NBN Field Guide</h2>
     <p>Every field of every test, in the order the portal shows them.</p>
-  </div>
-
-  <div class="controls">
-    <input type="search" id="q" placeholder="Find a field: margin, flaps, attainable…">
-    <span class="hint">Press <kbd>/</kbd> to focus</span>
-    <div class="chips" id="techchips">
-      <span class="chip on" data-tech="all">All</span>
-      <span class="chip" data-tech="fttn">FTTN/B</span>
-      <span class="chip" data-tech="fttc">FTTC</span>
-      <span class="chip" data-tech="hfc">HFC</span>
-      <span class="chip" data-tech="fttp">FTTP</span>
-      <span class="chip" data-tech="fw">Fixed Wireless</span>
-    </div>
   </div>
 
   <section class="test" data-tech="fttn">
@@ -461,6 +502,9 @@
     </ul>
   </div>
 </div>
+
+</main>
+
 <footer>
   <div class="footer-inner">
     <span class="footer-copy">Built for MSP helpdesks</span>
@@ -499,10 +543,10 @@
   }
   $("#q").addEventListener("input", apply);
   $("#techchips").addEventListener("click", function (e) {
-    var chip = e.target.closest(".chip");
+    var chip = e.target.closest(".filter-chip");
     if (!chip) return;
     activeTech = chip.getAttribute("data-tech");
-    all("#techchips .chip").forEach(function (c) { c.classList.toggle("on", c === chip); });
+    all("#techchips .filter-chip").forEach(function (c) { c.classList.toggle("active", c === chip); });
     apply();
   });
   document.addEventListener("keydown", function (e) {
@@ -510,6 +554,37 @@
       e.preventDefault(); $("#q").focus();
     }
   });
+
+  // Same dismiss state as the front page, so the banner does not come back here
+  // after being dismissed there.
+  var BANNER_KEY = "copilot-banner-dismissed";
+  var banner = $(".copilot-banner");
+  var dismiss = $("#copilot-banner-dismiss");
+  if (banner && localStorage.getItem(BANNER_KEY)) banner.hidden = true;
+  if (dismiss) dismiss.addEventListener("click", function () {
+    banner.hidden = true;
+    localStorage.setItem(BANNER_KEY, "1");
+  });
+
+  // The tab counts the front page shows, read from the same data files. Pills stay
+  // hidden if the fetch fails rather than showing a wrong number.
+  function fill(id, n) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n;
+    el.hidden = false;
+  }
+  Promise.all(["scripts", "commands", "dns", "bookmarks", "rfcs"].map(function (name) {
+    return fetch("/data/" + name + ".json").then(function (r) { return r.json(); });
+  })).then(function (res) {
+    var scripts = res[0], commands = res[1], dns = res[2], bookmarks = res[3], rfcs = res[4];
+    fill("count-scripts", scripts.length);
+    fill("count-commands", commands.filter(function (c) { return c.type !== "shortcut"; }).length);
+    fill("count-shortcuts", commands.filter(function (c) { return c.type === "shortcut"; }).length);
+    fill("count-dns", dns.length);
+    fill("count-bookmarks", bookmarks.length);
+    fill("count-rfcs", rfcs.length);
+  }).catch(function () { /* pills stay hidden */ });
 })();
 </script>
 </body>
