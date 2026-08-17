@@ -58,6 +58,7 @@ let bookmarks = [];
 let commands  = [];
 let rfcs      = [];
 let dns       = [];
+let nbn       = [];
 
 let activeTab      = 'scripts';
 let scriptFilter   = 'all';
@@ -73,15 +74,17 @@ let fuseBookmarks = null;
 let fuseCommands  = null;
 let fuseRfcs      = null;
 let fuseDns       = null;
+let fuseNbn       = null;
 
 // ─── Load data ────────────────────────────────────────────────────
 async function loadData() {
-  const [s, b, c, r, d] = await Promise.all([
+  const [s, b, c, r, d, n] = await Promise.all([
     fetch('data/scripts.json').then(r => r.json()),
     fetch('data/bookmarks.json').then(r => r.json()),
     fetch('data/commands.json').then(r => r.json()),
     fetch('data/rfcs.json').then(r => r.json()),
     fetch('data/dns.json').then(r => r.json()),
+    fetch('data/nbn.json').then(r => r.json()).catch(() => []),
   ]);
 
   scripts   = s;
@@ -89,6 +92,7 @@ async function loadData() {
   commands  = c;
   rfcs      = r;
   dns       = d;
+  nbn       = n;
 
   fuseScripts = new Fuse(scripts, {
     keys: ['name', 'description', 'tags', 'category'],
@@ -116,6 +120,14 @@ async function loadData() {
 
   fuseDns = new Fuse(dns, {
     keys: ['type', 'description', 'explanation', 'tags', 'category'],
+    threshold: 0.35,
+    includeScore: true,
+  });
+
+  // NBN has no panel of its own — the tab navigates to the Field Guide — so this
+  // index only feeds the hint strip under the search bar.
+  fuseNbn = new Fuse(nbn, {
+    keys: ['name', 'headline', 'description', 'tags', 'type'],
     threshold: 0.35,
     includeScore: true,
   });
@@ -201,8 +213,31 @@ function render() {
   renderShortcuts();
   renderRfcs();
   renderDns();
+  renderNbnHint();
   updateCounts();
   updateStats();
+}
+
+// The NBN tab leaves the SPA, so its entries can't render into a grid here. When a
+// search matches them, say so under the search box and hand the query to the guide.
+function renderNbnHint() {
+  const el = document.getElementById('nbn-hint');
+  if (!el) return;
+
+  if (!searchQuery || !fuseNbn) { el.hidden = true; return; }
+
+  const hits = getFiltered(nbn, fuseNbn, searchQuery);
+  if (!hits.length) { el.hidden = true; return; }
+
+  const names = hits.slice(0, 3).map(h => esc(h.name)).join(' · ');
+  const more  = hits.length > 3 ? ` · +${hits.length - 3} more` : '';
+  el.innerHTML = `
+    <span class="nbn-hint-count">${hits.length} in NBN Field Guide</span>
+    <span class="nbn-hint-names">${names}${more}</span>
+    <span class="nbn-hint-go">Open the guide &rarr;</span>
+  `;
+  el.href = `/nbn/?q=${encodeURIComponent(searchQuery)}`;
+  el.hidden = false;
 }
 
 function updateStats() {
@@ -210,7 +245,7 @@ function updateStats() {
   const totalCommands  = commands.filter(c => c.type === 'command').length;
   const totalShortcuts = commands.filter(c => c.type === 'shortcut').length;
   const total = totalScripts + totalCommands + totalShortcuts +
-                bookmarks.length + rfcs.length + dns.length;
+                bookmarks.length + rfcs.length + dns.length + nbn.length;
 
   const el = document.getElementById('header-stats');
   if (el) el.textContent = `${totalScripts} scripts · ${totalCommands} commands · ${totalShortcuts} shortcuts · ${total} total`;
@@ -596,6 +631,14 @@ function updateCounts() {
   document.getElementById('count-shortcuts').textContent = document.querySelectorAll('#shortcuts-grid .card').length;
   document.getElementById('count-rfcs').textContent      = document.querySelectorAll('#rfcs-grid .card').length;
   document.getElementById('count-dns').textContent       = document.querySelectorAll('#dns-grid .card').length;
+
+  // NBN has no grid to count, so it counts its data directly. Guarded because the
+  // pill is markup this file does not own.
+  const nbnCount = document.getElementById('count-nbn');
+  if (nbnCount && nbn.length) {
+    nbnCount.textContent = nbn.length;
+    nbnCount.hidden = false;
+  }
 }
 
 // ─── Modals ───────────────────────────────────────────────────────

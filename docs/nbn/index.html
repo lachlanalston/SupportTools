@@ -62,6 +62,15 @@
   .after .din p { font-size: 13px; color: var(--sub); margin: 8px 0 0; max-width: 72ch; }
   .after .din .q { font-family: var(--mono); font-size: 12px; color: var(--sub); background: var(--bg); border: 1px solid var(--border-sub); border-radius: 6px; padding: 8px 11px; margin-top: 8px; }
 
+  .numbers { margin-top: 34px; }
+  .numgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 14px; }
+  .num { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 12px 14px; }
+  .num-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .num-name { font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .num-headline { font-family: var(--mono); font-size: 12px; color: #d29922; white-space: nowrap; }
+  .num-desc { color: var(--sub); font-size: 12.5px; margin: 7px 0 0; }
+  .num-tech { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; color: var(--sub2); margin-top: 7px; text-transform: uppercase; }
+
   .docs { border-top: 1px solid var(--border); margin-top: 30px; padding-top: 14px; }
   .docs h4 { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sub2); margin: 0 0 8px; font-weight: 600; }
   .docs h4 span { text-transform: none; letter-spacing: 0; font-weight: 400; }
@@ -93,6 +102,7 @@
       <span class="brand-icon">&gt;_</span>
       <div>
         <h1>LRFA Tools</h1>
+        <p class="header-stats" id="header-stats"></p>
       </div>
     </div>
     <a class="github-link" href="https://github.com/lachlanalston/SupportTools" target="_blank" rel="noopener">
@@ -162,7 +172,10 @@
       RFCs
       <span class="tab-count" id="count-rfcs" hidden></span>
     </a>
-    <a class="tab active" href="/nbn/">NBN</a>
+    <a class="tab active" href="/nbn/">
+      NBN
+      <span class="tab-count" id="count-nbn" hidden></span>
+    </a>
   </nav>
 
   <div class="filters" id="techchips">
@@ -495,6 +508,16 @@
     </details>
   </div>
 
+  <!-- Rendered from /data/nbn.json so the numbers have one home, not two. -->
+  <section class="numbers" id="numbers" hidden>
+    <div class="thead">
+      <h3>Numbers &amp; thresholds</h3>
+      <span class="tmeta" id="numbers-meta" hidden></span>
+    </div>
+    <p class="tsub">The figures worth quoting back, on their own, without the test they came from.</p>
+    <div class="numgrid" id="numgrid"></div>
+  </section>
+
   <div class="docs">
     <h4>Official documents <span>· Aug 2026</span></h4>
     <ul>
@@ -596,9 +619,33 @@
     if (marks.length) root.normalize();
   }
 
+  // The entries from /data/nbn.json are atomic facts, not multi-field tests, so
+  // unlike a check they filter one by one.
+  var numbers = [];
+
+  function applyNumbers(q) {
+    var section = $("#numbers");
+    if (!numbers.length) { section.hidden = true; return 0; }
+
+    var shown = 0;
+    numbers.forEach(function (n) {
+      clearHighlight(n.el);
+      var techOk = activeTech === "all" || n.tech.indexOf("all") !== -1 || n.tech.indexOf(activeTech) !== -1;
+      var ok = techOk && (!q || n.hay.indexOf(q) !== -1);
+      n.el.hidden = !ok;
+      if (ok) { shown++; highlight(n.el, q); }
+    });
+
+    section.hidden = shown === 0;
+    var meta = $("#numbers-meta");
+    meta.textContent = shown + (shown === 1 ? " entry" : " entries");
+    meta.hidden = !q && activeTech === "all";
+    return shown;
+  }
+
   function apply() {
     var q = $("#q").value.trim().toLowerCase();
-    var shown = 0;
+    var shown = applyNumbers(q);
     checks.forEach(function (c) {
       clearHighlight(c.el);
       var techOk = activeTech === "all" || c.tech === "all" || c.tech === activeTech;
@@ -660,17 +707,63 @@
     el.textContent = n;
     el.hidden = false;
   }
-  Promise.all(["scripts", "commands", "dns", "bookmarks", "rfcs"].map(function (name) {
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch];
+    });
+  }
+
+  function renderNumbers(entries) {
+    var grid = $("#numgrid");
+    entries.forEach(function (e) {
+      var tech = Array.isArray(e.tech) ? e.tech : ["all"];
+      var card = document.createElement("div");
+      card.className = "num";
+      card.innerHTML =
+        '<div class="num-head"><span class="num-name">' + esc(e.name) + "</span>" +
+        (e.headline ? '<span class="num-headline">' + esc(e.headline) + "</span>" : "") +
+        "</div>" +
+        '<p class="num-desc">' + esc(e.description) + "</p>" +
+        '<div class="num-tech">' + esc(tech.join(" · ")) + "</div>";
+      grid.appendChild(card);
+      numbers.push({
+        el: card,
+        tech: tech,
+        hay: (e.name + " " + (e.headline || "") + " " + e.description + " " +
+              (e.tags || []).join(" ") + " " + (e.type || "")).toLowerCase()
+      });
+    });
+    $("#numbers").hidden = false;
+  }
+
+  Promise.all(["scripts", "commands", "dns", "bookmarks", "rfcs", "nbn"].map(function (name) {
     return fetch("/data/" + name + ".json").then(function (r) { return r.json(); });
   })).then(function (res) {
-    var scripts = res[0], commands = res[1], dns = res[2], bookmarks = res[3], rfcs = res[4];
+    var scripts = res[0], commands = res[1], dns = res[2], bookmarks = res[3], rfcs = res[4], nbn = res[5];
+    var cmds = commands.filter(function (c) { return c.type !== "shortcut"; }).length;
+    var cuts = commands.filter(function (c) { return c.type === "shortcut"; }).length;
+
     fill("count-scripts", scripts.length);
-    fill("count-commands", commands.filter(function (c) { return c.type !== "shortcut"; }).length);
-    fill("count-shortcuts", commands.filter(function (c) { return c.type === "shortcut"; }).length);
+    fill("count-commands", cmds);
+    fill("count-shortcuts", cuts);
     fill("count-dns", dns.length);
     fill("count-bookmarks", bookmarks.length);
     fill("count-rfcs", rfcs.length);
-  }).catch(function () { /* pills stay hidden */ });
+    fill("count-nbn", nbn.length);
+
+    // Same line, same arithmetic as the front page's updateStats().
+    var total = scripts.length + cmds + cuts + bookmarks.length + rfcs.length + dns.length + nbn.length;
+    var stats = $("#header-stats");
+    if (stats) stats.textContent = scripts.length + " scripts · " + cmds + " commands · " +
+      cuts + " shortcuts · " + total + " total";
+
+    renderNumbers(nbn);
+
+    // A query handed over from the front page's hint strip.
+    var handoff = new URLSearchParams(location.search).get("q");
+    if (handoff) $("#q").value = handoff;
+    apply();
+  }).catch(function () { /* pills stay hidden, the guide still reads fine */ });
 })();
 </script>
 </body>
