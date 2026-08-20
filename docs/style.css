@@ -223,47 +223,6 @@ main {
   margin-bottom: 24px;
 }
 
-/* Matches under the search box that live on the NBN Field Guide rather than in a
-   tab panel here, with the query handed across. */
-.nbn-hint {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: -12px 0 24px;
-  padding: 9px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  text-decoration: none;
-  font-size: 0.8rem;
-  transition: border-color var(--transition), background var(--transition);
-}
-
-.nbn-hint:hover {
-  border-color: #388bfd;
-  background: var(--card);
-}
-
-.nbn-hint-count {
-  color: #58a6ff;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.nbn-hint-names {
-  color: var(--sub);
-  flex: 1;
-  min-width: 140px;
-}
-
-.nbn-hint-go {
-  color: var(--sub2);
-  white-space: nowrap;
-}
-
-.nbn-hint[hidden] { display: none; }
-
 .search-icon {
   position: absolute;
   left: 14px;
@@ -1160,6 +1119,86 @@ kbd {
   to { opacity: 0; transform: translateX(-50%) translateY(8px); }
 }
 
+/* ─── NBN Field Guide (#nbn panel) ─────────────────────────────── */
+/* The guide is prose, not cards, so it brings its own typography. Everything is
+   scoped to #tab-nbn: these are short, generic class names and the rest of the
+   site must not inherit them. --mono is local for the same reason. */
+#tab-nbn {
+  --mono: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  max-width: 900px;
+}
+
+#tab-nbn a { color: #388bfd; text-decoration: none; }
+#tab-nbn a:hover { text-decoration: underline; }
+
+#tab-nbn .intro { padding: 4px 0; }
+#tab-nbn .intro h2 { font-size: 19px; margin: 0 0 6px; }
+#tab-nbn .intro p { color: var(--sub); font-size: 14px; margin: 0; max-width: 68ch; }
+
+#tab-nbn section.test { margin-top: 30px; }
+#tab-nbn .thead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+#tab-nbn .thead h3 { font-family: var(--mono); font-size: 16px; margin: 0; }
+#tab-nbn .tbadge { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; color: var(--text); background: var(--card-hover); border: 1px solid var(--border); border-radius: 5px; padding: 1px 8px; }
+#tab-nbn .tbadge.si { border-color: #9e6a03; color: #d29922; background: transparent; }
+#tab-nbn .tsub { color: var(--sub2); font-size: 13px; margin: 4px 0 0; max-width: 70ch; }
+#tab-nbn .tnote { color: var(--sub2); font-size: 12.5px; margin: 10px 0 0; max-width: 70ch; font-style: italic; }
+#tab-nbn .tmeta { font-family: var(--mono); font-size: 11px; color: var(--sub2); letter-spacing: 0.03em; margin-left: auto; }
+
+#tab-nbn .fields { margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
+#tab-nbn .field { display: grid; grid-template-columns: 205px minmax(0, 1fr); gap: 4px 18px; padding: 13px 16px; border-top: 1px solid var(--border-sub); }
+#tab-nbn .field:first-child { border-top: 0; }
+#tab-nbn .fname { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); padding-top: 1px; }
+#tab-nbn .fname .fx { display: block; font-weight: 400; font-size: 11px; color: var(--sub2); margin-top: 3px; }
+#tab-nbn .fname .sit { display: block; font-weight: 400; font-size: 10.5px; letter-spacing: 0.04em; color: #d29922; margin-top: 3px; }
+#tab-nbn .fbody .what { color: var(--sub); font-size: 13px; margin: 0 0 6px; }
+#tab-nbn .fbody .read { color: var(--text); font-size: 13.5px; margin: 0; }
+#tab-nbn .fbody details { margin-top: 8px; }
+#tab-nbn .fbody summary { cursor: pointer; color: var(--sub2); font-size: 12px; user-select: none; }
+#tab-nbn .fbody summary:hover { color: var(--sub); }
+#tab-nbn .fbody details p { color: var(--sub); font-size: 12.5px; margin: 7px 0 0; max-width: 64ch; }
+
+/* The guide's own <mark> carries its judgements; mark.hit is a search hit. */
+#tab-nbn mark { background: transparent; color: var(--text); font-weight: 600; }
+#tab-nbn mark.hit { background: rgba(56, 139, 253, 0.22); border-radius: 3px; padding: 0 2px; }
+
+#tab-nbn .after { margin-top: 34px; border-top: 1px solid var(--border); padding-top: 16px; }
+#tab-nbn .after h3 { font-size: 15px; margin: 0 0 4px; }
+#tab-nbn .after > p { color: var(--sub2); font-size: 13px; margin: 0 0 10px; }
+#tab-nbn .after details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0; margin-top: 8px; }
+#tab-nbn .after summary { cursor: pointer; padding: 10px 14px; font-size: 13.5px; font-weight: 600; }
+#tab-nbn .after .din { padding: 2px 14px 12px; }
+#tab-nbn .after .din p { font-size: 13px; color: var(--sub); margin: 8px 0 0; max-width: 72ch; }
+#tab-nbn .after .din .q { font-family: var(--mono); font-size: 12px; color: var(--sub); background: var(--bg); border: 1px solid var(--border-sub); border-radius: 6px; padding: 8px 11px; margin-top: 8px; }
+
+#tab-nbn .numbers { margin-top: 34px; }
+#tab-nbn .numgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 14px; }
+#tab-nbn .num { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 12px 14px; }
+#tab-nbn .num-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+#tab-nbn .num-name { font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--text); }
+#tab-nbn .num-headline { font-family: var(--mono); font-size: 12px; color: #d29922; white-space: nowrap; }
+#tab-nbn .num-desc { color: var(--sub); font-size: 12.5px; margin: 7px 0 0; }
+#tab-nbn .num-tech { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; color: var(--sub2); margin-top: 7px; text-transform: uppercase; }
+
+#tab-nbn .docs { border-top: 1px solid var(--border); margin-top: 30px; padding-top: 14px; }
+#tab-nbn .docs h4 { font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sub2); margin: 0 0 8px; font-weight: 600; }
+#tab-nbn .docs h4 span { text-transform: none; letter-spacing: 0; font-weight: 400; }
+#tab-nbn .docs ul { list-style: none; margin: 0; padding: 0; font-size: 12.5px; color: var(--sub2); }
+#tab-nbn .docs li { padding: 2px 0; }
+
+#tab-nbn [hidden] { display: none !important; }
+
+/* Printing the guide: the chrome goes, the open state of every "why" comes. */
+@media print {
+  header, nav.tabs, .copilot-banner, .search-bar-wrap, .filters, footer { display: none; }
+  body { background: #fff; color: #111; }
+  #tab-nbn .fields, #tab-nbn .after details { border-color: #bbb; background: #fff; }
+  #tab-nbn .field { border-color: #ddd; }
+  #tab-nbn .fname, #tab-nbn .fbody .read, #tab-nbn .thead h3 { color: #111; }
+  #tab-nbn .fbody .what, #tab-nbn .fbody details p, #tab-nbn .tsub { color: #444; }
+  #tab-nbn .fbody details { display: block; }
+  #tab-nbn .fbody details[open] summary { display: none; }
+}
+
 /* ─── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -1176,5 +1215,7 @@ kbd {
   .search-input { padding-right: 14px; }
   .platform-cards { grid-template-columns: repeat(2, 1fr); }
   .stats-bar-inner { gap: 8px; padding: 8px 16px; }
+  #tab-nbn .field { grid-template-columns: 1fr; }
+  #tab-nbn .fname .fx { display: inline; margin-left: 6px; }
   .footer-inner { padding: 14px 16px; }
 }

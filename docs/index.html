@@ -53,14 +53,12 @@
         type="search"
         id="search"
         class="search-input"
-        placeholder="Search scripts, commands, shortcuts, bookmarks, RFCs…"
+        placeholder="Search scripts, commands, shortcuts, bookmarks, RFCs, NBN checks…"
         autocomplete="off"
         spellcheck="false"
       />
       <span class="search-hint" id="search-hint">Press <kbd>/</kbd> to focus</span>
     </div>
-
-    <a class="nbn-hint" id="nbn-hint" href="/nbn/" hidden></a>
 
     <nav class="tabs" role="tablist">
       <button class="tab active" data-tab="scripts" role="tab" aria-selected="true">
@@ -87,10 +85,10 @@
         RFCs
         <span class="tab-count" id="count-rfcs">0</span>
       </button>
-      <a class="tab" href="/nbn/" role="tab" aria-selected="false" style="text-decoration: none;">
+      <button class="tab" data-tab="nbn" role="tab" aria-selected="false">
         NBN
-        <span class="tab-count" id="count-nbn" hidden>0</span>
-      </a>
+        <span class="tab-count" id="count-nbn">0</span>
+      </button>
     </nav>
 
     <!-- Scripts tab -->
@@ -179,6 +177,20 @@
       <div class="filters" id="dns-filters"></div>
       <div class="card-grid" id="dns-grid"></div>
       <p class="empty-state" id="dns-empty" hidden>No DNS records match your search.</p>
+    </div>
+
+    <!-- NBN tab — body fetched from data/nbn-guide.html, filtered by app.js -->
+    <div id="tab-nbn" class="tab-panel">
+      <div class="filters" id="nbn-filters">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="fttn">FTTN/B</button>
+        <button class="filter-chip" data-filter="fttc">FTTC</button>
+        <button class="filter-chip" data-filter="hfc">HFC</button>
+        <button class="filter-chip" data-filter="fttp">FTTP</button>
+        <button class="filter-chip" data-filter="fw">Fixed Wireless</button>
+      </div>
+      <div id="nbn-body"></div>
+      <p class="empty-state" id="nbn-empty" hidden>No check matches that. Search a check name like <strong>loopback</strong>, or anything inside one, like <strong>margin</strong>.</p>
     </div>
 
   </main>
