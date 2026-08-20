@@ -67,24 +67,31 @@ let shortcutFilter = 'all';
 let bookmarkFilter = 'all';
 let rfcFilter      = 'all';
 let dnsFilter      = 'all';
+let nbnFilter      = 'all';
 let searchQuery    = '';
+
+// The NBN guide is prose fetched as markup, not records rendered into cards, so
+// it keeps its own index: one entry per check, one per number card.
+let nbnChecks  = [];
+let nbnNumbers = [];
+let nbnShown   = 0;
 
 let fuseScripts   = null;
 let fuseBookmarks = null;
 let fuseCommands  = null;
 let fuseRfcs      = null;
 let fuseDns       = null;
-let fuseNbn       = null;
 
 // ─── Load data ────────────────────────────────────────────────────
 async function loadData() {
-  const [s, b, c, r, d, n] = await Promise.all([
+  const [s, b, c, r, d, n, guide] = await Promise.all([
     fetch('data/scripts.json').then(r => r.json()),
     fetch('data/bookmarks.json').then(r => r.json()),
     fetch('data/commands.json').then(r => r.json()),
     fetch('data/rfcs.json').then(r => r.json()),
     fetch('data/dns.json').then(r => r.json()),
     fetch('data/nbn.json').then(r => r.json()).catch(() => []),
+    fetch('data/nbn-guide.html').then(r => r.text()).catch(() => ''),
   ]);
 
   scripts   = s;
@@ -124,13 +131,9 @@ async function loadData() {
     includeScore: true,
   });
 
-  // NBN has no panel of its own — the tab navigates to the Field Guide — so this
-  // index only feeds the hint strip under the search bar.
-  fuseNbn = new Fuse(nbn, {
-    keys: ['name', 'headline', 'description', 'tags', 'type'],
-    threshold: 0.35,
-    includeScore: true,
-  });
+  // The guide is searched by substring rather than by Fuse: its matches are
+  // highlighted in place, and a fuzzy hit has no exact span to mark up.
+  buildNbnGuide(guide);
 
   buildBookmarkFilters();
   buildRfcFilters();
@@ -213,31 +216,187 @@ function render() {
   renderShortcuts();
   renderRfcs();
   renderDns();
-  renderNbnHint();
+  renderNbn();
   updateCounts();
   updateStats();
 }
 
-// The NBN tab leaves the SPA, so its entries can't render into a grid here. When a
-// search matches them, say so under the search box and hand the query to the guide.
-function renderNbnHint() {
-  const el = document.getElementById('nbn-hint');
-  if (!el) return;
+// ─── NBN Field Guide ──────────────────────────────────────────────
+// The guide is prose, so unlike the other tabs it is not rendered from records:
+// its markup arrives whole from data/nbn-guide.html and is filtered in place.
+// A check — one section.test — is the unit of a result. A match shows the whole
+// check, never a subset of its fields, because reading a field apart from the
+// rest of its test is how people misread these. What tells you why a check
+// matched is the highlighting and the header note, not a shorter list of fields.
+function buildNbnGuide(html) {
+  const body = document.getElementById('nbn-body');
+  if (!body || !html) return;
+  body.innerHTML = html;
+  // Rebuilt from the markup each time, so a second build indexes the new nodes
+  // instead of counting the ones it just replaced.
+  nbnNumbers = [];
 
-  if (!searchQuery || !fuseNbn) { el.hidden = true; return; }
+  nbnChecks = [...body.querySelectorAll('section.test')].map(sec => {
+    const fields = [...sec.querySelectorAll('.field')];
+    const keys   = fields.map(f => f.getAttribute('data-k') || '').join(' ');
+    const heading = sec.querySelector('h3');
+    const name = (heading.textContent + ' ' +
+      [...sec.querySelectorAll('.tbadge')].map(b => b.textContent).join(' ')).toLowerCase();
+    // Read before the note element exists, so the note's own text never becomes
+    // part of what the next keystroke searches.
+    const hay = (keys + ' ' + sec.textContent).toLowerCase();
 
-  const hits = getFiltered(nbn, fuseNbn, searchQuery);
-  if (!hits.length) { el.hidden = true; return; }
+    // Same #tab/slug deep link the other tabs use, addressed off the check name.
+    sec.id = `nbn-${slugify(heading.textContent)}`;
+    heading.title = 'Link to this check';
+    heading.style.cursor = 'pointer';
+    heading.addEventListener('click', () => {
+      history.replaceState(null, '', `#nbn/${slugify(heading.textContent)}`);
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 
-  const names = hits.slice(0, 3).map(h => esc(h.name)).join(' · ');
-  const more  = hits.length > 3 ? ` · +${hits.length - 3} more` : '';
-  el.innerHTML = `
-    <span class="nbn-hint-count">${hits.length} in NBN Field Guide</span>
-    <span class="nbn-hint-names">${names}${more}</span>
-    <span class="nbn-hint-go">Open the guide &rarr;</span>
-  `;
-  el.href = `/nbn/?q=${encodeURIComponent(searchQuery)}`;
-  el.hidden = false;
+    const note = document.createElement('span');
+    note.className = 'tmeta';
+    note.hidden = true;
+    sec.querySelector('.thead').appendChild(note);
+
+    return {
+      el: sec,
+      tech: sec.getAttribute('data-tech'),
+      name,
+      hay,
+      note,
+      fields: fields.map(f => ({
+        hay: ((f.getAttribute('data-k') || '') + ' ' + f.textContent).toLowerCase(),
+      })),
+    };
+  });
+
+  renderNbnNumbers();
+}
+
+// The nbn.json entries are atomic facts rather than multi-field tests, so unlike
+// a check they filter one by one.
+function renderNbnNumbers() {
+  const grid = document.getElementById('numgrid');
+  if (!grid) return;
+
+  nbn.forEach(entry => {
+    const tech = Array.isArray(entry.tech) ? entry.tech : ['all'];
+    const card = document.createElement('div');
+    card.className = 'num';
+    card.innerHTML = `
+      <div class="num-head">
+        <span class="num-name">${esc(entry.name)}</span>
+        ${entry.headline ? `<span class="num-headline">${esc(entry.headline)}</span>` : ''}
+      </div>
+      <p class="num-desc">${esc(entry.description)}</p>
+      <div class="num-tech">${esc(tech.join(' · '))}</div>
+    `;
+    grid.appendChild(card);
+
+    nbnNumbers.push({
+      el: card,
+      tech,
+      hay: `${entry.name} ${entry.headline || ''} ${entry.description} ${(entry.tags || []).join(' ')} ${entry.type || ''}`.toLowerCase(),
+    });
+  });
+
+  const section = document.getElementById('numbers');
+  if (section) section.hidden = !nbn.length;
+}
+
+// Walk text nodes rather than rewriting innerHTML: a query like "a" would
+// otherwise shred the markup, and re-rendering would collapse every open "why".
+// Hits are <mark class="hit"> so that clearing them leaves the guide's own
+// <mark> emphasis — the lines that carry its judgements — untouched.
+function nbnHighlight(root, q) {
+  if (q.length < 2) return;  // one letter hits half the page; the noise buries the signal
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+  const nodes = [];
+  let node;
+  while ((node = walker.nextNode())) {
+    const parent = node.parentNode;
+    if (parent && parent.classList && parent.classList.contains('tmeta')) continue;
+    if (node.nodeValue.toLowerCase().includes(q)) nodes.push(node);
+  }
+  nodes.forEach(n => {
+    const text = n.nodeValue, lower = text.toLowerCase();
+    const frag = document.createDocumentFragment();
+    let from = 0, at;
+    while ((at = lower.indexOf(q, from)) !== -1) {
+      if (at > from) frag.appendChild(document.createTextNode(text.slice(from, at)));
+      const m = document.createElement('mark');
+      m.className = 'hit';
+      m.textContent = text.slice(at, at + q.length);
+      frag.appendChild(m);
+      from = at + q.length;
+    }
+    if (from < text.length) frag.appendChild(document.createTextNode(text.slice(from)));
+    n.parentNode.replaceChild(frag, n);
+  });
+}
+
+function nbnClearHighlight(root) {
+  const marks = [...root.querySelectorAll('mark.hit')];
+  marks.forEach(m => m.parentNode.replaceChild(document.createTextNode(m.textContent), m));
+  if (marks.length) root.normalize();
+}
+
+function renderNbn() {
+  const empty = document.getElementById('nbn-empty');
+  if (!empty) return;
+
+  const q = searchQuery.toLowerCase();
+  let shown = 0;
+
+  nbnNumbers.forEach(n => {
+    nbnClearHighlight(n.el);
+    const techOk = nbnFilter === 'all' || n.tech.includes('all') || n.tech.includes(nbnFilter);
+    const ok = techOk && (!q || n.hay.includes(q));
+    n.el.hidden = !ok;
+    if (ok) { shown++; nbnHighlight(n.el, q); }
+  });
+
+  const numbersSection = document.getElementById('numbers');
+  const numbersShown   = shown;
+  if (numbersSection) numbersSection.hidden = numbersShown === 0;
+
+  const meta = document.getElementById('numbers-meta');
+  if (meta) {
+    meta.textContent = `${numbersShown} ${numbersShown === 1 ? 'entry' : 'entries'}`;
+    meta.hidden = !q && nbnFilter === 'all';
+  }
+
+  nbnChecks.forEach(c => {
+    nbnClearHighlight(c.el);
+    const techOk = nbnFilter === 'all' || c.tech === 'all' || c.tech === nbnFilter;
+
+    if (!q) {
+      c.el.hidden = !techOk;
+      c.note.hidden = true;
+      if (techOk) shown++;
+      return;
+    }
+
+    const nameHit   = c.name.includes(q);
+    const fieldHits = c.fields.filter(f => f.hay.includes(q)).length;
+    const ok = techOk && (nameHit || fieldHits > 0 || c.hay.includes(q));
+    c.el.hidden = !ok;
+    if (!ok) { c.note.hidden = true; return; }
+
+    shown++;
+    nbnHighlight(c.el, q);
+    // A check the query only mentions in passing is kept, but labelled, rather
+    // than promoted above the others: the guide's order is the portal's order.
+    c.note.textContent = fieldHits > 0
+      ? `${fieldHits} ${fieldHits === 1 ? 'field matches' : 'fields match'}`
+      : nameHit ? 'check name matches' : 'also mentions';
+    c.note.hidden = false;
+  });
+
+  empty.hidden = shown > 0;
+  nbnShown = shown;
 }
 
 function updateStats() {
@@ -632,13 +791,9 @@ function updateCounts() {
   document.getElementById('count-rfcs').textContent      = document.querySelectorAll('#rfcs-grid .card').length;
   document.getElementById('count-dns').textContent       = document.querySelectorAll('#dns-grid .card').length;
 
-  // NBN has no grid to count, so it counts its data directly. Guarded because the
-  // pill is markup this file does not own.
-  const nbnCount = document.getElementById('count-nbn');
-  if (nbnCount && nbn.length) {
-    nbnCount.textContent = nbn.length;
-    nbnCount.hidden = false;
-  }
+  // NBN has no grid of cards: renderNbn() counts the checks and number entries
+  // left standing after the search and the tech filter.
+  document.getElementById('count-nbn').textContent = nbnShown;
 }
 
 // ─── Modals ───────────────────────────────────────────────────────
@@ -963,6 +1118,19 @@ function openItemBySlug(tab, slug) {
     case 'commands': { const item = commands.find(c => c.type === 'command' && slugify(c.name) === slug); if (item) openCommandModal(item); break; }
     case 'shortcuts': { const item = commands.find(c => c.type === 'shortcut' && slugify(c.name) === slug); if (item) openCommandModal(item); break; }
     case 'dns': { const item = dns.find(d => slugify(d.type) === slug); if (item) openDnsModal(item); break; }
+    // The guide has no modal: a check is already on the page, so the link scrolls
+    // to it. It stays hidden if the tech filter excludes it, hence the reset.
+    case 'nbn': {
+      const sec = document.getElementById(`nbn-${slug}`);
+      if (!sec) break;
+      if (sec.hidden) {
+        nbnFilter = 'all';
+        document.querySelectorAll('#nbn-filters .filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
+        render();
+      }
+      sec.scrollIntoView({ block: 'start' });
+      break;
+    }
   }
 }
 
@@ -996,7 +1164,7 @@ function init() {
   });
 
   // Tabs
-  const VALID_TABS = new Set(['scripts', 'commands', 'shortcuts', 'bookmarks', 'rfcs', 'dns']);
+  const VALID_TABS = new Set(['scripts', 'commands', 'shortcuts', 'bookmarks', 'rfcs', 'dns', 'nbn']);
 
   function activateTab(name) {
     if (!VALID_TABS.has(name)) name = 'scripts';
@@ -1018,7 +1186,7 @@ function init() {
   window.addEventListener('hashchange', () => {
     const { tab, slug } = parseHash(location.hash);
     activateTab(tab);
-    if (slug && scripts.length) openItemBySlug(tab, slug);
+    if (slug) openItemBySlug(tab, slug);
   });
 
   const { tab: initialTab } = parseHash(location.hash);
@@ -1061,6 +1229,16 @@ function init() {
     document.querySelectorAll('#dns-filters .filter-chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     dnsFilter = chip.dataset.filter;
+    render();
+  });
+
+  // NBN tech filters
+  document.getElementById('nbn-filters').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('#nbn-filters .filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    nbnFilter = chip.dataset.filter;
     render();
   });
 

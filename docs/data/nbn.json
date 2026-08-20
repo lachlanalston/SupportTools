@@ -120,7 +120,7 @@
     "name": "Line State Interpreter",
     "type": "tool",
     "tech": ["fttn"],
-    "url": "/nbn/#interpreter",
+    "url": "/#nbn/line-state",
     "description": "Punch in the numbers from a Line State test and get per-field verdicts, meters, and the escalation script pre-filled with your values. The full decoder guide (every field, every technology, spec section, glossary) lives on the same page.",
     "tags": ["interpreter", "line-state", "tool", "nbn"]
   },
@@ -128,7 +128,7 @@
     "name": "NBN Test Decoder",
     "type": "tool",
     "tech": ["all"],
-    "url": "/nbn/",
+    "url": "/#nbn",
     "description": "The reference behind the cards: field-by-field line state guide, every technology's tests, what 'in spec' means, escalation playbook, glossary, sources.",
     "tags": ["guide", "reference", "nbn", "tests"]
   },
